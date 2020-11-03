@@ -1,0 +1,430 @@
+import 'dart:async';
+import 'package:Decon/DeconManager/CitiesList.dart';
+import 'package:Decon/DrawerFragments/5_AddDevice/AddDevice.dart';
+import 'package:Decon/DrawerFragments/6_AboutVysion.dart';
+
+import 'package:Decon/Bottom_Navigation/2_AllDevices.dart';
+import 'package:Decon/DrawerFragments/2_DeviceSetting/2_DeviceSetting.dart';
+import 'package:Decon/Bottom_Navigation/PeopleForAdmin.dart';
+import 'package:Decon/Bottom_Navigation/PeopleForManager.dart';
+import 'package:Decon/DrawerFragments/7_Contact.dart';
+import 'package:Decon/DrawerFragments/4_HealthReport.dart';
+import 'package:Decon/DrawerFragments/1_Home.dart';
+import 'package:Decon/DrawerFragments/3_Statistics/3_Statistics.dart';
+import 'package:Decon/Models/Models.dart';
+import 'package:Decon/Services/Auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+
+class Item {
+  Text title;
+  Icon icon;
+  Item(this.title, this.icon);
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return HomePageState();
+  }
+}
+
+class HomePageState extends State<HomePage> {
+  bool _isfromDrawer = true;
+  HomePageState();
+
+  List<DeviceData> _allDeviceData;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  StreamSubscription<Event> _onDataAddedSubscription;
+  StreamSubscription<Event> _onDataChangedSubscription;
+  Query _query;
+  Widget middleContainer;
+  int _selectedDrawerIndex = 0, _currentIndex = 0;
+  int simStatus = 0, countbattery=0, counttemp=0;
+  Color statusColor = Colors.red;
+  String simMessage = 'sim_message_negative';
+  _getBottomNavItem(int position) {
+    switch (position) {
+      case 0:
+        return Home(allDeviceData: _allDeviceData);
+        break;
+      case 1:
+        return AllDevices(
+          allDeviceData: _allDeviceData,
+        );
+      case 2:
+        if(Auth.instance.post=="Manager")
+        return People();
+        else
+        return PeopleForAdmin();
+    }
+  }
+
+  _getDrawerItemWidget(int position) {
+    switch (position) {
+      case 0:
+        return Home(allDeviceData: _allDeviceData );
+        break;
+      case 1:
+        return DeviceSettings(allDevicesList: _allDeviceData,);
+        break;
+      case 2:
+        return Stats(allDeviceData: _allDeviceData);
+        break;
+      case 3:
+        return HealthReport();
+        break;
+      case 4:
+        return AddDevice();
+        break;
+      case 5:
+        return AboutVysion();
+        break;
+      case 6:
+        return Contact();
+        break;
+      default:
+        return "Error Ocurred";
+    }
+  }
+
+  _onSelectedItem(int index) {
+    setState(() {
+      _isfromDrawer = true;
+      _selectedDrawerIndex = index;
+    });
+    Navigator.of(context).pop();
+  }
+  
+  @override
+  void initState() {
+    _query = _database.reference().child("cities/C1/Series/S1/Devices");
+    _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
+    _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
+    // final databasebref = FirebaseDatabase.instance.reference();
+    // databasebref
+    //     .child("SIM")
+    //     .child(_simPath)
+    //     .child("Status")
+    //     .once()
+    //     .then((DataSnapshot snapshot) {
+    //   print("${snapshot.value}");
+    //   simStatus = snapshot.value;
+    //   if (simStatus == 1) {
+    //     setState(() {
+    //       print("sim status is ::::::${simStatus}");
+    //       statusColor = Color.fromRGBO(8, 156, 62, 1);
+    //       simMessage = 'sim_message_positive';
+    //     });
+    //   }
+    // });
+
+    _allDeviceData = new List();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _onDataChangedSubscription.cancel();
+    _onDataAddedSubscription.cancel();
+    super.dispose();
+  }
+
+  onDeviceAdded(Event event) {
+    setState(() {
+      _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
+    });
+    _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
+    _allDeviceData
+        .forEach((device) => print("Device is ${device.id.split("_")[2]}"));
+  }
+
+  onDeviceChanged(Event event) {
+    var oldKey = _allDeviceData.singleWhere((entry) {
+      return entry.id.split("_")[2] == event.snapshot.key;
+    });
+    setState(() {
+      _allDeviceData[_allDeviceData.indexOf(oldKey)] =
+          DeviceData.fromSnapshot(event.snapshot);
+      //debugPrint("what is----------- ");
+    });
+  }
+
+  Future showErrorDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(title: Text('Are You Sure?'), actions: <Widget>[
+            MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop("Yes");
+              },
+              elevation: 5.0,
+              child: Text('YES'),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop("No");
+              },
+              elevation: 5.0,
+              child: Text('NO'),
+            )
+          ]);
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    final drawerItems = [
+      Item(
+          Text("Home",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.home,
+            color: gc,
+          )),
+      Item(
+          Text("Device Settings",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.settings,
+            color: tc,
+          )),
+      Item(
+          Text("Statistics",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.assessment,
+            color: tc,
+          )),
+      Item(
+          Text("Maintainence Report",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.build,
+            color: tc,
+          )),
+      Item(
+          Text("Add Devices",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.add,
+            color: tc,
+          )),
+      Item(
+          Text("About Vysion",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.verified_user,
+            color: tc,
+          )),
+      Item(
+          Text("Contact Us",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.settings_phone,
+            color: tc,
+          )),
+      Item(
+          Text("Log Out",
+              style: TextStyle(
+                  color: gc,
+                  fontWeight: FontWeight.w400,
+                  fontSize: SizeConfig.b * 4.08)),
+          Icon(
+            Icons.person,
+            color: tc,
+          )),
+    ];
+    final bottomNavTitiles = ["Home", "Devices", "Teams"];
+    var drawerOptions = <Widget>[];
+    for (var i = 0; i < drawerItems.length; i++) {
+      if (i != 7) {
+        drawerOptions.add(ListTile(
+          leading: drawerItems[i].icon,
+          title: drawerItems[i].title,
+          selected: i == _selectedDrawerIndex,
+          onTap: () {
+            _onSelectedItem(i);
+          },
+        ));
+      } else {
+        drawerOptions.add(ListTile(
+          leading: drawerItems[i].icon,
+          title: drawerItems[i].title,
+          selected: i == _selectedDrawerIndex,
+          onTap: () {
+            Navigator.of(context).pop();
+            showErrorDialog(context).then((onValue) {
+              if (onValue == "Yes") {
+                Auth.instance.signOut();
+              }
+            });
+          },
+        ));
+      }
+    }
+
+    return Scaffold(
+        appBar: AppBar(
+    title: _isfromDrawer
+        ? drawerItems[_selectedDrawerIndex].title
+        : Text(bottomNavTitiles[_currentIndex]),
+    actions: [
+      //if(FirebaseAuth.instance.currentUser.phoneNumber=="+917080889393")
+      IconButton(icon: Icon(Icons.add_box), onPressed: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CitiesList()));
+      })
+    ],    
+        ),
+        drawer: Drawer(
+    child: Container(
+      color: Color(0xffF4F3F3),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, SizeConfig.v * 1.25),
+            padding: EdgeInsets.fromLTRB(
+                SizeConfig.b * 1.2,
+                SizeConfig.v * 1.25,
+                SizeConfig.b * 0.8,
+                SizeConfig.v * 1.25),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(width: SizeConfig.b * 3),
+                        CircleAvatar(
+                          radius: SizeConfig.b * 11,
+                          backgroundImage: AssetImage("assets/f.png"),
+                        ),
+                        SizedBox(width: SizeConfig.b * 3),
+                        Expanded(
+                            child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                              Text("${FirebaseAuth.instance.currentUser?.displayName??""}",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: SizeConfig.b * 5.09)),
+                              SizedBox(height: SizeConfig.v * 1.5),
+                              Text("${FirebaseAuth.instance.currentUser?.phoneNumber??""}",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: SizeConfig.b * 4.08)),
+                            ]))
+                      ]),
+                ]),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  Color(0xff263238),
+                  Color(0xff005A87),
+                ])),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: drawerOptions,
+          )
+        ],
+      ),
+    ),
+        ),
+        body: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: _isfromDrawer
+          ? _getDrawerItemWidget(_selectedDrawerIndex)
+          : _getBottomNavItem(_currentIndex)),
+        bottomNavigationBar: BottomNavigationBar(
+    unselectedItemColor: Colors.grey,
+    selectedItemColor: Colors.white,
+    selectedFontSize: 14.0,
+    currentIndex: _currentIndex,
+    type: BottomNavigationBarType.fixed,
+    backgroundColor: Color(0xff263238),
+
+    iconSize: 20.0,
+    //unselectedFontSize: 11.0,
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(
+          Icons.home,
+        ),
+        title: Text('Home'),
+      ),
+      BottomNavigationBarItem(
+          icon: Icon(
+            Icons.bug_report,
+          ),
+          title: Text('Devices')),
+      BottomNavigationBarItem(
+          icon: Icon(
+            Icons.people,
+          ),
+          title: Text('Team')),
+    ],
+    onTap: (index) {
+      setState(() {
+        _isfromDrawer = false;
+        _currentIndex = index;
+        // _showTabs(_currentIndex);
+      });
+    },
+        ),
+      );
+  }
+}
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double b;
+  static double v;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    b = screenWidth / 100;
+    v = screenHeight / 100;
+  }
+}
+
+const gc = Colors.black;
+const tc = Color(0xff263238);
