@@ -66,8 +66,8 @@ class DeviceData {
 
   DeviceData.fromSnapshot(DataSnapshot snapshot){
         id = snapshot.value["id"];
-        latitude = double.parse(snapshot.value["latitude"].toString());
-        longitude = double.parse( snapshot.value["longitude"].toString());
+        latitude = snapshot.value["latitude"];
+        longitude = snapshot.value["longitude"];
         battery = snapshot.value["battery"];
         distance =  snapshot.value["distance"];
         if(distance>=Auth.instance.groundlevelabove)

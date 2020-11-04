@@ -16,6 +16,7 @@ import 'package:Decon/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class Item {
   Text title;
@@ -42,8 +43,10 @@ class HomePageState extends State<HomePage> {
   Widget middleContainer;
   int _selectedDrawerIndex = 0, _currentIndex = 0;
   int simStatus = 0, countbattery=0, counttemp=0;
-  Color statusColor = Colors.red;
-  String simMessage = 'sim_message_negative';
+  String _itemSelected; List<String> list =[];
+  Map _citiesMap;  String ccode = Auth.instance.cityCode;
+  GlobalKey<ScaffoldState> _scafoldKey = GlobalKey<ScaffoldState>();
+  
   _getBottomNavItem(int position) {
     switch (position) {
       case 0:
@@ -76,7 +79,7 @@ class HomePageState extends State<HomePage> {
         return HealthReport();
         break;
       case 4:
-        return AddDevice();
+        return AddDevice(cityCode: ccode,);
         break;
       case 5:
         return AboutVysion();
@@ -94,34 +97,59 @@ class HomePageState extends State<HomePage> {
       _isfromDrawer = true;
       _selectedDrawerIndex = index;
     });
-    Navigator.of(context).pop();
+    _scafoldKey.currentState.openEndDrawer();
+    
   }
+  _loadDeviceSettings(String ccode) async{
+    DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child("cities/$ccode/DeviceSettings")
+        .once(); 
+    DeviceSettingModel deviceSettingModel =
+        DeviceSettingModel.fromSnapshot(snapshot);
+    Auth.instance.manholedepth = double.parse( deviceSettingModel.manholedepth);
+    Auth.instance.criticalLevelAbove = double.parse(deviceSettingModel.criticallevelabove);
+    Auth.instance.informativelevelabove = double.parse(deviceSettingModel.informativelevelabove);
+    Auth.instance.normalLevelabove = double.parse(deviceSettingModel.nomrallevelabove);
+    Auth.instance.groundlevelabove = double.parse(deviceSettingModel.groundlevelbelow);
+    Auth.instance.tempThresholdValue = double.parse(deviceSettingModel.tempthresholdvalue);
+    Auth.instance.batteryThresholdvalue = double.parse(deviceSettingModel.batterythresholdvalue);
+    
+  }
+  _setQuery(String cityCode) async{
   
-  @override
-  void initState() {
-    _query = _database.reference().child("cities/C1/Series/S1/Devices");
+    if(Auth.instance.post=="Manager"){
+     _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
+     _loadDeviceSettings(cityCode);      
+    }else{
+    _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
+    }
     _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
-    // final databasebref = FirebaseDatabase.instance.reference();
-    // databasebref
-    //     .child("SIM")
-    //     .child(_simPath)
-    //     .child("Status")
-    //     .once()
-    //     .then((DataSnapshot snapshot) {
-    //   print("${snapshot.value}");
-    //   simStatus = snapshot.value;
-    //   if (simStatus == 1) {
-    //     setState(() {
-    //       print("sim status is ::::::${simStatus}");
-    //       statusColor = Color.fromRGBO(8, 156, 62, 1);
-    //       simMessage = 'sim_message_positive';
-    //     });
-    //   }
-    // });
-
-    _allDeviceData = new List();
-
+     _allDeviceData = new List();
+    
+  }
+  _getCitiesList() async{
+   DataSnapshot citiesSnapshot =await FirebaseDatabase.instance.reference().child("citiesList").once();
+   _citiesMap = citiesSnapshot.value;
+   _citiesMap.forEach((key, value) { 
+     list.add(value);
+   });
+   print(list);
+   setState(() {  
+   });
+   
+  }
+  @override
+  void initState() {
+    if(Auth.instance.post=="Manager"){
+     _getCitiesList();
+     _setQuery("C0");
+    }
+    else{
+    _setQuery(Auth.instance.cityCode);
+    }
+      
     super.initState();
   }
 
@@ -134,6 +162,7 @@ class HomePageState extends State<HomePage> {
 
   onDeviceAdded(Event event) {
     setState(() {
+  
       _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
     });
     _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
@@ -177,6 +206,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     SizeConfig().init(context);
     final drawerItems = [
       Item(
@@ -290,18 +320,51 @@ class HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
+      key: _scafoldKey,
         appBar: AppBar(
-    title: _isfromDrawer
+    leading: IconButton(icon: Icon(Icons.menu), onPressed: (){
+      _scafoldKey.currentState.openDrawer();
+    }),      
+    title: Auth.instance.post=="Manager"?
+         DropdownButton<String>(
+                elevation: 8,
+                items: list.map((dropDownStringitem) {
+                  return DropdownMenuItem<String>(
+                    value: dropDownStringitem,
+                    child: Text(
+                      dropDownStringitem,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (newValueSelected) {
+                  _itemSelected = newValueSelected;
+                  
+                  
+                  _citiesMap.forEach((key, value) { 
+                    if(value == newValueSelected)
+                    ccode = key;
+                  });
+                  setState(() {
+                   context = context;
+                  _setQuery(ccode);  
+                  });  
+                },
+                isExpanded: true,
+                hint: Text("Dummy City"),
+                value: _itemSelected ?? null,
+              )
+        :_isfromDrawer
         ? drawerItems[_selectedDrawerIndex].title
         : Text(bottomNavTitiles[_currentIndex]),
     actions: [
-      //if(FirebaseAuth.instance.currentUser.phoneNumber=="+917080889393")
+      if(Auth.instance.post == "Manager")
       IconButton(icon: Icon(Icons.add_box), onPressed: (){
         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CitiesList()));
       })
     ],    
         ),
-        drawer: Drawer(
+        drawer: Drawer( 
+               
     child: Container(
       color: Color(0xffF4F3F3),
       child: ListView(

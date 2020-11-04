@@ -60,7 +60,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+         floatingActionButton: Auth.instance.post == "Admin"? FloatingActionButton(
                         backgroundColor: Color(0xff0099FF),
                         onPressed: () {
                           showDelegatesDialog(context);
@@ -68,7 +68,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                         child: Icon(
                           Icons.add,
                         ),
-                      ),
+                      ):SizedBox(height: 0.0,),
         body: Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(height: SizeConfig.v * 3),
@@ -160,7 +160,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                             child: StreamBuilder<Event>(
                               stream: FirebaseDatabase.instance
                                                 .reference()
-                                                .child("cities/C1/posts")
+                                                .child("cities/${Auth.instance.cityCode}/posts")
                                                 .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {

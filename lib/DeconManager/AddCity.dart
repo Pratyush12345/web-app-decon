@@ -1,3 +1,4 @@
+import 'package:Decon/Models/Models.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 class AddCity extends StatefulWidget {
@@ -14,7 +15,7 @@ class _AddCityState extends State<AddCity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(title: Text("Add City")),
+     appBar: AppBar(title: Text("Add City12")),
      body: Container(
        padding: EdgeInsets.all(16.0),
        width: MediaQuery.of(context).size.width,
@@ -46,6 +47,20 @@ class _AddCityState extends State<AddCity> {
               dbRef.reference().child("citiesList").update({
                "C${widget.cityLength+1}" : _cityNameController.text
               });
+              FirebaseDatabase.instance
+                    .reference()
+                    .child("cities/C${widget.cityLength+1}/DeviceSettings")
+                    .update(DeviceSettingModel(
+                            "4",
+                            "1",
+                            "2",
+                            "3",
+                            "3",
+                            "50.0",
+                            "20")
+                        .toJson());
+                      
+
               Navigator.of(context).pop();
             },
            )

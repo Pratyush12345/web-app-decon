@@ -53,32 +53,50 @@ class _PhoneVerifState extends State<PhoneVerif> {
               padding: EdgeInsets.all(22.0),
               children: [
                 Animator<Offset>(
-                        tween: Tween<Offset>(begin: Offset(-1, -0.4), end: Offset(-0.6, -0.3)),
+                        tween: Tween<Offset>(begin: Offset(-1, -0.4), end: Offset(-0.7, -0.3)),
                         cycles: 1,
                         builder: (context, animatorState, child) =>
                             FractionalTranslation(
                           translation: animatorState.value,
                           child: Container(
-                            height: 300.0,
-                            width: 400.0,
+                            height: 200.0,
+                            width: 350.0,
                             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(180.0),
                 color: Color(0xFFE6E7E8)),
                           ),
                         ),
                       ),
-                
-                Center(
-                  child: Text("DECON", style: TextStyle(
-                    fontSize: 50.0,
-                    fontWeight: FontWeight.bold,
-                    color: 
-                      Color(0xff005A87),
-                    
-                  ),),
+                Animator(
+                        cycles: 1,
+                        tween: Tween<Offset>(begin: Offset(0, -0.5), end: Offset(0, -0.6)) ,
+                        duration: Duration(milliseconds: 500),
+                        builder:(context, animatorState, child)=> FractionalTranslation(
+                        translation: animatorState.value, 
+                        child: Container(
+                          height:200.0 ,
+                          width: 200.0,
+                          child: Image(
+                              key: UniqueKey(),
+                              width: 200.0,
+                              height: 200.0,
+                              image: AssetImage('assets/DECON.png')),
+                        )),
+                  ),  
+                Transform(
+                     transform: Matrix4.translationValues(0, -60.0, 0),
+                                  child: Center(
+                      child: Text("DECON", style: TextStyle(
+                        fontSize: 50.0,
+                        fontWeight: FontWeight.bold,
+                        color: 
+                          Color(0xff005A87),
+                        
+                      ),),
+                    ),
                 ),      
                 SizedBox(
-                  height: 50.0,
+                  height: 20.0,
                 ),      
                 Container(
                   padding:

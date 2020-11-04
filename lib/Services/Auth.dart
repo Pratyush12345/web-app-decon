@@ -5,7 +5,10 @@ import 'package:Decon/Models/Models.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,10 +16,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 String name;
 String email;
 String imageUrl;
-
+BuildContext context;
 
 abstract class BaseAuth {
-  Future<void> signInWithOTP(String smscode, String verificationID, String name);
+  Future<void> signInWithOTP(String smscode, String verificationID, String name, BuildContext context);
   signOut();
 }
 
@@ -36,8 +39,12 @@ class Auth implements BaseAuth {
   double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelabove,
    batteryThresholdvalue;
   double tempThresholdValue;
+  
+  ProgressDialog progressDialog;
+
   _sharedprefinit() async{
     pref = await  SharedPreferences.getInstance(); 
+    
   }
 
   handleAfterSignIn(){
@@ -64,13 +71,12 @@ class Auth implements BaseAuth {
       builder: (BuildContext context, snapshot){
         if(snapshot.hasData){
           
-          bool isSignedIn = (Auth.instance.pref.getBool("isSignedIn")??false);
-          if(!isSignedIn){
-          Auth.instance.pref.setBool("isSignedIn", true);
-          Navigator.of(context).pop();
-          }
-          
-          return HomePage();
+          // bool isSignedIn = (Auth.instance.pref.getBool("isSignedIn")??false);
+          // if(!isSignedIn){
+          // Auth.instance.pref.setBool("isSignedIn", true);
+          // Navigator.of(context).pop();
+          //}
+           return HomePage();
         }
         else{
           return PhoneVerif();
@@ -94,24 +100,43 @@ class Auth implements BaseAuth {
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
 
     print("------------");
+     if(Auth.instance.post!="Manager")
     _loadDeviceSettings();
     return "done";
   }
   
-  signInWithCred(cred, name)async{
+  signInWithCred(cred, name, BuildContext context)async{
    currentuser= (await _firebaseAuth.signInWithCredential(cred)).user;
    currentuser.updateProfile(displayName: name);
    currentuser.reload();
-   await Future.delayed(Duration(seconds: 10)); 
+   //await Future.delayed(Duration(seconds: 10));
+   print("++++++");
+   print("Hellow World");
+   print("++++++");
+   await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FlareLoading(
+                name: 'assets/gurucool.flr',
+                onSuccess: (_) {
+                  Navigator.pop(context);
+                },
+                onError: (_, __) {},
+                startAnimation: 'animation',
+                until: () => Future.delayed(Duration(seconds: 10)),
+              ),
+            ),
+          );
+   Auth.instance.pref.setBool("isSignedIn", true);       
    await updateClaims(currentuser);
    _updateNameInDatabase(name);
-   
+   return "done";
   }
   
   @override
-  signInWithOTP(String verid, String smscode, String name) async {
+  signInWithOTP(String verid, String smscode, String name, BuildContext context) async {
    AuthCredential authCredential = PhoneAuthProvider.credential(verificationId: verid, smsCode: smscode);
-   signInWithCred(authCredential, name);
+   signInWithCred(authCredential, name, context);
   }
   
   
@@ -149,8 +174,8 @@ class Auth implements BaseAuth {
   _loadDeviceSettings() async{
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child("cities/C1/DeviceSettings")
-        .once();
+        .child("cities/${Auth.instance.cityCode}/DeviceSettings")
+        .once(); 
     DeviceSettingModel deviceSettingModel =
         DeviceSettingModel.fromSnapshot(snapshot);
     manholedepth = double.parse( deviceSettingModel.manholedepth);

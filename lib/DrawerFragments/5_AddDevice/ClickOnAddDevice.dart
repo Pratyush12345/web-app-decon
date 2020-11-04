@@ -90,28 +90,40 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                       SizeConfig.v * 0.5, SizeConfig.b * 2.5, SizeConfig.v * 3),
                   
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  color: Colors.white,
-                  child: TextField(
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                            color: Colors.white,
+                      
+                            borderRadius:
+                                BorderRadius.circular(12.0)),
+                      width: SizeConfig.b * 80,
+                      child: TextField( 
                         
                         controller: _deviceIdText,
                         
                                 style: TextStyle(fontSize: SizeConfig.b * 4.3,color: Colors.white ),
                                 decoration: InputDecoration(
-                                  
+                            border: InputBorder.none,      
                             isDense: true,
                             contentPadding: new EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                             hintText: "Enter Device Id",
-                            border: OutlineInputBorder(
-                                
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.grey))),
+                            ),
                       ),
                 ),
                 SizedBox(height: 20.0,),
                 !_addDeviceManually? RaisedButton(
+                  shape: RoundedRectangleBorder(
+                            
+                            borderRadius: BorderRadius.circular(24.0),
+                            side: BorderSide(color: Colors.blue)
+                          ),
+                  textColor: Colors.white,
+                          elevation: 7.0,
+                          color: Colors.blue,
                   child: widget.isUpdating? Text("Add This Device") : Text("Add Location of this device"),
                   onPressed:()async {
                    position = await getCurrentLocation();
@@ -120,40 +132,59 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                 ):
                 Column(
                   children: [
-                    TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "First Name cannot be empty";
-                        }
-                        return null;
-                      },
-                      controller: _latitudeText,
-                      style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                      decoration: InputDecoration(
-                          contentPadding: new EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 10.0),
-                          hintText: "Enter Latitude",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide(color: Colors.grey))),
+                    Container(
+                      
+                      decoration: BoxDecoration(
+                            color: Colors.white,
+                      
+                            borderRadius:
+                                BorderRadius.circular(12.0)),
+                      width: SizeConfig.b * 80,
+                      height: 40.0 ,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "First Name cannot be empty";
+                          }
+                          return null;
+                        },
+                        controller: _latitudeText,
+                        style: TextStyle(fontSize: SizeConfig.b * 4.3, color: Colors.white),
+                        decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: new EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            hintText: "Enter Latitude",
+                            border: InputBorder.none 
+                            ),
+                      ),
                     ),
                     SizedBox(height: 20.0,),
-                    TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "First Name cannot be empty";
-                        }
-                        return null;
-                      },
-                      controller: _longitudeText,
-                      style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                      decoration: InputDecoration(
-                          contentPadding: new EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 10.0),
-                          hintText: "Enter Longitude",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide(color: Colors.grey))),
+                    Container(
+                      decoration: BoxDecoration(
+                            color: Colors.white,
+                      
+                            borderRadius:
+                                BorderRadius.circular(12.0)),
+                      width: SizeConfig.b * 80,
+                      height: 40.0,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "First Name cannot be empty";
+                          }
+                          return null;
+                        },
+                        controller: _longitudeText,
+                        style: TextStyle(fontSize: SizeConfig.b * 4.3, color: Color(0xFF868A8F)),
+                        decoration: InputDecoration(
+                           isDense: true,
+                            contentPadding: new EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            hintText: "Enter Longitude",
+                            border: InputBorder.none  
+                            )
+                      ),
                     ),
                   ],
                 ),
@@ -167,7 +198,15 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                 await _updatedatabase(double.parse(_latitudeText.text), double.parse(_longitudeText.text));
                 }
                 },
+                shape: RoundedRectangleBorder(
+                            
+                            borderRadius: BorderRadius.circular(24.0),
+                            side: BorderSide(color: Colors.blue)
+                          ),
                 child: Text("Add Device Manually"),
+                textColor: Colors.white,
+                          elevation: 7.0,
+                          color: Colors.blue
                 )
               ],
             ),

@@ -23,13 +23,12 @@ class BottomLayout extends StatefulWidget {
   BottomLayout({this.allDeviceData});
   @override
   State<StatefulWidget> createState() {
-    return BottomLayoutState(this.allDeviceData);
+    return BottomLayoutState();
   }
 }
 
 class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderStateMixin{
-  List<DeviceData> _allDeviceData;
-  BottomLayoutState(this._allDeviceData);
+  
   Animation groundAnimation,normalAnimation, informativeAnimation, criticalAnimation;
   AnimationController animationController; 
   TextEditingController titleController = TextEditingController();
@@ -53,11 +52,11 @@ class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderSt
   Widget build(BuildContext context) {
     SizeConfig().init(context);
    
-    print("Length of All device is ${_allDeviceData.length}");
-    _count=countDevices(_allDeviceData) ;
+    print("Length of All device is ${widget.allDeviceData.length}");
+    _count=countDevices(widget.allDeviceData) ;
        counttemp = 0;
        countbattery = 0;
-     _allDeviceData.forEach((element) { 
+     widget.allDeviceData.forEach((element) { 
       if(element.battery< Auth.instance.batteryThresholdvalue ){
         countbattery++;
       }

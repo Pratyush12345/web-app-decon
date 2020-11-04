@@ -28,14 +28,12 @@ class Home extends StatefulWidget {
   Home({this.allDeviceData});
   @override
   State<StatefulWidget> createState() {
-    return HomeState(this.allDeviceData);
+    return HomeState();
   }
 }
 
 class HomeState extends State<Home> {
   TextEditingController deviceNameController = TextEditingController();
-  List<DeviceData> _allDeviceData;
-  HomeState(this._allDeviceData);
   String futureAddress = "";
   // Completer<GoogleMapController> _controller = Completer();
   Completer<GoogleMapController> _controller = Completer();
@@ -79,7 +77,7 @@ class HomeState extends State<Home> {
               child: TextField(
                 controller: deviceNameController,
                 onSubmitted: (val) async {
-                  _searching("D" + val);
+                  _searching(val);
                 },
                 style: TextStyle(fontSize: SizeConfig.b * 4.3),
                 decoration: InputDecoration(
@@ -112,13 +110,13 @@ class HomeState extends State<Home> {
         onMapCreated: (GoogleMapController googleMapControler) {
           _controller.complete(googleMapControler);
         },
-        markers: addMarker(_allDeviceData),
+        markers: addMarker(widget.allDeviceData),
       ),
     );
   }
 
   Set<Marker> addMarker(List<DeviceData> _allDeviceData) {
-    print("Length is ######: ${_allDeviceData.length}");
+    print("Length is ######: ${widget.allDeviceData.length}");
     Set<Marker> _setOfMarker = new Set();
     if (_allDeviceData.length != 0) {
       for (var i = 0; i < _allDeviceData.length; i++) {
@@ -190,15 +188,23 @@ class HomeState extends State<Home> {
   }
 
   _searching(String val) async {
-    var Key = _allDeviceData.singleWhere((entry) {
-      return entry.id.split("_")[2] == val.trim();
+    print(val);
+    DeviceData specificDevice;
+    if(val!=""){
+    var Key = widget.allDeviceData.firstWhere((entry) {
+      if(entry.id.split("_")[2].contains(val.trim())||entry.address.contains(val.trim()))
+      return true ;
+      else
+      return false;
     });
-    DeviceData specificDevice = _allDeviceData[_allDeviceData.indexOf(Key)];
+    specificDevice = widget.allDeviceData[widget.allDeviceData.indexOf(Key)];
     _value = 20.0;
     GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(specificDevice.latitude, specificDevice.longitude),
         zoom: _value)));
+    }
+    
   }
 
   _showBottomSheet(int level, double latitude, double longitude) {
@@ -260,7 +266,7 @@ class HomeState extends State<Home> {
           padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
           height: MediaQuery.of(context).size.height * (0.29),
           child: BottomLayout(
-            allDeviceData: _allDeviceData,
+            allDeviceData: widget.allDeviceData,
           )),
     );
   }

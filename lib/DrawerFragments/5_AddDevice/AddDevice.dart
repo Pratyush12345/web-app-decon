@@ -21,6 +21,8 @@ class SizeConfig {
   }
 }
 class AddDevice extends StatefulWidget {
+  final String cityCode;
+  AddDevice({@required this.cityCode});
   @override
   _AddDeviceState createState() => _AddDeviceState();
 }
@@ -46,26 +48,18 @@ class _AddDeviceState extends State<AddDevice> {
         child: Icon(Icons.add),
         ),
       body: StreamBuilder<Event>( 
-        stream: FirebaseDatabase.instance.reference().child("cities/C1/Series/S1/Devices").onValue ,
+        stream: FirebaseDatabase.instance.reference().child("cities/${widget.cityCode}/Series/S1/Devices").onValue ,
         builder:(BuildContext context, snapshot){
           if(snapshot.hasData){
                   List<DeviceData> _listofDevices = List();
                   int _wlevel;double _distance;
                   snapshot.data.snapshot?.value?.forEach((key, value){
-                    _distance = value["distance"]; 
-                    if(_distance>=Auth.instance.groundlevelabove)
-                      _wlevel = 0;
-                      else if(_distance>=Auth.instance.informativelevelabove && _distance< Auth.instance.normalLevelabove)
-                      _wlevel = 1;
-                      else if(_distance>=Auth.instance.criticalLevelAbove && _distance< Auth.instance.informativelevelabove)
-                      _wlevel = 2;
-                      else if(_distance<Auth.instance.criticalLevelAbove)
-                      _wlevel = 3;
+                   
                     _listofDevices.add(DeviceData(
                       id: value["id"],battery: value["battery"], latitude: value["latitude"],
                       longitude: value["longitude"], status: value["simStatus"],
-                      distance: _distance,
-                      wlevel: _wlevel ,
+                      distance: value["distance"],
+                      wlevel: 0 ,
                       openManhole: value["openManhole"],
                       address: value["address"]??"Empty",
                       temperature: value["temperature"]

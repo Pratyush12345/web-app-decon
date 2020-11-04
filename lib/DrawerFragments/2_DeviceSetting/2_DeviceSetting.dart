@@ -42,8 +42,8 @@ class _DeviceSettings extends State<DeviceSettings> {
   final _groundlevelbelow = TextEditingController(text: "3");
   final _tempthresholdvalue = TextEditingController(text: "50");
   final _batterythresholdvalue = TextEditingController(text: "20");
-  _loadFromDatabase() async {
-   
+  _loadFromDatabase() async { 
+  
     setState(() {
       _maholesdepth.text = Auth.instance.manholedepth.toString();
       _crticallevelabove.text = Auth.instance.criticalLevelAbove.toString();

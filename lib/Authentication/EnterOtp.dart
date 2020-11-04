@@ -1,3 +1,4 @@
+import 'package:Decon/MainPage/HomePage.dart';
 import 'package:Decon/Services/Auth.dart';
 import 'package:animator/animator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,13 +33,17 @@ class _EnterOTPState extends State<EnterOTP> {
   String smsCode = "";
   String verificationID;
   bool codeSent = false;
-  verifyPhone() async {
+  verifyPhone(context) async {
     final PhoneVerificationCompleted verfiySuccess =
         (AuthCredential cred) async {
       print("vvvvvvvvvvvvvvvv");
       print("Verify Success");
       print("vvvvvvvvvvvvvvvv");
-      await Auth.instance.signInWithCred(cred, widget.name);
+      String result = await Auth.instance.signInWithCred(cred, widget.name, context);
+      // if(result!=null){
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
+      // }
       
     };
 
@@ -80,7 +85,7 @@ class _EnterOTPState extends State<EnterOTP> {
       
       _listisAutoFocused.add(FocusNode());
     }
-    verifyPhone();
+    verifyPhone(context);
     super.initState();
   }
   Widget _getOTPWidget(int pos, bool isAutoFocused){
@@ -225,7 +230,7 @@ class _EnterOTPState extends State<EnterOTP> {
                             side: BorderSide(color: Colors.blue)
                           ),
                           onPressed: () async {
-                    await Auth.instance.signInWithOTP(verificationID, smsCode, widget.name);
+                    await Auth.instance.signInWithOTP(verificationID, smsCode, widget.name, context);
                   },
                           child: Icon(Icons.arrow_right),
                           textColor: Colors.white,
