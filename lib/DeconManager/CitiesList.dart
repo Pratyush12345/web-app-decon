@@ -1,7 +1,4 @@
 import 'package:Decon/DeconManager/AddCity.dart';
-import 'package:Decon/DeconManager/DelegatePost.dart';
-import 'package:Decon/Models/Models.dart';
-import 'package:Decon/Services/Auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -17,27 +14,27 @@ class _CitiesListState extends State<CitiesList> {
   void initState() {
     super.initState();
   }
-
+ Future showCityDialog(BuildContext context) {
+    return showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return  AddCity(
+                  cityLength: _citiesMap.length,
+                );
+        });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add City"),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Auth.instance.signOut();
-              })
-        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+        backgroundColor: Color(0xff0099FF),
         onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AddCity(
-                  cityLength: _citiesMap.length,
-                )));
+        showCityDialog(context);
       }),
       body: Container(
           width: MediaQuery.of(context).size.width,
@@ -48,19 +45,21 @@ class _CitiesListState extends State<CitiesList> {
                   if(snapshot.hasData){
                     
                   _citiesMap = snapshot.data.snapshot.value;
+                  
+                  print(_citiesMap);
                   return ListView.builder(
                 itemCount: _citiesMap.length,
                 itemBuilder: (context, index) {
                   return Card(
                     child: ListTile(
-                      leading: Text("${index + 1}"),
-                      title: Text(_citiesMap["C${index + 1}"]),
+                      leading: Text("$index"),
+                      title: Text(_citiesMap["C$index"]),
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => DelegatePost(
-                                  cityCode: index+1,
-                                  cityName: _citiesMap["C${index + 1}"],
-                                )));
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => DelegatePost(
+                        //           cityCode: index,
+                        //           cityName: _citiesMap["C$index"],
+                        //         )));
                       },
                     ),
                   );

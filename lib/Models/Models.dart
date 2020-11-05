@@ -91,6 +91,7 @@ class DeviceData {
       "latitude": latitude,
       "longitude": longitude,
       "wLevel": wlevel,
+      "distance" : distance,
       "simStatus": status,
       "openManhole": openManhole,
       "address": address,

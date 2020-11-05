@@ -143,13 +143,13 @@ class _Add_admin extends State<Add_admin> {
                             onPressed: ()async{
                         
                         List<String> _pendingReq= Auth.instance.pref.getStringList("pendingAdminRequest")??[];
-                        _pendingReq?.add("+${_phoneNumberController.text}");
+                        _pendingReq?.add("+91${_phoneNumberController.text}");
                         Auth.instance.pref.setStringList("pendingAdminRequest", _pendingReq);      
                         DataSnapshot cityNameSnapshot = await FirebaseDatabase.instance.reference().child("citiesList/${_cityCodeController.text}").once();      
                         String cityName = cityNameSnapshot.value.toString(); 
                               FirebaseFirestore.instance
                         .collection('CurrentLogins')
-                        .doc(_phoneNumberController.text)
+                        .doc("+91${_phoneNumberController.text}")
                         .set({
                       "value":
                           "Admin_${cityName}_${_cityCodeController.text}_None_${_stateNameController.text}"

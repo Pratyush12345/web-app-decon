@@ -49,13 +49,13 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                  DeviceData(
                   id:_deviceIdText.text,
                   battery: 100,
-                  latitude: position.latitude,
-                  longitude: position.longitude,
+                  latitude: latitude,
+                  longitude: longitude,
                   status: 1,
-                  distance: Auth.instance.manholedepth,
+                  distance: 3.9,
                   openManhole: "No Data",
                   address: address,
-                  temperature: 0.0
+                  temperature: 50.2
 
                  ).toJson());
                  Navigator.of(context).pop();
@@ -101,10 +101,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                                 BorderRadius.circular(12.0)),
                       width: SizeConfig.b * 80,
                       child: TextField( 
-                        
+                        cursorColor: Color(0xFF868A8F),
                         controller: _deviceIdText,
                         
-                                style: TextStyle(fontSize: SizeConfig.b * 4.3,color: Colors.white ),
+                                style: TextStyle(fontSize: SizeConfig.b * 4.3,color: Color(0xFF868A8F) ),
                                 decoration: InputDecoration(
                             border: InputBorder.none,      
                             isDense: true,
@@ -128,7 +128,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   onPressed:()async {
                    position = await getCurrentLocation();
                    await _updatedatabase(position.latitude,position.longitude);
-                               } 
+                     
+                   } 
                 ):
                 Column(
                   children: [
@@ -149,7 +150,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                           return null;
                         },
                         controller: _latitudeText,
-                        style: TextStyle(fontSize: SizeConfig.b * 4.3, color: Colors.white),
+                        cursorColor: Color(0xFF868A8F),
+                        style: TextStyle(fontSize: SizeConfig.b * 4.3, color: Color(0xFF868A8F)),
                         decoration: InputDecoration(
                             isDense: true,
                             contentPadding: new EdgeInsets.symmetric(
@@ -176,6 +178,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                           return null;
                         },
                         controller: _longitudeText,
+                        cursorColor: Color(0xFF868A8F),
                         style: TextStyle(fontSize: SizeConfig.b * 4.3, color: Color(0xFF868A8F)),
                         decoration: InputDecoration(
                            isDense: true,
@@ -195,7 +198,35 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                    _addDeviceManually = true;
                 }); 
                 else{
-                await _updatedatabase(double.parse(_latitudeText.text), double.parse(_longitudeText.text));
+            
+                  print(_latitudeText.text);
+                  print(_longitudeText.text);
+                  double latitude = double.parse(_latitudeText.text);
+                  double longitude = double.parse(_longitudeText.text);
+                //await _updatedatabase(double.parse(_latitudeText.text), double.parse(_longitudeText.text));
+                String cityCode = _deviceIdText.text.split("_")[0];
+               String seriescode = _deviceIdText.text.split("_")[1];
+               String deviceCode = _deviceIdText.text.split("_")[2];
+               print(cityCode);
+               print(seriescode);
+               print(deviceCode);
+               String address = await AddressCalculator(latitude,longitude).getLocation();
+               await FirebaseDatabase.instance.reference().child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
+               .update(
+                 DeviceData(
+                  id:_deviceIdText.text,
+                  battery: 100,
+                  latitude: latitude,
+                  longitude: longitude,
+                  status: 1,
+                  distance: 3.9,
+                  openManhole: "No Data",
+                  address: address,
+                  temperature: 50.5
+
+                 ).toJson());
+                 Navigator.of(context).pop();
+
                 }
                 },
                 shape: RoundedRectangleBorder(

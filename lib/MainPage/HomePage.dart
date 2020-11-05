@@ -70,7 +70,7 @@ class HomePageState extends State<HomePage> {
         return Home(allDeviceData: _allDeviceData );
         break;
       case 1:
-        return DeviceSettings(allDevicesList: _allDeviceData,);
+        return DeviceSettings(allDevicesList: _allDeviceData,cityCode: ccode, );
         break;
       case 2:
         return Stats(allDeviceData: _allDeviceData);

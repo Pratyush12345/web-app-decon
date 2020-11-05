@@ -33,13 +33,14 @@ class _EnterOTPState extends State<EnterOTP> {
   String smsCode = "";
   String verificationID;
   bool codeSent = false;
+  
   verifyPhone(context) async {
     final PhoneVerificationCompleted verfiySuccess =
         (AuthCredential cred) async {
       print("vvvvvvvvvvvvvvvv");
       print("Verify Success");
       print("vvvvvvvvvvvvvvvv");
-      String result = await Auth.instance.signInWithCred(cred, widget.name, context);
+      String result = await Auth.instance.signInWithCred(cred, widget.name,);
       // if(result!=null){
       //   Navigator.of(context).pushAndRemoveUntil(
       //     MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
@@ -58,6 +59,7 @@ class _EnterOTPState extends State<EnterOTP> {
       print("sms code sent");
       print("sssssssssssssss");
       this.verificationID = verid;
+    
       setState(() {
         this.codeSent = true;
         //smsCodeDialog(context);
@@ -85,10 +87,14 @@ class _EnterOTPState extends State<EnterOTP> {
       
       _listisAutoFocused.add(FocusNode());
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    //verifyPhone(context);
+    });
     verifyPhone(context);
     super.initState();
   }
   Widget _getOTPWidget(int pos, bool isAutoFocused){
+    
    return Container(
                       decoration: BoxDecoration(
                             color: Color(0xffDEE0E0),
@@ -98,7 +104,9 @@ class _EnterOTPState extends State<EnterOTP> {
                       width: SizeConfig.b * 10,
                           
                       child: TextField(
+                          
                           onChanged: (value){
+                            
                             if(value.length==1){
                               setState(() {
                                 smsCode = smsCode + value;
@@ -127,45 +135,46 @@ class _EnterOTPState extends State<EnterOTP> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    
     return Scaffold(
         
         body: Stack(
         children: [
-          Animator<Offset>(
-            tween: Tween<Offset>(begin: Offset(1, 1.2), end: Offset(0.7, 1.2)),
-            cycles: 1,
-            builder: (context, animatorState, child) => FractionalTranslation(
-              translation: animatorState.value,
-              child: Container(
-                height: 300.0,
-                width: 400.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(150.0),
-                    color: Colors.blue.withOpacity(0.2) ),
-              ),
-            ),
-          ),
+          // Animator<Offset>(
+          //   tween: Tween<Offset>(begin: Offset(1, 1.2), end: Offset(0.7, 1.2)),
+          //   cycles: 1,
+          //   builder: (context, animatorState, child) => FractionalTranslation(
+          //     translation: animatorState.value,
+          //     child: Container(
+          //       height: 300.0,
+          //       width: 400.0,
+          //       decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(150.0),
+          //           color: Colors.blue.withOpacity(0.2) ),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: ListView(
               padding: EdgeInsets.all(24.0),
               children: [
-                Animator<Offset>(
-                        tween: Tween<Offset>(begin: Offset(-1, -0.4), end: Offset(-0.7, -0.3)),
-                        cycles: 1,
-                        builder: (context, animatorState, child) =>
-                            FractionalTranslation(
-                          translation: animatorState.value,
-                          child: Container(
-                            height: 200.0,
-                            width: 350.0,
-                            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(180.0),
-                color: Color(0xFFE6E7E8)),
-                          ),
-                        ),
-                      ),
+                // Animator<Offset>(
+                //         tween: Tween<Offset>(begin: Offset(-1, -0.4), end: Offset(-0.7, -0.3)),
+                //         cycles: 1,
+                //         builder: (context, animatorState, child) =>
+                //             FractionalTranslation(
+                //           translation: animatorState.value,
+                //           child: Container(
+                //             height: 200.0,
+                //             width: 350.0,
+                //             decoration: BoxDecoration(
+                // borderRadius: BorderRadius.circular(180.0),
+                // color: Color(0xFFE6E7E8)),
+                //           ),
+                //         ),
+                //       ),
                 
                 Center(
                   child: Text("VERIFICATION", style: TextStyle(
@@ -230,7 +239,7 @@ class _EnterOTPState extends State<EnterOTP> {
                             side: BorderSide(color: Colors.blue)
                           ),
                           onPressed: () async {
-                    await Auth.instance.signInWithOTP(verificationID, smsCode, widget.name, context);
+                    await Auth.instance.signInWithOTP(verificationID, "123456", widget.name,);
                   },
                           child: Icon(Icons.arrow_right),
                           textColor: Colors.white,

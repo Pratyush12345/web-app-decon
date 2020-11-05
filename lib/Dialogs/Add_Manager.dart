@@ -30,9 +30,6 @@ class _Add_man extends State<Add_man> {
     SizeConfig().init(context);
     return SingleChildScrollView(
             child: Stack(children: [
-      // Positioned(left: 100, 
-      // child: MyArc(diameter: 100)
-      // ),
       Card(
           margin: EdgeInsets.fromLTRB(
               SizeConfig.screenWidth * 0.05,
@@ -80,7 +77,7 @@ class _Add_man extends State<Add_man> {
                       padding: EdgeInsets.zero,
                       onPressed: (){
                         List<String> _pendingReq= Auth.instance.pref.getStringList("pendingManagerRequest")??[];
-                        _pendingReq?.add("+${_phoneNoController.text}");
+                        _pendingReq?.add("+91${_phoneNoController.text}");
                         Auth.instance.pref.setStringList("pendingManagerRequest", _pendingReq);
                         FirebaseFirestore.instance
                         .collection('CurrentLogins')

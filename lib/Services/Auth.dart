@@ -1,14 +1,8 @@
-import 'package:Decon/MainPage/HomePage.dart';
-import 'package:Decon/Authentication/Phoneverif.dart';
-import 'package:Decon/Authentication/Wait.dart';
 import 'package:Decon/Models/Models.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,72 +13,35 @@ String imageUrl;
 BuildContext context;
 
 abstract class BaseAuth {
-  Future<void> signInWithOTP(String smscode, String verificationID, String name, BuildContext context);
+  Future<void> signInWithOTP(String smscode, String verificationID, String name);
   signOut();
 }
 
 class Auth implements BaseAuth {
   static Auth instance = Auth._();
   Auth._(){
-    _sharedprefinit();
-    
+    _sharedprefinit();  
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User currentuser;
   SharedPreferences pref; 
-  String post;
+  String post, globalname;
   String cityName;
   String cityCode, rangeOfDevicesEx;
   double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelabove,
-   batteryThresholdvalue;
+  batteryThresholdvalue;
   double tempThresholdValue;
-  
-  ProgressDialog progressDialog;
+  BuildContext changeContext;
 
   _sharedprefinit() async{
     pref = await  SharedPreferences.getInstance(); 
-    
   }
 
-  handleAfterSignIn(){
-    return FutureBuilder(
-      future: Auth.instance.updateClaims(FirebaseAuth.instance.currentUser),
-      builder:(context, snapshot){
-        if(snapshot.connectionState==ConnectionState.done){
-          if(snapshot.hasData){
-          
-          return HomePage();
-          }
-          return Wait();
-        }
-        else{
-          return Wait();
-        }
-      } 
-    
-    );
-  } 
-  handleAuth(){
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, snapshot){
-        if(snapshot.hasData){
-          
-          // bool isSignedIn = (Auth.instance.pref.getBool("isSignedIn")??false);
-          // if(!isSignedIn){
-          // Auth.instance.pref.setBool("isSignedIn", true);
-          // Navigator.of(context).pop();
-          //}
-           return HomePage();
-        }
-        else{
-          return PhoneVerif();
-        }
-      }
-      );
+  Stream<User> get appuser{
+    return _firebaseAuth.authStateChanges().map((user) => user);
   }
-  
+
   Future<String> updateClaims(currentuser) async {
     IdTokenResult idTokenResult = await currentuser.getIdTokenResult(true);
     print("------------");
@@ -100,43 +57,29 @@ class Auth implements BaseAuth {
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
 
     print("------------");
-     if(Auth.instance.post!="Manager")
+    _updateNameInDatabase(globalname); 
+    if(Auth.instance.post!="Manager")
     _loadDeviceSettings();
     return "done";
   }
-  
-  signInWithCred(cred, name, BuildContext context)async{
+  Future<String> delayedLogin(User currentUser) async{
+   Auth.instance.pref.setBool("isSignedIn", true);  
+   await Future.delayed(Duration(seconds: 10));     
+   String value= await updateClaims(currentuser);
+   return value;
+  }
+  signInWithCred(cred, name)async{
+   globalname = name; 
    currentuser= (await _firebaseAuth.signInWithCredential(cred)).user;
    currentuser.updateProfile(displayName: name);
    currentuser.reload();
-   //await Future.delayed(Duration(seconds: 10));
-   print("++++++");
-   print("Hellow World");
-   print("++++++");
-   await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FlareLoading(
-                name: 'assets/gurucool.flr',
-                onSuccess: (_) {
-                  Navigator.pop(context);
-                },
-                onError: (_, __) {},
-                startAnimation: 'animation',
-                until: () => Future.delayed(Duration(seconds: 10)),
-              ),
-            ),
-          );
-   Auth.instance.pref.setBool("isSignedIn", true);       
-   await updateClaims(currentuser);
-   _updateNameInDatabase(name);
    return "done";
   }
   
   @override
-  signInWithOTP(String verid, String smscode, String name, BuildContext context) async {
+  signInWithOTP(String verid, String smscode, String name ) async {
    AuthCredential authCredential = PhoneAuthProvider.credential(verificationId: verid, smsCode: smscode);
-   signInWithCred(authCredential, name, context);
+   signInWithCred(authCredential, name);
   }
   
   

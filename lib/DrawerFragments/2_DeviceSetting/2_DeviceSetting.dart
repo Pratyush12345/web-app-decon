@@ -28,20 +28,21 @@ const tc = Color(0xff263238);
 
 class DeviceSettings extends StatefulWidget {
   final List<DeviceData> allDevicesList;
-  DeviceSettings({Key key, this.allDevicesList}) : super(key: key);
+  String cityCode;
+  DeviceSettings({Key key, this.allDevicesList, this.cityCode}) : super(key: key);
 
   @override
   _DeviceSettings createState() => _DeviceSettings(); 
 }
 
 class _DeviceSettings extends State<DeviceSettings> {
-  final _maholesdepth = TextEditingController(text: "4");
-  final _crticallevelabove = TextEditingController(text: "1");
-  final _informativelevelabove = TextEditingController(text: "2");
-  final _normallevelabove = TextEditingController(text: "3");
-  final _groundlevelbelow = TextEditingController(text: "3");
-  final _tempthresholdvalue = TextEditingController(text: "50");
-  final _batterythresholdvalue = TextEditingController(text: "20");
+  final _maholesdepth = TextEditingController();
+  final _crticallevelabove = TextEditingController();
+  final _informativelevelabove = TextEditingController();
+  final _normallevelabove = TextEditingController();
+  final _groundlevelbelow = TextEditingController();
+  final _tempthresholdvalue = TextEditingController();
+  final _batterythresholdvalue = TextEditingController();
   _loadFromDatabase() async { 
   
     setState(() {
@@ -349,17 +350,18 @@ class _DeviceSettings extends State<DeviceSettings> {
           SizedBox(
               child: MaterialButton(
                   onPressed: () async{
-                    if (int.parse(_groundlevelbelow.text) <=
-                      int.parse(_maholesdepth.text) &&
-                  (int.parse(_normallevelabove.text) <=
-                      int.parse(_groundlevelbelow.text)) &&
-                  (int.parse(_informativelevelabove.text) <=
-                      int.parse(_normallevelabove.text)) &&
-                  (int.parse(_crticallevelabove.text) <=
-                      int.parse(_informativelevelabove.text))) {
+                    if (double.parse(_groundlevelbelow.text) <=
+                      double.parse(_maholesdepth.text) &&
+                  (double.parse(_normallevelabove.text) <=
+                      double.parse(_groundlevelbelow.text)) &&
+                  (double.parse(_informativelevelabove.text) <=
+                      double.parse(_normallevelabove.text)) &&
+                  (double.parse(_crticallevelabove.text) <=
+                      double.parse(_informativelevelabove.text))) {
+                        print(widget.cityCode);
                 await FirebaseDatabase.instance
                     .reference()
-                    .child("cities/C1/DeviceSettings")
+                    .child("cities/${widget.cityCode}/DeviceSettings")
                     .update(DeviceSettingModel(
                             _maholesdepth.text,
                             _crticallevelabove.text,
