@@ -108,68 +108,8 @@ class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderSt
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: SizeConfig.b * 1.8,
-                                  vertical: SizeConfig.v * 1),
-                              decoration: BoxDecoration(
-                                color: Color(0x60979797),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 2.51),
-                              ),
-                              width: SizeConfig.b * 45.8,
-                              child: Row(
-                                children: [
-                                  Row(children: [
-                                    SizedBox(width: SizeConfig.b * 4),
-                                    CircleAvatar(
-                                        backgroundColor: Color(0xffC4C4C4),
-                                        radius: SizeConfig.b * 1.4),
-                                    SizedBox(width: SizeConfig.b * 2),
-                                    Text("Ground Level",
-                                        style: TextStyle(
-                                            fontSize: SizeConfig.b * 3.05,
-                                            color: Colors.white)),
-                                  ]),
-                                  Spacer(),
-                                  Text("${groundAnimation.value}",
-                                      style: TextStyle(
-                                          fontSize: SizeConfig.b * 3.05,
-                                          color: Colors.white))
-                                ],
-                              )),
-                          SizedBox(height: SizeConfig.v * 0.5),
-                          Container(
-                              width: SizeConfig.b * 45.8,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: SizeConfig.b * 1.8,
-                                  vertical: SizeConfig.v * 1),
-                              decoration: BoxDecoration(
-                                color: Color(0x60979797),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 2.5),
-                              ),
-                              child: Row(
-                                children: [
-                                  Row(children: [
-                                    SizedBox(width: SizeConfig.b * 4),
-                                    CircleAvatar(
-                                        backgroundColor: Color(0xff69D66D),
-                                        radius: SizeConfig.b * 1.5),
-                                    SizedBox(width: SizeConfig.b * 2),
-                                    Text("Normal Level",
-                                        style: TextStyle(
-                                            fontSize: SizeConfig.b * 3.05,
-                                            color: Colors.white)),
-                                  ]),
-                                  Spacer(),
-                                  Text("${normalAnimation.value}",
-                                      style: TextStyle(
-                                          fontSize: SizeConfig.b * 3.05,
-                                          color: Colors.white))
-                                ],
-                              )),
-                          SizedBox(height: SizeConfig.v * 0.5),
+                          
+                          
                           Container(
                               width: SizeConfig.b * 45.8,
                               padding: EdgeInsets.symmetric(
@@ -226,6 +166,68 @@ class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderSt
                                   ]),
                                   Spacer(),
                                   Text("${informativeAnimation.value}",
+                                      style: TextStyle(
+                                          fontSize: SizeConfig.b * 3.05,
+                                          color: Colors.white))
+                                ],
+                              )),
+                              SizedBox(height: SizeConfig.v * 0.5),
+                          Container(
+                              width: SizeConfig.b * 45.8,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: SizeConfig.b * 1.8,
+                                  vertical: SizeConfig.v * 1),
+                              decoration: BoxDecoration(
+                                color: Color(0x60979797),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 2.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Row(children: [
+                                    SizedBox(width: SizeConfig.b * 4),
+                                    CircleAvatar(
+                                        backgroundColor: Color(0xff69D66D),
+                                        radius: SizeConfig.b * 1.5),
+                                    SizedBox(width: SizeConfig.b * 2),
+                                    Text("Normal Level",
+                                        style: TextStyle(
+                                            fontSize: SizeConfig.b * 3.05,
+                                            color: Colors.white)),
+                                  ]),
+                                  Spacer(),
+                                  Text("${normalAnimation.value}",
+                                      style: TextStyle(
+                                          fontSize: SizeConfig.b * 3.05,
+                                          color: Colors.white))
+                                ],
+                              )),
+                          SizedBox(height: SizeConfig.v * 0.5),
+                              Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: SizeConfig.b * 1.8,
+                                  vertical: SizeConfig.v * 1),
+                              decoration: BoxDecoration(
+                                color: Color(0x60979797),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 2.51),
+                              ),
+                              width: SizeConfig.b * 45.8,
+                              child: Row(
+                                children: [
+                                  Row(children: [
+                                    SizedBox(width: SizeConfig.b * 4),
+                                    CircleAvatar(
+                                        backgroundColor: Color(0xffC4C4C4),
+                                        radius: SizeConfig.b * 1.4),
+                                    SizedBox(width: SizeConfig.b * 2),
+                                    Text("Ground Level",
+                                        style: TextStyle(
+                                            fontSize: SizeConfig.b * 3.05,
+                                            color: Colors.white)),
+                                  ]),
+                                  Spacer(),
+                                  Text("${groundAnimation.value}",
                                       style: TextStyle(
                                           fontSize: SizeConfig.b * 3.05,
                                           color: Colors.white))
@@ -289,7 +291,7 @@ class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderSt
                                           color: Colors.white)),
                                   Spacer(),
                                   CircleAvatar(
-                                      child: Text("${counttemp}"),
+                                      child: Text(""),
                                       backgroundColor: Color(0xffC4C4C4),
                                       radius: SizeConfig.b * 2.6),
                                 ]),
@@ -319,7 +321,7 @@ class BottomLayoutState extends State<BottomLayout>  with SingleTickerProviderSt
                                           color: Colors.white)),
                                   Spacer(),
                                   CircleAvatar(
-                                      child: Text("${countbattery}"),
+                                      child: Text("$countbattery"),
                                       backgroundColor: Color(0xffC4C4C4),
                                       radius: SizeConfig.b * 2.6),
                                 ]),

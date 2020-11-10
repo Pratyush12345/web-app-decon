@@ -1,9 +1,12 @@
+import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Services/Auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Add_admin extends StatefulWidget {
+  final int cityLength;
+  Add_admin({@required this.cityLength});
   @override
   _Add_admin createState() => _Add_admin();
 }
@@ -25,10 +28,12 @@ class SizeConfig {
 
 class _Add_admin extends State<Add_admin> {
   final _phoneNumberController = TextEditingController();
-  
+  final _nameController = TextEditingController();
   final _stateNameController = TextEditingController();
+  final _cityNameController = TextEditingController();
+  final _sheetURLController = TextEditingController();
+  final dbRef = FirebaseDatabase.instance;
   
-  final _cityCodeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -49,7 +54,84 @@ class _Add_admin extends State<Add_admin> {
                   padding: EdgeInsets.fromLTRB(SizeConfig.b * 2.5,
                       SizeConfig.v * 0.5, SizeConfig.b * 2.5, SizeConfig.v * 3),
                   child: Column(children: [
-                    
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(
+                                SizeConfig.b * 5.09, 0, 0, 0),
+                            width: SizeConfig.b * 40,
+                            decoration: BoxDecoration(
+                                color: Color(0xffDEE0E0),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 1)),
+                            child: TextField(
+                              controller: _cityNameController,
+                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: 'City Name',
+                                hintStyle:
+                                    TextStyle(fontSize: SizeConfig.b * 4),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(
+                                SizeConfig.b * 5.09, 0, 0, 0),
+                            width: SizeConfig.b * 40,
+                            decoration: BoxDecoration(
+                                color: Color(0xffDEE0E0),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 1)),
+                            child: TextField(
+                              controller: _stateNameController,
+                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: 'State Name',
+                                hintStyle:
+                                    TextStyle(fontSize: SizeConfig.b * 4),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          
+                        ]),
+                    SizedBox(height: SizeConfig.v * 1.5),
+                        
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Name of Admin",
+                              style: TextStyle(
+                                  fontSize: SizeConfig.b * 4.07,
+                                  color: Colors.white)),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(
+                                SizeConfig.b * 5.09, 0, 0, 0),
+                            width: SizeConfig.b * 50,
+                            decoration: BoxDecoration(
+                                color: Color(0xffDEE0E0),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 1)),
+                            child: TextField(
+                              controller: _nameController,
+                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: 'Enter Name',
+                                hintStyle:
+                                    TextStyle(fontSize: SizeConfig.b * 4),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ]),    
                     SizedBox(height: SizeConfig.v * 1.5),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,11 +162,12 @@ class _Add_admin extends State<Add_admin> {
                             ),
                           ),
                         ]),
+                        
                     SizedBox(height: SizeConfig.v * 2),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("City Code",
+                          Text("Sheet URL",
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 4.07,
                                   color: Colors.white)),
@@ -98,11 +181,11 @@ class _Add_admin extends State<Add_admin> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1)),
                             child: TextField(
-                              controller: _cityCodeController,
+                              controller: _sheetURLController,
                               style: TextStyle(fontSize: SizeConfig.b * 4.3),
                               decoration: InputDecoration(
                                 isDense: true,
-                                hintText: 'Enter City Code',
+                                hintText: 'Sheet URL',
                                 hintStyle:
                                     TextStyle(fontSize: SizeConfig.b * 4),
                                 border: InputBorder.none,
@@ -111,49 +194,46 @@ class _Add_admin extends State<Add_admin> {
                           ),
                         ]),
                     SizedBox(height: SizeConfig.v * 2),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 40,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _stateNameController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: 'State',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 4),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ]),
+                    
                     SizedBox(height: SizeConfig.v * 6),
                     SizedBox(
                         child: MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: ()async{
-                        
-                        List<String> _pendingReq= Auth.instance.pref.getStringList("pendingAdminRequest")??[];
-                        _pendingReq?.add("+91${_phoneNumberController.text}");
-                        Auth.instance.pref.setStringList("pendingAdminRequest", _pendingReq);      
-                        DataSnapshot cityNameSnapshot = await FirebaseDatabase.instance.reference().child("citiesList/${_cityCodeController.text}").once();      
-                        String cityName = cityNameSnapshot.value.toString(); 
-                              FirebaseFirestore.instance
-                        .collection('CurrentLogins')
+                    dbRef.reference().child("citiesList").update({
+                     "C${widget.cityLength}" : _cityNameController.text
+                    });
+                    dbRef.reference()
+                          .child("cities/C${widget.cityLength}/DeviceSettings")
+                          .update(DeviceSettingModel(
+                                  "4.0",
+                                  "1.0",
+                                  "2.0",
+                                  "3.0",
+                                  "3.0",
+                                  "50.0",
+                                  "20.0")
+                              .toJson());
+                    dbRef.reference()
+                          .child("cities/C${widget.cityLength}").update({
+                           "sheetURL": _sheetURLController.text,
+                           "stateName": _stateNameController.text,
+                          });          
+                    dbRef.reference()
+                          .child("adminsList").push().update({
+                          "name": _nameController.text,
+                          "phoneNo": "+91${_phoneNumberController.text}",
+                          "post": "Admin",
+                          "cityName": _cityNameController.text,
+                          "stateName": _stateNameController.text
+                          });    
+                        FirebaseFirestore.instance
+                        .collection('CurrentLogins') 
                         .doc("+91${_phoneNumberController.text}")
                         .set({
                       "value":
-                          "Admin_${cityName}_${_cityCodeController.text}_None_${_stateNameController.text}"
-                    });
+                          "Admin_${_cityNameController.text}_C${widget.cityLength}_None_${_stateNameController.text}"
+                       });
                                   Navigator.of(context).pop();
 
                             },

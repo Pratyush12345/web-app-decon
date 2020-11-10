@@ -24,7 +24,9 @@ class SizeConfig {
 
 class PeopleForAdmin extends StatefulWidget {
   final BuildContext menuScreenContext;
-  PeopleForAdmin({Key key, this.menuScreenContext}) : super(key: key);
+  final bool fromManager;
+  final String cityCode;
+  PeopleForAdmin({Key key, this.menuScreenContext, this.fromManager, this.cityCode}) : super(key: key);
 
   @override
   _PeopleForAdmin createState() => _PeopleForAdmin();
@@ -35,8 +37,9 @@ const tc = Color(0xff263238);
 
 class _PeopleForAdmin extends State<PeopleForAdmin> {
   DelegateModel _delegateModel;
+  String ccode;
   _loadFromDatabase() async{
-  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("adminsList").orderByChild("cityCode").equalTo("C1").once();
+  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("adminsList").orderByChild("cityCode").equalTo("${widget.cityCode}").once();
   setState(() { 
   _delegateModel = DelegateModel.fromJsonForAdmin(snapshot.value);  
   });
@@ -45,6 +48,12 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   @override
   void initState() {
     _loadFromDatabase();
+    if(widget.fromManager){
+      ccode = widget.cityCode;
+    }
+    else
+      ccode = Auth.instance.cityCode;  
+    
     super.initState();
   }
   Future showDelegatesDialog(BuildContext context) {
@@ -55,12 +64,36 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
           return Add_Delegates();
         });
   }
+  Future showDeleteDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(title: Text('Delete user?'), actions: <Widget>[
+            MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop("Yes");
+              },
+              elevation: 5.0,
+              child: Text('YES'),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop("No");
+              },
+              elevation: 5.0,
+              child: Text('NO'),
+            )
+          ]);
+        });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-         floatingActionButton: Auth.instance.post == "Admin"? FloatingActionButton(
+         appBar: widget.fromManager?AppBar(title: Text("Admin Team"),):SizedBox(height: 0.0,),
+         floatingActionButton: Auth.instance.post == "Admin"||widget.fromManager? FloatingActionButton(
                         backgroundColor: Color(0xff0099FF),
                         onPressed: () {
                           showDelegatesDialog(context);
@@ -160,7 +193,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                             child: StreamBuilder<Event>(
                               stream: FirebaseDatabase.instance
                                                 .reference()
-                                                .child("cities/${Auth.instance.cityCode}/posts")
+                                                .child("cities/$ccode/posts")
                                                 .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
@@ -230,69 +263,84 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                                         padding: EdgeInsets.zero,
                                         itemCount: _listofdelegates.length,
                                         itemBuilder: (BuildContext ctxt, int index) {
-                                          return Column(children: [
-                                            Container(
-                                                decoration: BoxDecoration(
-                                                  color: Color(0x35C4C4C4),
-                                                  borderRadius: BorderRadius.circular(
-                                                      SizeConfig.b * 1.2),
-                                                ),
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: SizeConfig.b * 5.1,
-                                                    vertical: SizeConfig.v * 0.8),
-                                                child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(children: [
-                                                        Container(
-                                                            width: SizeConfig.b * 45,
-                                                            child: Text(
-                                                                _listofdelegates[index].name,
-                                                                style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontSize:
-                                                                        SizeConfig.b *
-                                                                            4.071,
-                                                                    fontWeight: FontWeight
-                                                                        .w400))),
-                                                        Spacer(),
-                                                        Text(_listofdelegates[index].post,
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize:
-                                                                    SizeConfig.b * 3.054,
-                                                                fontWeight:
-                                                                    FontWeight.w400)),
-                                                      ]),
-                                                      SizedBox(height: SizeConfig.v * 1),
-                                                      Row(children: [
-                                                        Container(
-                                                            height: SizeConfig.b * 4,
-                                                            width: SizeConfig.b * 4.58,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        SizeConfig.b *
-                                                                            1.2),
-                                                                color: Color(0x804ADB58)),
-                                                            child: IconButton(
-                                                                onPressed: null,
-                                                                padding: EdgeInsets.zero,
-                                                                icon: Icon(Icons.call,
-                                                                    color: Colors.white,
-                                                                    size: SizeConfig.b *
-                                                                        3.5))),
-                                                        SizedBox(width: SizeConfig.b * 3),
-                                                        Text(_listofdelegates[index].numb,
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize:
-                                                                    SizeConfig.b * 3.56)),
-                                                      ]),
-                                                    ])),
-                                            SizedBox(height: SizeConfig.v * 1),
-                                          ]);
+                                          return InkWell(
+                                              onLongPress: (){
+                                                showDeleteDialog(context).then((value)async{
+                                                                print(value);
+                                                                if(value == "Yes"){
+                                                                  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("/cities/$ccode/posts/").orderByChild("phoneNo").equalTo(_listofdelegates[index].numb).once();
+                                                                  Map _map= snapshot.value;
+                                                                  _map.forEach((key, value) { 
+                                                                   FirebaseDatabase.instance.reference().child("/cities/$ccode/posts/$key").remove();
+                                                                  });
+                                                                  
+                                                                }
+                                                              });
+                                              },
+                                              child: Column(children: [
+                                              Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0x35C4C4C4),
+                                                    borderRadius: BorderRadius.circular(
+                                                        SizeConfig.b * 1.2),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: SizeConfig.b * 5.1,
+                                                      vertical: SizeConfig.v * 0.8),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(children: [
+                                                          Container(
+                                                              width: SizeConfig.b * 45,
+                                                              child: Text(
+                                                                  _listofdelegates[index].name,
+                                                                  style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize:
+                                                                          SizeConfig.b *
+                                                                              4.071,
+                                                                      fontWeight: FontWeight
+                                                                          .w400))),
+                                                          Spacer(),
+                                                          Text(_listofdelegates[index].post,
+                                                              style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize:
+                                                                      SizeConfig.b * 3.054,
+                                                                  fontWeight:
+                                                                      FontWeight.w400)),
+                                                        ]),
+                                                        SizedBox(height: SizeConfig.v * 1),
+                                                        Row(children: [
+                                                          Container(
+                                                              height: SizeConfig.b * 4,
+                                                              width: SizeConfig.b * 4.58,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          SizeConfig.b *
+                                                                              1.2),
+                                                                  color: Color(0x804ADB58)),
+                                                              child: IconButton(
+                                                                  onPressed: null,
+                                                                  padding: EdgeInsets.zero,
+                                                                  icon: Icon(Icons.call,
+                                                                      color: Colors.white,
+                                                                      size: SizeConfig.b *
+                                                                          3.5))),
+                                                          SizedBox(width: SizeConfig.b * 3),
+                                                          Text(_listofdelegates[index].numb,
+                                                              style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize:
+                                                                      SizeConfig.b * 3.56)),
+                                                        ]),
+                                                      ])),
+                                              SizedBox(height: SizeConfig.v * 1),
+                                            ]),
+                                          );
                                         }),
                                   ],
                                 );

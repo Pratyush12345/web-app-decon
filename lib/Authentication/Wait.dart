@@ -8,7 +8,9 @@ class Wait extends StatelessWidget {
         child: Container(
           width: 100.0,
           height: 100.0,
-          child: CircularProgressIndicator()),
+          child: CircularProgressIndicator(
+            )
+            ),
       ),
     );
   }

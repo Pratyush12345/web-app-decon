@@ -50,7 +50,7 @@ class _DeviceSettings extends State<DeviceSettings> {
       _crticallevelabove.text = Auth.instance.criticalLevelAbove.toString();
       _informativelevelabove.text = Auth.instance.informativelevelabove.toString();
       _normallevelabove.text = Auth.instance.normalLevelabove.toString();
-      _groundlevelbelow.text = Auth.instance.groundlevelabove.toString();
+      _groundlevelbelow.text = Auth.instance.groundlevelbelow.toString();
       _tempthresholdvalue.text = Auth.instance.tempThresholdValue.toString();
       _batterythresholdvalue.text = Auth.instance.batteryThresholdvalue.toString();
       });

@@ -1,3 +1,9 @@
+//city name
+//state name
+//name of admin
+//mobile no
+
+
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -74,11 +80,11 @@ class _AddCityState extends State<AddCity> {
                             color: Colors.blue,
                   onPressed: (){
                     dbRef.reference().child("citiesList").update({
-                     "C${widget.cityLength+1}" : _cityNameController.text
+                     "C${widget.cityLength}" : _cityNameController.text
                     });
-                    FirebaseDatabase.instance
-                          .reference()
-                          .child("cities/C${widget.cityLength+1}/DeviceSettings")
+                    
+                          dbRef.reference()
+                          .child("cities/C${widget.cityLength}/DeviceSettings")
                           .update(DeviceSettingModel(
                                   "4.0",
                                   "1.0",

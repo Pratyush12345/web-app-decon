@@ -21,7 +21,8 @@ class SizeConfig {
 class Stats extends StatefulWidget {
   final BuildContext menuScreenContext;
   final List<DeviceData> allDeviceData;
-  Stats({Key key, this.menuScreenContext, this.allDeviceData}) : super(key: key);
+  final String sheetURL;
+  Stats({Key key, this.menuScreenContext,this.sheetURL, this.allDeviceData}) : super(key: key);
 
   @override
   _StatsState createState() => _StatsState();
@@ -108,7 +109,7 @@ class _StatsState extends State<Stats> {
                   itemBuilder: (BuildContext ctxt, int index) {
                     return InkWell(
                           onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Graph(deviceData: _filteredDeviceData[index],)));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Graphs(deviceData: _filteredDeviceData[index], sheetURL: widget.sheetURL , )));
                           },
                           child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

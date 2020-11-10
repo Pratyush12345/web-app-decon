@@ -22,8 +22,8 @@ class SizeConfig {
 class AllDevices extends StatefulWidget {
   final BuildContext menuScreenContext;
   final List<DeviceData> allDeviceData;
-
-  AllDevices({Key key, this.menuScreenContext, this.allDeviceData}) : super(key: key);
+  final String sheetURL;
+  AllDevices({Key key, this.menuScreenContext,this.sheetURL, this.allDeviceData}) : super(key: key);
 
   @override
   _AllDevicesState createState() => _AllDevicesState();
@@ -71,7 +71,7 @@ class _AllDevicesState extends State<AllDevices> {
         Container(
           alignment: Alignment.center,
           padding: EdgeInsets.fromLTRB(
-              SizeConfig.b * 5.1, SizeConfig.v * 1, SizeConfig.b * 1.3, 0),
+              SizeConfig.b * 1.5, SizeConfig.v * 1, SizeConfig.b * 1.3, 0),
           height: SizeConfig.v * 7,
           width: SizeConfig.b * 63.61,
           decoration: BoxDecoration(
@@ -101,10 +101,10 @@ class _AllDevicesState extends State<AllDevices> {
             controller: _searchText,
             style: TextStyle(fontSize: SizeConfig.b * 4.3),
             decoration: InputDecoration(
-              prefixIcon : Icon(Icons.search, size: 30.0,),
+              prefixIcon : Icon(Icons.search, size: 25.0,),
               isDense: true,
-              hintText: 'Search by DeviceID/ location',
-              hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+              hintText: 'Search by Device/ ID/ location',
+              hintStyle: TextStyle(fontSize: SizeConfig.b * 3.2),
               border: InputBorder.none,
             ),
           ),
@@ -119,12 +119,28 @@ class _AllDevicesState extends State<AllDevices> {
               color: Color.fromARGB(255, 222, 224, 224),
               borderRadius: BorderRadius.circular(SizeConfig.b * 7.7)),
           child: DropdownButton<String>(
+                 dropdownColor: Color(0xff263238),
+                isDense: false,
+                underline: SizedBox(height: 0.0,),
                 elevation: 8,
                 items: list.map((dropDownStringitem) {
                   return DropdownMenuItem<String>(
                     value: dropDownStringitem,
-                    child: Text(
-                      dropDownStringitem,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(4.0,4.0,0.0,0.0),
+                        width: SizeConfig.b*80,
+                        height: SizeConfig.v*4,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 222, 224, 224).withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8.0)
+                        ),
+                      child: Text(
+                        dropDownStringitem,
+                        style: TextStyle(
+                        color: Colors.black87,  
+                        fontSize: SizeConfig.b*3.2
+                        ),
+                      ),
                     ),
                   );
                 }).toList(),
@@ -176,7 +192,7 @@ class _AllDevicesState extends State<AllDevices> {
                   });
                 },
                 isExpanded: true,
-                hint: Text("Filter"),
+                hint: Text("Filter", style: TextStyle(fontSize: SizeConfig.b*3.2),),
                 value: __itemSelected ?? null,
               )
         ),
@@ -195,7 +211,7 @@ class _AllDevicesState extends State<AllDevices> {
                   itemBuilder: (BuildContext ctxt, int index) {
                     return InkWell(
                         onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Graph(deviceData: _filteredDeviceData[index],)));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Graphs(deviceData: _filteredDeviceData[index],sheetURL: widget.sheetURL,)));
                           },
                          child: Column(children: [
                         Row(children: [
@@ -236,6 +252,7 @@ class _AllDevicesState extends State<AllDevices> {
                                   ])),
                           Container(
                               child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,    
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
@@ -266,7 +283,7 @@ class _AllDevicesState extends State<AllDevices> {
                               ]),
                               SizedBox(height: SizeConfig.v * 0.5),
                               Row(children: [
-                                Icon(Icons.add,
+                                Icon(Icons.thermostat_rounded,
                                     size: SizeConfig.b * 4),
                                 SizedBox(width: SizeConfig.b * 1),
                                 Text("${_filteredDeviceData[index].temperature}\u2103")

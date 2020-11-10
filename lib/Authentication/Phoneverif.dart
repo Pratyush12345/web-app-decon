@@ -173,23 +173,24 @@ class _PhoneVerifState extends State<PhoneVerif> {
                       FractionalTranslation(
                           translation: animatorState.value,
                           child: Container(
-                            height: 200.0,
-                            width: 200.0,
+                            height: 150.0,
+                            width: 150.0,
                             child: Image(
                                 key: UniqueKey(),
-                                width: 200.0,
-                                height: 200.0,
+                                width: 150.0,
+                                height: 150.0,
                                 image: AssetImage('assets/DECON.png')),
                           )),
                 ):Center(
                   child: Text("VERIFICATION", style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.w500,
                     color: 
-                      Colors.grey,
+                      Colors.black38,
                     
                   ),),
                 ),
+                SizedBox(height: 20.0,),
                 _isphoneVerif? Transform(
                   transform: Matrix4.translationValues(0, -60.0, 0),
                   child: Center(
@@ -217,7 +218,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
                 ),      
                 
                 SizedBox(
-                  height: 20.0,
+                  height: 30.0,
                 ),
                 _isphoneVerif
                     ? Container(
@@ -354,7 +355,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
                           minWidth: 60.0,
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24.0),
+                                borderRadius: BorderRadius.circular(30.0),
                                 side: BorderSide(color: Colors.blue)),
                             onPressed: () async {
                               await Auth.instance.signInWithOTP(
@@ -363,7 +364,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
                                 _nameController.text.trim(),
                               );
                             },
-                            child: Icon(Icons.arrow_right),
+                            child: Icon(Icons.arrow_forward),
                             textColor: Colors.white,
                             elevation: 7.0,
                             color: Colors.blue,

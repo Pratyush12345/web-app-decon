@@ -29,7 +29,7 @@ class Auth implements BaseAuth {
   String post, globalname;
   String cityName;
   String cityCode, rangeOfDevicesEx;
-  double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelabove,
+  double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelbelow,
   batteryThresholdvalue;
   double tempThresholdValue;
   BuildContext changeContext;
@@ -56,8 +56,7 @@ class Auth implements BaseAuth {
     cityName = idTokenResult.claims['cityName'];
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
 
-    print("------------");
-    _updateNameInDatabase(globalname); 
+    print("------------"); 
     if(Auth.instance.post!="Manager")
     _loadDeviceSettings();
     return "done";
@@ -66,6 +65,7 @@ class Auth implements BaseAuth {
    Auth.instance.pref.setBool("isSignedIn", true);  
    await Future.delayed(Duration(seconds: 10));     
    String value= await updateClaims(currentuser);
+    _updateNameInDatabase(globalname);
    return value;
   }
   signInWithCred(cred, name)async{
@@ -96,19 +96,19 @@ class Auth implements BaseAuth {
   _updateNameInDatabase(String name)async{
 
    if(post=="Manager"){ 
-   await FirebaseDatabase.instance.reference().child("/managerList/${currentuser.uid}").update(
+   await FirebaseDatabase.instance.reference().child("/managerList/${FirebaseAuth.instance.currentUser.uid}").update(
      {
        "name" : name
      });
    }
    else if(post =="Admin"){
-     await FirebaseDatabase.instance.reference().child("/adminsList/${currentuser.uid}").update(
+     await FirebaseDatabase.instance.reference().child("/adminsList/${FirebaseAuth.instance.currentUser.uid}").update(
      {
        "name" : name
      });
    }
    else{
-     await FirebaseDatabase.instance.reference().child("/cities/$cityCode/posts/${currentuser.uid}").update(
+     await FirebaseDatabase.instance.reference().child("/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}").update(
      {
        "name" : name
      });
@@ -125,7 +125,7 @@ class Auth implements BaseAuth {
     criticalLevelAbove = double.parse(deviceSettingModel.criticallevelabove);
     informativelevelabove = double.parse(deviceSettingModel.informativelevelabove);
     normalLevelabove = double.parse(deviceSettingModel.nomrallevelabove);
-    groundlevelabove = double.parse(deviceSettingModel.groundlevelbelow);
+    groundlevelbelow = double.parse(deviceSettingModel.groundlevelbelow);
     tempThresholdValue = double.parse(deviceSettingModel.tempthresholdvalue);
     batteryThresholdvalue = double.parse(deviceSettingModel.batterythresholdvalue);
 

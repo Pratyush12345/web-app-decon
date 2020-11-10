@@ -46,7 +46,7 @@ class HomePageState extends State<HomePage> {
   String _itemSelected; List<String> list =[];
   Map _citiesMap;  String ccode = Auth.instance.cityCode;
   GlobalKey<ScaffoldState> _scafoldKey = GlobalKey<ScaffoldState>();
-  
+  String sheetURL;
   _getBottomNavItem(int position) {
     switch (position) {
       case 0:
@@ -55,12 +55,13 @@ class HomePageState extends State<HomePage> {
       case 1:
         return AllDevices(
           allDeviceData: _allDeviceData,
+          sheetURL: sheetURL,
         );
       case 2:
         if(Auth.instance.post=="Manager")
         return People();
         else
-        return PeopleForAdmin();
+        return PeopleForAdmin(fromManager: false, cityCode: ccode,);
     }
   }
 
@@ -73,7 +74,7 @@ class HomePageState extends State<HomePage> {
         return DeviceSettings(allDevicesList: _allDeviceData,cityCode: ccode, );
         break;
       case 2:
-        return Stats(allDeviceData: _allDeviceData);
+        return Stats(allDeviceData: _allDeviceData, sheetURL: sheetURL);
         break;
       case 3:
         return HealthReport();
@@ -111,18 +112,27 @@ class HomePageState extends State<HomePage> {
     Auth.instance.criticalLevelAbove = double.parse(deviceSettingModel.criticallevelabove);
     Auth.instance.informativelevelabove = double.parse(deviceSettingModel.informativelevelabove);
     Auth.instance.normalLevelabove = double.parse(deviceSettingModel.nomrallevelabove);
-    Auth.instance.groundlevelabove = double.parse(deviceSettingModel.groundlevelbelow);
+    Auth.instance.groundlevelbelow = double.parse(deviceSettingModel.groundlevelbelow);
     Auth.instance.tempThresholdValue = double.parse(deviceSettingModel.tempthresholdvalue);
     Auth.instance.batteryThresholdvalue = double.parse(deviceSettingModel.batterythresholdvalue);
     
+  }
+  _getsheetURL(String cityCode) async{
+   DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child("cities/$cityCode/sheetURL")
+        .once();
+   sheetURL = snapshot.value.toString();
   }
   _setQuery(String cityCode) async{
   
     if(Auth.instance.post=="Manager"){
      _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
-     _loadDeviceSettings(cityCode);      
+     await _loadDeviceSettings(cityCode);
+      _getsheetURL(cityCode);      
     }else{
     _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
+    _getsheetURL(cityCode);
     }
     _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
@@ -177,7 +187,6 @@ class HomePageState extends State<HomePage> {
     setState(() {
       _allDeviceData[_allDeviceData.indexOf(oldKey)] =
           DeviceData.fromSnapshot(event.snapshot);
-      //debugPrint("what is----------- ");
     });
   }
 
@@ -322,49 +331,81 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       key: _scafoldKey,
         appBar: AppBar(
-    leading: IconButton(icon: Icon(Icons.menu), onPressed: (){
+    backgroundColor: Colors.white,     
+    leading: IconButton(icon: Icon(Icons.menu, color: Colors.grey,), onPressed: (){
       _scafoldKey.currentState.openDrawer();
     }),      
     title: Auth.instance.post=="Manager"?
-         DropdownButton<String>(
-                elevation: 8,
-                items: list.map((dropDownStringitem) {
-                  return DropdownMenuItem<String>(
-                    value: dropDownStringitem,
-                    child: Text(
-                      dropDownStringitem,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (newValueSelected) {
-                  _itemSelected = newValueSelected;
-                  
-                  
-                  _citiesMap.forEach((key, value) { 
-                    if(value == newValueSelected)
-                    ccode = key;
-                  });
-                  setState(() {
-                   context = context;
-                  _setQuery(ccode);  
-                  });  
-                },
-                isExpanded: true,
-                hint: Text("Dummy City"),
-                value: _itemSelected ?? null,
-              )
+         Container(
+           alignment: Alignment.center,
+          padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.82, 0, 0, 0),
+          height: SizeConfig.v * 5,
+          width: SizeConfig.b * 80,
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 222, 224, 224),
+              borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
+          
+           child: DropdownButton<String>(
+                  elevation: 8,
+                  dropdownColor: Color(0xff263238),
+                  isDense: false,
+                  underline: SizedBox(height: 0.0,),
+                  items: list.map((dropDownStringitem) {
+                    return DropdownMenuItem<String>(
+                       
+                      value: dropDownStringitem,
+                      child: Container(
+                    
+                        padding: EdgeInsets.fromLTRB(12.0,4.0,4.0,4.0),
+                        width: SizeConfig.b*80,
+                        height: SizeConfig.v*4,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 222, 224, 224).withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        child: Text(
+                          dropDownStringitem,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (newValueSelected) {
+                    _itemSelected = newValueSelected;
+                    
+                    
+                    _citiesMap.forEach((key, value) { 
+                      if(value == newValueSelected)
+                      ccode = key;
+                    });
+                    setState(() {
+                     context = context;
+                    _setQuery(ccode);  
+                    });  
+                  },
+                  isExpanded: true,
+                  hint: Text("Dummy City",
+                  style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87
+                          ),),
+                  value: _itemSelected ?? null,
+                ),
+         )
         :_isfromDrawer
         ? drawerItems[_selectedDrawerIndex].title
         : Text(bottomNavTitiles[_currentIndex]),
     actions: [
       if(Auth.instance.post == "Manager")
-      IconButton(icon: Icon(Icons.add_box), onPressed: (){
+      IconButton(icon: Icon(Icons.add_box, color: Colors.black,), onPressed: (){
         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CitiesList()));
       })
     ],    
         ),
-        drawer: Drawer( 
-               
+        drawer: Drawer(            
     child: Container(
       color: Color(0xffF4F3F3),
       child: ListView(
@@ -452,7 +493,7 @@ class HomePageState extends State<HomePage> {
       ),
       BottomNavigationBarItem(
           icon: Icon(
-            Icons.bug_report,
+            Icons.memory,
           ),
           title: Text('Devices')),
       BottomNavigationBarItem(

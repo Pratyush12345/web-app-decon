@@ -10,7 +10,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Decon"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
          <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyBwBaz-4dvNvGuUFkvoU32oUiRS_-lnqUs"/>
         <activity

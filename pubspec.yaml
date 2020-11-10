@@ -42,6 +42,9 @@ dependencies:
   animator:   
   progress_dialog:
   flare_loading:
+  charts_flutter:
+  http:
+  intl:  
   
 dev_dependencies:
   flutter_test:

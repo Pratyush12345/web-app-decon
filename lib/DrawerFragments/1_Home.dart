@@ -72,7 +72,8 @@ class HomeState extends State<Home> {
               height: SizeConfig.v * 7,
               width: SizeConfig.b * 89.1,
               decoration: BoxDecoration(
-                  color: Color(0x305C6266),
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(color: Colors.grey,offset: Offset(1,1) , blurRadius: 5.0),],
                   borderRadius: BorderRadius.circular(SizeConfig.b * 7.64)),
               child: TextField(
                 controller: deviceNameController,

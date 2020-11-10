@@ -37,6 +37,22 @@ class DeviceSettingModel {
 
 }
 
+class FeedbackForm {
+  String date;
+  String level;
+
+  FeedbackForm(this.date, this.level,);
+
+  factory FeedbackForm.fromJson( dynamic json) {
+    return FeedbackForm("${json['key']}", "${json['value']}");
+  }
+
+  // Method to make GET parameters.
+  Map toJson() => {
+        'date': date,
+        'level': level,
+      };
+}
 
 
 class DeviceData {
@@ -70,7 +86,7 @@ class DeviceData {
         longitude = snapshot.value["longitude"];
         battery = snapshot.value["battery"];
         distance =  snapshot.value["distance"];
-        if(distance>=Auth.instance.groundlevelabove)
+        if(distance>=Auth.instance.groundlevelbelow)
         wlevel = 0;
         else if(distance>=Auth.instance.informativelevelabove && distance< Auth.instance.normalLevelabove)
         wlevel = 1;
@@ -113,6 +129,7 @@ class DelegateModel {
   DelegateModel(
       {this.name,
       this.cityName,
+      this.cityCode,
       this.post,
       this.numb,
       this.uid,
@@ -121,6 +138,7 @@ class DelegateModel {
   DelegateModel.fromJsonForAdmin(Map snapshot){
    snapshot.forEach((key, value) { 
    uid = key;
+   cityCode = value["cityCode"];
    name = value["name"];
    post = value["post"];
    numb = value["phoneNo"];
@@ -129,7 +147,7 @@ class DelegateModel {
    cityCode = value["cityCode"];
    Map _map = {};
    String rangeofDevices = value["rangeOfDeviceEx"];
-   if (rangeofDevices != "None")
+   if (rangeofDevices != "None" && rangeOfDeviceEx!=null)
    rangeofDevices.replaceAll("{", "").replaceAll("}", "")
    .split(",").forEach((element) {
       String key = element.split(":")[0];
@@ -141,3 +159,4 @@ class DelegateModel {
    
   }    
 }
+//{informativeLevelAbove=2.0, tempThresholdValue=50.5, criticalLevelAbove=1.0, manHoleDepth=4.0, groundLevelBelow=3.0, nomralLevelAbove=3.0, batteryThresholdValue=80.0}
