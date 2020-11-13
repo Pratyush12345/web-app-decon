@@ -225,7 +225,8 @@ class _Add_admin extends State<Add_admin> {
                           "phoneNo": "+91${_phoneNumberController.text}",
                           "post": "Admin",
                           "cityName": _cityNameController.text,
-                          "stateName": _stateNameController.text
+                          "stateName": _stateNameController.text,
+                          "cityCode": "C${widget.cityLength}"
                           });    
                         FirebaseFirestore.instance
                         .collection('CurrentLogins') 

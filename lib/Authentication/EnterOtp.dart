@@ -40,7 +40,7 @@ class _EnterOTPState extends State<EnterOTP> {
       print("vvvvvvvvvvvvvvvv");
       print("Verify Success");
       print("vvvvvvvvvvvvvvvv");
-      String result = await Auth.instance.signInWithCred(cred, widget.name,);
+      //String result = await Auth.instance.signInWithCred(cred, widget.name,);
       // if(result!=null){
       //   Navigator.of(context).pushAndRemoveUntil(
       //     MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
@@ -239,7 +239,7 @@ class _EnterOTPState extends State<EnterOTP> {
                             side: BorderSide(color: Colors.blue)
                           ),
                           onPressed: () async {
-                    await Auth.instance.signInWithOTP(verificationID, "123456", widget.name,);
+                   // await Auth.instance.signInWithOTP(verificationID, "123456", widget.name,);
                   },
                           child: Icon(Icons.arrow_right),
                           textColor: Colors.white,

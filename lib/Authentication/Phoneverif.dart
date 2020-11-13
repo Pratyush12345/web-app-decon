@@ -27,7 +27,6 @@ class PhoneVerif extends StatefulWidget {
 class _PhoneVerifState extends State<PhoneVerif> {
   final _countryCode = TextEditingController(text: "+91");
   final _phoneNoController = TextEditingController();
-  final _nameController = TextEditingController();
   String phoneNo;
   String smsCode = "";
   bool _isphoneVerif = true;
@@ -43,7 +42,6 @@ class _PhoneVerifState extends State<PhoneVerif> {
       print("vvvvvvvvvvvvvvvv");
       await Auth.instance.signInWithCred(
         cred,
-        _nameController.text.trim(),
       );
     };
 
@@ -221,24 +219,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
                   height: 30.0,
                 ),
                 _isphoneVerif
-                    ? Container(
-                        padding:
-                            EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                        decoration: BoxDecoration(
-                            color: Color(0xffDEE0E0),
-                            borderRadius:
-                                BorderRadius.circular(SizeConfig.b * 1)),
-                        alignment: Alignment.center,
-                        width: SizeConfig.b * 80,
-                        child: TextField(
-                          controller: _nameController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter Your Name',
-                            hintStyle: TextStyle(fontSize: SizeConfig.b * 3.7),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      )
+                    ? SizedBox(height: 0.0,)
                     :Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -361,7 +342,6 @@ class _PhoneVerifState extends State<PhoneVerif> {
                               await Auth.instance.signInWithOTP(
                                 verificationID,
                                 smsCode,
-                                _nameController.text.trim(),
                               );
                             },
                             child: Icon(Icons.arrow_forward),

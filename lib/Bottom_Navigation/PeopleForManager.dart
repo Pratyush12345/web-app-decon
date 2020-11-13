@@ -203,11 +203,6 @@ class _People extends State<People> with SingleTickerProviderStateMixin {
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
                                               _listofManagers.clear();
-                                              List<String>
-                                                  _pendingRequestManager =
-                                                  Auth.instance.pref.getStringList(
-                                                      "pendingManagerRequest");
-
 
                                               snapshot.data.snapshot?.value
                                                   ?.forEach((key, value) {
@@ -226,7 +221,6 @@ class _People extends State<People> with SingleTickerProviderStateMixin {
                                                         element.split(":")[1];
                                                     _map[key] = val;
                                                   });
-                                                _pendingRequestManager?.remove(value["phoneNo"].toString());
                                                 if(value["name"].toString().toLowerCase().contains(_searchedManagerValue.toLowerCase())||value["phoneNo"].toString().contains(_searchedManagerValue)||_searchedManagerValue=="")  
                                                 _listofManagers.add(
                                                     DelegateModel(
@@ -240,121 +234,96 @@ class _People extends State<People> with SingleTickerProviderStateMixin {
                                                         name: value["name"]));
                                               });
                                               
-                                              return Column(
-                                                children: [
-                                                  if (_pendingRequestManager!=null &&_pendingRequestManager?.length!=0)
-                                                    Container(
-                                                      color: Color(0xff0099FF),
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.05,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        "${_pendingRequestManager?.length} Pending Request",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ListView.builder(
-                                                      physics: ScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      padding: EdgeInsets.zero,
-                                                      itemCount:
-                                                          _listofManagers.length,
-                                                      itemBuilder:
-                                                          (BuildContext ctxt,
-                                                              int index) {
-                                                        return InkWell(
-                                                              onLongPress: (){
-                                                              showDeleteDialog(context).then((value)async{
-                                                                print(value);
-                                                                if(value == "Yes"){
-                                                                  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("/managerList/").orderByChild("phoneNo").equalTo(_listofManagers[index].numb).once();
-                                                                  Map _map= snapshot.value;
-                                                                  _map.forEach((key, value) { 
-                                                                   FirebaseDatabase.instance.reference().child("/managerList/$key").remove();
-                                                                  });
-                                                                  
-                                                                }
+                                              return ListView.builder(
+                                                  physics: ScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount:
+                                                      _listofManagers.length,
+                                                  itemBuilder:
+                                                      (BuildContext ctxt,
+                                                          int index) {
+                                                    return InkWell(
+                                                          onLongPress: (){
+                                                          showDeleteDialog(context).then((value)async{
+                                                            print(value);
+                                                            if(value == "Yes"){
+                                                              DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("/managerList/").orderByChild("phoneNo").equalTo(_listofManagers[index].numb).once();
+                                                              Map _map= snapshot.value;
+                                                              _map.forEach((key, value) { 
+                                                               FirebaseDatabase.instance.reference().child("/managerList/$key").remove();
                                                               });
-                                                              },                                                    
-                                                              child: Column(
-                                                              children: [
-                                                                Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Color(
-                                                                          0x20C4C4C4),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(SizeConfig.b *
-                                                                              1.2),
-                                                                    ),
-                                                                    margin: EdgeInsets.fromLTRB(
-                                                                        SizeConfig
-                                                                                .b *
-                                                                            5.1,
+                                                              
+                                                            }
+                                                          });
+                                                          },                                                    
+                                                          child: Column(
+                                                          children: [
+                                                            Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Color(
+                                                                      0x20C4C4C4),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(SizeConfig.b *
+                                                                          1.2),
+                                                                ),
+                                                                margin: EdgeInsets.fromLTRB(
+                                                                    SizeConfig
+                                                                            .b *
+                                                                        5.1,
+                                                                    1,
+                                                                    SizeConfig
+                                                                            .b *
+                                                                        5.1,
+                                                                    1),
+                                                                padding: EdgeInsets.fromLTRB(
+                                                                    SizeConfig
+                                                                            .b *
+                                                                        5.1,
+                                                                    SizeConfig
+                                                                            .v *
                                                                         1,
-                                                                        SizeConfig
-                                                                                .b *
-                                                                            5.1,
+                                                                    SizeConfig
+                                                                            .b *
+                                                                        5.1,
+                                                                    SizeConfig
+                                                                            .v *
                                                                         1),
-                                                                    padding: EdgeInsets.fromLTRB(
-                                                                        SizeConfig
-                                                                                .b *
-                                                                            5.1,
-                                                                        SizeConfig
-                                                                                .v *
-                                                                            1,
-                                                                        SizeConfig
-                                                                                .b *
-                                                                            5.1,
-                                                                        SizeConfig
-                                                                                .v *
-                                                                            1),
-                                                                    child: Row(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex:
-                                                                                3,
-                                                                            child: Container(
-                                                                                width: SizeConfig.b * 48.5,
-                                                                                child: Text(_listofManagers[index].name, style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 4.071, fontWeight: FontWeight.w400))),
-                                                                          ),
-                                                                          Spacer(),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                4,
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Text(_listofManagers[index].numb,
-                                                                                  style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 3.5)),
-                                                                              SizedBox(width: SizeConfig.b * 3),
-                                                                              Container(
-                                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(SizeConfig.b * 1.2), color: Color(0x804ADB58)),
-                                                                                  height: SizeConfig.v * 2.86,
-                                                                                  width: SizeConfig.b * 5.1,
-                                                                                  child: IconButton(onPressed: null, padding: EdgeInsets.zero, icon: Icon(Icons.call, color: Colors.white, size: SizeConfig.b * 4))),
-                                                                            ]),
-                                                                          ),
-                                                                        ])),
-                                                                SizedBox(
-                                                                    height:
-                                                                        SizeConfig
-                                                                                .v *
-                                                                            1),
-                                                              ]),
-                                                        );
-                                                      }),
-                                                ],
-                                              );
+                                                                child: Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        flex:
+                                                                            3,
+                                                                        child: Container(
+                                                                            width: SizeConfig.b * 48.5,
+                                                                            child: Text(_listofManagers[index].name, style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 4.071, fontWeight: FontWeight.w400))),
+                                                                      ),
+                                                                      Spacer(),
+                                                                      Expanded(
+                                                                        flex:
+                                                                            4,
+                                                                        child:
+                                                                            Row(children: [
+                                                                          Text(_listofManagers[index].numb,
+                                                                              style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 3.5)),
+                                                                          SizedBox(width: SizeConfig.b * 3),
+                                                                          Container(
+                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(SizeConfig.b * 1.2), color: Color(0x804ADB58)),
+                                                                              height: SizeConfig.v * 2.86,
+                                                                              width: SizeConfig.b * 5.1,
+                                                                              child: IconButton(onPressed: null, padding: EdgeInsets.zero, icon: Icon(Icons.call, color: Colors.white, size: SizeConfig.b * 4))),
+                                                                        ]),
+                                                                      ),
+                                                                    ])),
+                                                            SizedBox(
+                                                                height:
+                                                                    SizeConfig
+                                                                            .v *
+                                                                        1),
+                                                          ]),
+                                                    );
+                                                  });
                                             } else {
                                               return Center(
                                                 child:

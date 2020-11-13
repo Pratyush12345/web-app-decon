@@ -1,9 +1,11 @@
-import 'package:Decon/Services/Auth.dart';
+import 'package:Decon/Models/Models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Add_Delegates extends StatefulWidget {
+  DelegateModel delegateModel;
+  Add_Delegates({@required this.delegateModel});
   @override
   _Add_Delegates createState() => _Add_Delegates();
 }
@@ -25,11 +27,8 @@ class SizeConfig {
 
 class _Add_Delegates extends State<Add_Delegates> {
   final _phoneNumberController = TextEditingController();
-  
-  final _stateNameController = TextEditingController();
-  
-  final _cityCodeController = TextEditingController();
   final _postnameController = TextEditingController();
+  final _nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -52,6 +51,35 @@ class _Add_Delegates extends State<Add_Delegates> {
                   child: Column(children: [
                     
                     SizedBox(height: SizeConfig.v * 1.5),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Name",
+                              style: TextStyle(
+                                  fontSize: SizeConfig.b * 4.07,
+                                  color: Colors.white)),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(
+                                SizeConfig.b * 5.09, 0, 0, 0),
+                            width: SizeConfig.b * 50,
+                            decoration: BoxDecoration(
+                                color: Color(0xffDEE0E0),
+                                borderRadius:
+                                    BorderRadius.circular(SizeConfig.b * 1)),
+                            child: TextField(
+                              controller: _nameController,
+                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: 'Enter Name',
+                                hintStyle:
+                                    TextStyle(fontSize: SizeConfig.b * 4),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ]),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -81,61 +109,16 @@ class _Add_Delegates extends State<Add_Delegates> {
                             ),
                           ),
                         ]),
+                    
                     SizedBox(height: SizeConfig.v * 2),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("City Code",
+                          Text("Enter Post",
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 4.07,
                                   color: Colors.white)),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 50,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _cityCodeController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: 'Enter City Code',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 4),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ]),
-                    SizedBox(height: SizeConfig.v * 2),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 40,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _stateNameController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: 'State',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 4),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
+                          
                           Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.fromLTRB(
@@ -164,18 +147,20 @@ class _Add_Delegates extends State<Add_Delegates> {
                         child: MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: ()async{
-                        
-                        List<String> _pendingReq= Auth.instance.pref.getStringList("pendingDelegatesRequest")??[];
-                        _pendingReq?.add("+${_phoneNumberController.text}");
-                        Auth.instance.pref.setStringList("pendingDelegatesRequest", _pendingReq);      
-                        DataSnapshot cityNameSnapshot = await FirebaseDatabase.instance.reference().child("citiesList/${_cityCodeController.text}").once();      
-                        String cityName = cityNameSnapshot.value.toString(); 
-                              FirebaseFirestore.instance
+                        FirebaseDatabase.instance.reference()
+                          .child("cities/${widget.delegateModel.cityCode??"C0"}/posts").push().update({
+                          "name": _nameController.text,
+                          "phoneNo": "+91${_phoneNumberController.text}",
+                          "post": "${_postnameController.text}",
+                          "cityName": "${widget.delegateModel.cityName}",
+                          "stateName": "${widget.delegateModel.stateName}"
+                          });
+                        FirebaseFirestore.instance
                         .collection('CurrentLogins')
-                        .doc(_phoneNumberController.text)
+                        .doc("+91${_phoneNumberController.text}")
                         .set({
                       "value":
-                          "Admin_${cityName}_${_cityCodeController.text}_None_${_stateNameController.text}"
+                          "${_postnameController.text}_${widget.delegateModel.cityName}_${widget.delegateModel.cityCode}_None_${widget.delegateModel.stateName}"
                     });
                                   Navigator.of(context).pop();
 

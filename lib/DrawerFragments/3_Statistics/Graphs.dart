@@ -1,6 +1,10 @@
+import 'package:Decon/DrawerFragments/3_Statistics/levelGraph.dart';
+import 'package:Decon/DrawerFragments/3_Statistics/TemperatureGraph.dart';
+import 'package:Decon/DrawerFragments/3_Statistics/ManholeGraph.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -29,27 +33,29 @@ class Graphs extends StatefulWidget {
 }
 
 class _GraphsState extends State<Graphs> {
-  List<charts.Series<LinearData, int>> _seriesLinearData;
-  List<charts.Series<TempData, int>> _seriesTempData;
-  List<charts.Series<ManHoleData, int>> _seriesManHoleData;
+  List<ChartSeries<LinearData, int>> _seriesLinearData;
+  List<ChartSeries<TempData, int>> _seriesTempData;
+  List<ChartSeries<ManHoleData, int>> _seriesManHoleData;
   String currentMM, currentYY;
   String monthNo;
   String url;
-  String _itemSelected;
+  String _itemSelected, yearSelected;
   List<LinearData> data1 = [];
-  Map<String,String> _monthstonum = {
-     "January":"01",
-    "February":"02",
-    "March":"03",
-    "April":"04",
-    "May":"05",
-    "June":"06",
-    "July":"07",
-    "August":"08",
-    "September":"09",
-    "October":"10",
-    "November":"11",
-    "December":"12"
+  List<TempData> data2 = [];
+  List<ManHoleData> data3 = [];
+  Map<String, String> _monthstonum = {
+    "January": "01",
+    "February": "02",
+    "March": "03",
+    "April": "04",
+    "May": "05",
+    "June": "06",
+    "July": "07",
+    "August": "08",
+    "September": "09",
+    "October": "10",
+    "November": "11",
+    "December": "12"
   };
   Map<int, String> _numtomonths = {
     1: "January",
@@ -79,19 +85,25 @@ class _GraphsState extends State<Graphs> {
     "November",
     "December"
   ];
-  Map<int, int> _dataMap = {
-    1: 31,
-    2: 28,
-    3: 31,
-    4: 30,
-    5: 31,
-    6: 30,
-    7: 31,
-    8: 31,
-    9: 30,
-    10: 31,
-    11: 30,
-    12: 31,
+  List<String> listyear = [
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+  ];
+  Map<String, int> _dataMap = {
+    "01": 31,
+    "02": 28,
+    "03": 31,
+    "04": 30,
+    "05": 31,
+    "06": 30,
+    "07": 31,
+    "08": 31,
+    "09": 30,
+    "10": 31,
+    "11": 30,
+    "12": 31,
   };
   final Map<int, String> levels = {
     0: "Ground level",
@@ -106,40 +118,9 @@ class _GraphsState extends State<Graphs> {
     3: Color(0xffD93D3D)
   };
   int i;
-  _generateData() {
-    var data2 = [
-      TempData(1, 10.0),
-      TempData(2, 31.5),
-      TempData(3, 81.0),
-      TempData(4, 23.0),
-      TempData(5, 45.6),
-    ];
-    var data3 = [
-      ManHoleData(1, 1),
-      ManHoleData(2, 0),
-      ManHoleData(3, 1),
-      ManHoleData(4, 0),
-      ManHoleData(5, 1),
-    ];
 
-    _seriesTempData.add(charts.Series(
-      data: data2,
-      colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
-      domainFn: (TempData data, _) => data.yearval,
-      measureFn: (TempData data, _) => data.temp,
-      id: "Temp",
-    ));
-    _seriesManHoleData.add(charts.Series(
-      data: data3,
-      colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
-      domainFn: (ManHoleData data, _) => data.yearval,
-      measureFn: (ManHoleData data, _) => data.condn,
-      id: "Condn",
-    ));
-  }
-
-  Future<List<FeedbackForm>> getFeedbackList() async {
-    return await http.get(url).then((response) {
+  Future<List<FeedbackForm>> getFeedbackList(String _url) async {
+    return await http.get(_url).then((response) {
       var jsonFeedback = convert.jsonDecode(response.body) as List;
       return jsonFeedback.map((json) => FeedbackForm.fromJson(json)).toList();
     });
@@ -153,25 +134,25 @@ class _GraphsState extends State<Graphs> {
     int yy = _date.year;
     monthNo = mm.toString().length == 1 ? "0$mm" : "$mm";
     currentMM = _numtomonths[mm];
-     _itemSelected = currentMM;
+    _itemSelected = currentMM;
     currentYY = yy.toString();
-    _createLevelGraphDatapoints();   
-    _generateData();
+    yearSelected = currentYY;
 
+    _createLevelGraphDatapoints();
   }
- _createLevelGraphDatapoints(){
-   String searchKey = "$monthNo/$currentYY";
-    url =
-        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}";
-   
-    
-    _seriesLinearData = List<charts.Series<LinearData, int>>();
-    _seriesTempData = List<charts.Series<TempData, int>>();
-    _seriesManHoleData = List<charts.Series<ManHoleData, int>>();
-    getFeedbackList().then((value) {
+
+  _createLevelGraphDatapoints() {
+    String searchKey = "$monthNo/$currentYY";
+    String url1 =
+        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
+    _seriesLinearData = List<ChartSeries<LinearData, int>>();
+    _seriesTempData = List<ChartSeries<TempData, int>>();
+    _seriesManHoleData = List<ChartSeries<ManHoleData, int>>();
+
+    getFeedbackList(url1).then((value) {
       int i = 1, ground = 0, normal = 0, informative = 0, critical = 0;
       data1.clear();
-      for (i = 1; i <= 31; i++) {
+      for (i = 1; i <= _dataMap[monthNo]; i++) {
         ground = 0;
         normal = 0;
         informative = 0;
@@ -179,13 +160,13 @@ class _GraphsState extends State<Graphs> {
         value.forEach((element) {
           String date = i.toString().length == 1 ? "0$i" : "$i";
           if (element.date.contains("$date/$monthNo/$currentYY\n")) {
-            if (element.level == "0") {
+            if (element.value == "0") {
               ground++;
-            } else if (element.level == "1") {
+            } else if (element.value == "1") {
               normal++;
-            } else if (element.level == "2") {
+            } else if (element.value == "2") {
               informative++;
-            } else if (element.level == "3") {
+            } else if (element.value == "3") {
               critical++;
             }
           }
@@ -211,65 +192,123 @@ class _GraphsState extends State<Graphs> {
           }
         }
       }
-      _seriesLinearData.add(charts.Series(
-        data: data1,
-        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
-        domainFn: (LinearData data, _) => data.yearval,
-        measureFn: (LinearData data, _) => data.salesval,
-        id: "Air",
+      _seriesLinearData.add(LineSeries(
+        dataSource: data1,
+        isVisibleInLegend: false,
+        animationDuration: 1000,
+        xAxisName: "Days",
+        yAxisName: "Levels",
+        color: Color(0xff990099),
+        enableTooltip: true,
+        xValueMapper: (LinearData data, _) => data.yearval,
+        yValueMapper: (LinearData data, _) => data.salesval,
+        name: "",
+        markerSettings: MarkerSettings(
+            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            height: 3.0),
+      ));
+      _createTempGraphDatapoints();
+    });
+  }
+
+  _createTempGraphDatapoints() {
+    String searchKey = "$monthNo/$currentYY";
+    String url2 =
+        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet2";
+
+    getFeedbackList(url2).then((value) {
+      int i = 1;
+      data2.clear();
+      for (i = 1; i <= _dataMap[monthNo]; i++) {
+        value.forEach((element) {
+          print(element.date);
+          String date = i.toString().length == 1 ? "0$i" : "$i";
+          if (element.date.contains("$date/$monthNo/$currentYY\n")) {
+            data2.add(TempData(i, double.parse(element.value)));
+          } else {
+            if (data2.length >= 1)
+              data2.add(TempData(i, data2[data2.length - 1].temp));
+            else {
+              data2.add(TempData(i, 0.0));
+            }
+          }
+        });
+      }
+      _seriesTempData.add(LineSeries(
+        dataSource: data2,
+        isVisibleInLegend: false,
+        animationDuration: 1000,
+        xAxisName: "Days",
+        yAxisName: "Temperature",
+        color: Color(0xff990099),
+        enableTooltip: true,
+        xValueMapper: (TempData data, _) => data.yearval,
+        yValueMapper: (TempData data, _) => data.temp,
+        name: "",
+        markerSettings: MarkerSettings(
+            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            height: 3.0),
+      ));
+      _createOpenGraphDatapoints();
+    });
+  }
+
+  _createOpenGraphDatapoints() {
+    String searchKey = "$monthNo/$currentYY";
+    String url3 =
+        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet3";
+
+    getFeedbackList(url3).then((value) {
+      int i = 1, open = 0, close = 0;
+      data3.clear();
+      for (i = 1; i <= _dataMap[monthNo]; i++) {
+        open = 0;
+        close = 0;
+        value.forEach((element) {
+          String date = i.toString().length == 1 ? "0$i" : "$i";
+          if (element.date.contains("$date/$monthNo/$currentYY\n")) {
+            if (element.value == "0") {
+              open++;
+            } else if (element.value == "1") {
+              close++;
+            }
+          }
+        });
+
+        if (open == 0 && close == 0) {
+          data3.add(ManHoleData(i, 0));
+        } else {
+          if (close >= open) {
+            data3.add(ManHoleData(i, 1));
+          } else {
+            data3.add(ManHoleData(i, 0));
+          }
+        }
+      }
+      _seriesManHoleData.add(StepLineSeries(
+        dataSource: data3,
+        isVisibleInLegend: false,
+        animationDuration: 1000,
+        xAxisName: "Days",
+        yAxisName: "ManHole Condn",
+        color: Color(0xff990099),
+        enableTooltip: true,
+        xValueMapper: (ManHoleData data, _) => data.yearval,
+        yValueMapper: (ManHoleData data, _) => data.condn,
+        name: "",
+        markerSettings: MarkerSettings(
+            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            height: 3.0),
       ));
       setState(() {});
     });
- }
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(
-          title: Container(
-        padding: EdgeInsets.only(left: 8.0),
-        width: SizeConfig.v * 60,
-        height: SizeConfig.b * 11,
-        decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(12.0)),
-        child: DropdownButton<String>(
-          dropdownColor: Color(0xff263238),
-          underline: SizedBox(
-            height: 0.0,
-          ),
-          elevation: 8,
-          items: list.map((dropDownStringitem) {
-            return DropdownMenuItem<String>(
-              
-              value: dropDownStringitem,
-              child: Container(
-                padding: EdgeInsets.only(left: 8.0, top: 8.0),
-        
-                width: SizeConfig.v * 60,
-                height: SizeConfig.b * 11,
-                decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(12.0)),
-                child: Text(
-                  dropDownStringitem,
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: (newValueSelected) {
-            setState(() {
-            _itemSelected = newValueSelected;
-            monthNo = _monthstonum[_itemSelected].toString();
-            print(monthNo);
-            _createLevelGraphDatapoints();  
-            }); 
-            
-          },
-          isExpanded: true,
-          hint: Text("Select Month"),
-          value: _itemSelected ?? null,
-        ),
-      )),
+      appBar: AppBar(title: Text("Graph")),
       body: ListView(
         children: [
           Container(
@@ -347,69 +386,108 @@ class _GraphsState extends State<Graphs> {
                               color: Color(0xff0099FF)))),
                 ],
               )),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: charts.LineChart(
-                _seriesLinearData,
-                defaultRenderer:
-                    charts.LineRendererConfig(includeArea: true, stacked: true),
-                animate: true,
-                animationDuration: Duration(seconds: 5),
-                behaviors: [
-                  charts.ChartTitle("Days",
-                      behaviorPosition: charts.BehaviorPosition.bottom),
-                  charts.ChartTitle("Levels",
-                      behaviorPosition: charts.BehaviorPosition.start)
-                ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                width: SizeConfig.b * 40,
+                height: SizeConfig.v * 11,
+                child: DropdownButton<String>(
+                  dropdownColor: Color(0xff263238),
+                  underline: SizedBox(
+                    height: 0.0,
+                  ),
+                  elevation: 8,
+                  items: list.map((dropDownStringitem) {
+                    return DropdownMenuItem<String>(
+                      value: dropDownStringitem,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8.0, top: 8.0),
+                        width: SizeConfig.v * 70,
+                        height: SizeConfig.b * 11,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(12.0)),
+                        child: Text(
+                          dropDownStringitem,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (newValueSelected) {
+                    setState(() {
+                      _itemSelected = newValueSelected;
+                      monthNo = _monthstonum[_itemSelected].toString();
+                      print(monthNo);
+                      _createLevelGraphDatapoints();
+                    });
+                  },
+                  isExpanded: true,
+                  hint: Text("Select Month"),
+                  value: _itemSelected ?? null,
+                ),
               ),
-            ),
+              SizedBox(
+                width: 10.0,
+              ),
+              Container(
+                width: SizeConfig.b * 30,
+                height: SizeConfig.v * 11,
+                child: DropdownButton<String>(
+                  dropdownColor: Color(0xff263238),
+                  underline: SizedBox(
+                    height: 0.0,
+                  ),
+                  elevation: 8,
+                  items: listyear.map((dropDownStringitem) {
+                    return DropdownMenuItem<String>(
+                      value: dropDownStringitem,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8.0, top: 8.0),
+                        width: SizeConfig.v * 60,
+                        height: SizeConfig.b * 11,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(12.0)),
+                        child: Text(
+                          dropDownStringitem,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (newValueSelected) {
+                    setState(() {
+                      yearSelected = newValueSelected;
+                      currentYY = yearSelected.toString();
+                      print(currentYY);
+                      _createLevelGraphDatapoints();
+                    });
+                  },
+                  isExpanded: true,
+                  hint: Text("Select Year"),
+                  value: yearSelected ?? null,
+                ),
+              ),
+            ],
+          ),
+          LevelGraph(
+            seriesLinearData: _seriesLinearData,
+            lastDay: double.parse(_dataMap[monthNo].toString()),
           ),
           SizedBox(
-            height: 15.0,
+            height: 20.0,
           ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: charts.LineChart(
-                _seriesTempData,
-                defaultRenderer:
-                    charts.LineRendererConfig(includeArea: true, stacked: true),
-                animate: true,
-                animationDuration: Duration(seconds: 5),
-                behaviors: [
-                  charts.ChartTitle("Years",
-                      behaviorPosition: charts.BehaviorPosition.bottom),
-                  charts.ChartTitle("Temperature",
-                      behaviorPosition: charts.BehaviorPosition.start)
-                ],
-              ),
-            ),
+          TempGraph(
+            seriesTempData: _seriesTempData,
+            lastDay: double.parse(_dataMap[monthNo].toString())
           ),
           SizedBox(
-            height: 15.0,
+            height: 20.0,
           ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: charts.LineChart(
-                _seriesManHoleData,
-                defaultRenderer:
-                    charts.LineRendererConfig(includeArea: true, stacked: true),
-                animate: true,
-                animationDuration: Duration(seconds: 5),
-                behaviors: [
-                  charts.ChartTitle("Years",
-                      behaviorPosition: charts.BehaviorPosition.bottom),
-                  charts.ChartTitle("ManHole Condn",
-                      behaviorPosition: charts.BehaviorPosition.start)
-                ],
-              ),
-            ),
-          ),
+          ManholeGraph(
+            seriesManHoleData: _seriesManHoleData,
+            lastDay: double.parse(_dataMap[monthNo].toString())
+          )
         ],
       ),
     );

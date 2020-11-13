@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:Decon/DeconManager/CitiesList.dart';
 import 'package:Decon/DrawerFragments/5_AddDevice/AddDevice.dart';
 import 'package:Decon/DrawerFragments/6_AboutVysion.dart';
-
+import 'package:Decon/Services/GlobalVariable.dart';
 import 'package:Decon/Bottom_Navigation/2_AllDevices.dart';
 import 'package:Decon/DrawerFragments/2_DeviceSetting/2_DeviceSetting.dart';
 import 'package:Decon/Bottom_Navigation/PeopleForAdmin.dart';
@@ -13,8 +13,10 @@ import 'package:Decon/DrawerFragments/1_Home.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/3_Statistics.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Services/Auth.dart';
+import 'package:Decon/Services/SplashCarousel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -35,7 +37,7 @@ class HomePageState extends State<HomePage> {
   bool _isfromDrawer = true;
   HomePageState();
 
-  List<DeviceData> _allDeviceData;
+  List<DeviceData> _allDeviceData = [];
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   StreamSubscription<Event> _onDataAddedSubscription;
   StreamSubscription<Event> _onDataChangedSubscription;
@@ -157,7 +159,7 @@ class HomePageState extends State<HomePage> {
      _setQuery("C0");
     }
     else{
-    _setQuery(Auth.instance.cityCode);
+    _setQuery(Auth.instance.cityCode??"C0");
     }
       
     super.initState();
@@ -381,6 +383,7 @@ class HomePageState extends State<HomePage> {
                       if(value == newValueSelected)
                       ccode = key;
                     });
+                    VariableGlobal.iscitychanged = true;
                     setState(() {
                      context = context;
                     _setQuery(ccode);  
@@ -395,13 +398,31 @@ class HomePageState extends State<HomePage> {
                   value: _itemSelected ?? null,
                 ),
          )
-        :_isfromDrawer
-        ? drawerItems[_selectedDrawerIndex].title
-        : Text(bottomNavTitiles[_currentIndex]),
+        :Text("${Auth.instance.cityName??"Demo City"}",
+        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87
+                          ),),
     actions: [
       if(Auth.instance.post == "Manager")
       IconButton(icon: Icon(Icons.add_box, color: Colors.black,), onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CitiesList()));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel()));
+        // return Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => FlareLoading(
+        //         name: 'assets/gurucool.flr',
+        //         onSuccess: (_) {
+        //           Navigator.of(context).pop();
+        //           return "done";
+        //         },
+        //         onError: (_, __) {},
+        //         startAnimation: 'animation',
+        //         until: () => Future.delayed(Duration(seconds: 10)),
+        //       ),
+        //     ),
+        //   );
+
       })
     ],    
         ),
@@ -436,7 +457,7 @@ class HomePageState extends State<HomePage> {
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
-                              Text("${FirebaseAuth.instance.currentUser?.displayName??""}",
+                              Text("${Auth.instance.displayName??""}",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,

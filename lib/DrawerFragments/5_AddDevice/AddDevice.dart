@@ -48,7 +48,7 @@ class _AddDeviceState extends State<AddDevice> {
         child: Icon(Icons.add),
         ),
       body: StreamBuilder<Event>( 
-        stream: FirebaseDatabase.instance.reference().child("cities/${widget.cityCode}/Series/S1/Devices").onValue ,
+        stream: FirebaseDatabase.instance.reference().child("cities/${widget.cityCode??"C0"}/Series/S1/Devices").onValue ,
         builder:(BuildContext context, snapshot){
           if(snapshot.hasData){
                   List<DeviceData> _listofDevices = List();

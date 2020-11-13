@@ -1,6 +1,4 @@
-import 'package:Decon/Dialogs/Add_Admin.dart';
 import 'package:Decon/Dialogs/Add_Delegates.dart';
-import 'package:Decon/Bottom_Navigation/PeopleForManager.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Services/Auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -39,7 +37,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   DelegateModel _delegateModel;
   String ccode;
   _loadFromDatabase() async{
-  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("adminsList").orderByChild("cityCode").equalTo("${widget.cityCode}").once();
+  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("adminsList").orderByChild("cityCode").equalTo("${ccode??"C0"}").once();
   setState(() { 
   _delegateModel = DelegateModel.fromJsonForAdmin(snapshot.value);  
   });
@@ -47,13 +45,14 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   }
   @override
   void initState() {
-    _loadFromDatabase();
+    
     if(widget.fromManager){
       ccode = widget.cityCode;
     }
-    else
-      ccode = Auth.instance.cityCode;  
-    
+    else{
+      ccode = Auth.instance.cityCode; 
+    } 
+    _loadFromDatabase();
     super.initState();
   }
   Future showDelegatesDialog(BuildContext context) {
@@ -61,7 +60,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_Delegates();
+          return Add_Delegates(delegateModel: _delegateModel);
         });
   }
   Future showDeleteDialog(BuildContext context) {
@@ -92,7 +91,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-         appBar: widget.fromManager?AppBar(title: Text("Admin Team"),):SizedBox(height: 0.0,),
+         appBar: widget.fromManager?AppBar(title: Text("Admin Team"),): PreferredSize(preferredSize: Size.fromHeight(0.0),child: SizedBox(height: 0.0,),),
          floatingActionButton: Auth.instance.post == "Admin"||widget.fromManager? FloatingActionButton(
                         backgroundColor: Color(0xff0099FF),
                         onPressed: () {
@@ -193,7 +192,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                             child: StreamBuilder<Event>(
                               stream: FirebaseDatabase.instance
                                                 .reference()
-                                                .child("cities/$ccode/posts")
+                                                .child("cities/${ccode??"C0"}/posts")
                                                 .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
@@ -211,7 +210,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                                                   Map _map = {};
                                                   String rangeofDevices =
                                                       value["rangeOfDeviceEx"];
-                                                  if (rangeofDevices != "None")
+                                                  if (rangeofDevices != "None" && rangeofDevices!=null)
                                                     rangeofDevices
                                                         .replaceAll("{", "")
                                                         .replaceAll("}", "")
@@ -234,116 +233,91 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                                                       post: value["post"],
                                                       name: value["name"]));
                                                 });  
-                                return Column(
-                                  children: [
-                                    if (_pendingRequestDelegates!=null&& _pendingRequestDelegates?.length!=0)
-                                                      Container(
-                                                        color: Color(0xff0099FF),
-                                                        width:
-                                                            MediaQuery.of(context)
-                                                                .size
-                                                                .width,
-                                                        height:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height *
-                                                                0.05,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Text(
-                                                          "${_pendingRequestDelegates?.length} Pending Request",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                      ),
-                                    ListView.builder(
-                                        physics: ScrollPhysics(),
-                                        shrinkWrap: true,
-                                        padding: EdgeInsets.zero,
-                                        itemCount: _listofdelegates.length,
-                                        itemBuilder: (BuildContext ctxt, int index) {
-                                          return InkWell(
-                                              onLongPress: (){
-                                                showDeleteDialog(context).then((value)async{
-                                                                print(value);
-                                                                if(value == "Yes"){
-                                                                  DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("/cities/$ccode/posts/").orderByChild("phoneNo").equalTo(_listofdelegates[index].numb).once();
-                                                                  Map _map= snapshot.value;
-                                                                  _map.forEach((key, value) { 
-                                                                   FirebaseDatabase.instance.reference().child("/cities/$ccode/posts/$key").remove();
-                                                                  });
-                                                                  
-                                                                }
+                                return ListView.builder(
+                                    physics: ScrollPhysics(),
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    itemCount: _listofdelegates.length,
+                                    itemBuilder: (BuildContext ctxt, int index) {
+                                      return InkWell(
+                                          onLongPress: (){
+                                            showDeleteDialog(context).then((value)async{
+                                                            print(value);
+                                                            if(value == "Yes"){
+                                                              DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("/cities/${ccode??"C0"}/posts/").orderByChild("phoneNo").equalTo(_listofdelegates[index].numb).once();
+                                                              Map _map= snapshot.value;
+                                                              _map.forEach((key, value) { 
+                                                               FirebaseDatabase.instance.reference().child("/cities/${ccode??"C0"}/posts/$key").remove();
                                                               });
-                                              },
-                                              child: Column(children: [
-                                              Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0x35C4C4C4),
-                                                    borderRadius: BorderRadius.circular(
-                                                        SizeConfig.b * 1.2),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: SizeConfig.b * 5.1,
-                                                      vertical: SizeConfig.v * 0.8),
-                                                  child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(children: [
-                                                          Container(
-                                                              width: SizeConfig.b * 45,
-                                                              child: Text(
-                                                                  _listofdelegates[index].name,
-                                                                  style: TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize:
-                                                                          SizeConfig.b *
-                                                                              4.071,
-                                                                      fontWeight: FontWeight
-                                                                          .w400))),
-                                                          Spacer(),
-                                                          Text(_listofdelegates[index].post,
+                                                              
+                                                            }
+                                                          });
+                                          },
+                                          child: Column(children: [
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                color: Color(0x35C4C4C4),
+                                                borderRadius: BorderRadius.circular(
+                                                    SizeConfig.b * 1.2),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: SizeConfig.b * 5.1,
+                                                  vertical: SizeConfig.v * 0.8),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(children: [
+                                                      Container(
+                                                          width: SizeConfig.b * 45,
+                                                          child: Text(
+                                                              _listofdelegates[index].name,
                                                               style: TextStyle(
                                                                   color: Colors.white,
                                                                   fontSize:
-                                                                      SizeConfig.b * 3.054,
-                                                                  fontWeight:
-                                                                      FontWeight.w400)),
-                                                        ]),
-                                                        SizedBox(height: SizeConfig.v * 1),
-                                                        Row(children: [
-                                                          Container(
-                                                              height: SizeConfig.b * 4,
-                                                              width: SizeConfig.b * 4.58,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          SizeConfig.b *
-                                                                              1.2),
-                                                                  color: Color(0x804ADB58)),
-                                                              child: IconButton(
-                                                                  onPressed: null,
-                                                                  padding: EdgeInsets.zero,
-                                                                  icon: Icon(Icons.call,
-                                                                      color: Colors.white,
-                                                                      size: SizeConfig.b *
-                                                                          3.5))),
-                                                          SizedBox(width: SizeConfig.b * 3),
-                                                          Text(_listofdelegates[index].numb,
-                                                              style: TextStyle(
+                                                                      SizeConfig.b *
+                                                                          4.071,
+                                                                  fontWeight: FontWeight
+                                                                      .w400))),
+                                                      Spacer(),
+                                                      Text(_listofdelegates[index].post,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize:
+                                                                  SizeConfig.b * 3.054,
+                                                              fontWeight:
+                                                                  FontWeight.w400)),
+                                                    ]),
+                                                    SizedBox(height: SizeConfig.v * 1),
+                                                    Row(children: [
+                                                      Container(
+                                                          height: SizeConfig.b * 4,
+                                                          width: SizeConfig.b * 4.58,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      SizeConfig.b *
+                                                                          1.2),
+                                                              color: Color(0x804ADB58)),
+                                                          child: IconButton(
+                                                              onPressed: null,
+                                                              padding: EdgeInsets.zero,
+                                                              icon: Icon(Icons.call,
                                                                   color: Colors.white,
-                                                                  fontSize:
-                                                                      SizeConfig.b * 3.56)),
-                                                        ]),
-                                                      ])),
-                                              SizedBox(height: SizeConfig.v * 1),
-                                            ]),
-                                          );
-                                        }),
-                                  ],
-                                );
+                                                                  size: SizeConfig.b *
+                                                                      3.5))),
+                                                      SizedBox(width: SizeConfig.b * 3),
+                                                      Text(_listofdelegates[index].numb,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize:
+                                                                  SizeConfig.b * 3.56)),
+                                                    ]),
+                                                  ])),
+                                          SizedBox(height: SizeConfig.v * 1),
+                                        ]),
+                                      );
+                                    });
                                 }else{
                                   return Center(
                                                   child:

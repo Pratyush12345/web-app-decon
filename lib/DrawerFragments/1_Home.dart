@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:Decon/Services/GlobalVariable.dart';
 import 'package:Decon/MainPage/Layout/BottomLayout.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 
@@ -40,17 +40,26 @@ class HomeState extends State<Home> {
 
   LatLng _latLng;
   double _value;
-
+  
   @override
   void initState() {
-    _latLng = new LatLng(26.234567, 72.235690);
+    _latLng = new LatLng(26.123456, 72.234567 );
     _value = 8.0;
     super.initState();
   }
-
+ _animateMap() async{
+   GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(widget.allDeviceData[0].latitude, widget.allDeviceData[0].longitude),
+        zoom: 8.0)));
+ }
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    if(VariableGlobal.iscitychanged){
+    _animateMap();
+    }
+    
     return Scaffold(
       body: Stack(
         children: <Widget>[googlemap(context), searchBar(), showBottomLayout()],
@@ -78,6 +87,7 @@ class HomeState extends State<Home> {
               child: TextField(
                 controller: deviceNameController,
                 onSubmitted: (val) async {
+                  VariableGlobal.iscitychanged = false;
                   _searching(val);
                 },
                 style: TextStyle(fontSize: SizeConfig.b * 4.3),

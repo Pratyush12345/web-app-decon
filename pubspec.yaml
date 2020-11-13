@@ -43,6 +43,7 @@ dependencies:
   progress_dialog:
   flare_loading:
   charts_flutter:
+  syncfusion_flutter_charts:
   http:
   intl:  
   
@@ -66,6 +67,11 @@ flutter:
     - assets/f.png
     - assets/DECON.png
     - assets/gurucool.flr
+    - assets/analyse.flr
+    - assets/conserve.flr
+    - assets/detect.flr
+    - assets/inform.flr
+    - assets/process.flr
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

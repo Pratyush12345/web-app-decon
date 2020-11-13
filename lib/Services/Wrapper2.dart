@@ -1,6 +1,7 @@
 import 'package:Decon/Authentication/Wait.dart';
 import 'package:Decon/MainPage/HomePage.dart';
 import 'package:Decon/Services/Auth.dart';
+import 'package:Decon/Services/SplashCarousel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 class Wrapper2 extends StatelessWidget {
@@ -12,6 +13,10 @@ class Wrapper2 extends StatelessWidget {
           if (snap.hasData) {
             return HomePage();      
           } else {
+            // if(Auth.instance.pref.getBool("isSignedIn"))
+            // return Wait();
+            // else
+            // return SplashCarousel();
             return Wait();
           }
         },

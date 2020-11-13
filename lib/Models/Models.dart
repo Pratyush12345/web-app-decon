@@ -39,9 +39,9 @@ class DeviceSettingModel {
 
 class FeedbackForm {
   String date;
-  String level;
+  String value;
 
-  FeedbackForm(this.date, this.level,);
+  FeedbackForm(this.date, this.value,);
 
   factory FeedbackForm.fromJson( dynamic json) {
     return FeedbackForm("${json['key']}", "${json['value']}");
@@ -50,7 +50,7 @@ class FeedbackForm {
   // Method to make GET parameters.
   Map toJson() => {
         'date': date,
-        'level': level,
+        'level': value,
       };
 }
 
@@ -136,7 +136,7 @@ class DelegateModel {
       this.stateName,
       this.rangeOfDeviceEx});
   DelegateModel.fromJsonForAdmin(Map snapshot){
-   snapshot.forEach((key, value) { 
+   snapshot?.forEach((key, value) { 
    uid = key;
    cityCode = value["cityCode"];
    name = value["name"];
@@ -144,7 +144,6 @@ class DelegateModel {
    numb = value["phoneNo"];
    stateName = value["stateName"];
    cityName = value["cityName"];
-   cityCode = value["cityCode"];
    Map _map = {};
    String rangeofDevices = value["rangeOfDeviceEx"];
    if (rangeofDevices != "None" && rangeOfDeviceEx!=null)

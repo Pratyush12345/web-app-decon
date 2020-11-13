@@ -13,7 +13,7 @@ String imageUrl;
 BuildContext context;
 
 abstract class BaseAuth {
-  Future<void> signInWithOTP(String smscode, String verificationID, String name);
+  Future<void> signInWithOTP(String smscode, String verificationID);
   signOut();
 }
 
@@ -26,7 +26,7 @@ class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User currentuser;
   SharedPreferences pref; 
-  String post, globalname;
+  String post, displayName;
   String cityName;
   String cityCode, rangeOfDevicesEx;
   double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelbelow,
@@ -55,8 +55,9 @@ class Auth implements BaseAuth {
     cityCode = idTokenResult.claims['cityCode'];
     cityName = idTokenResult.claims['cityName'];
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
-
+    
     print("------------"); 
+    _fetchName();
     if(Auth.instance.post!="Manager")
     _loadDeviceSettings();
     return "done";
@@ -65,21 +66,18 @@ class Auth implements BaseAuth {
    Auth.instance.pref.setBool("isSignedIn", true);  
    await Future.delayed(Duration(seconds: 10));     
    String value= await updateClaims(currentuser);
-    _updateNameInDatabase(globalname);
+   // _updateNameInDatabase(globalname);
    return value;
   }
-  signInWithCred(cred, name)async{
-   globalname = name; 
+  signInWithCred(cred)async{
    currentuser= (await _firebaseAuth.signInWithCredential(cred)).user;
-   currentuser.updateProfile(displayName: name);
-   currentuser.reload();
    return "done";
   }
   
   @override
-  signInWithOTP(String verid, String smscode, String name ) async {
+  signInWithOTP(String verid, String smscode) async {
    AuthCredential authCredential = PhoneAuthProvider.credential(verificationId: verid, smsCode: smscode);
-   signInWithCred(authCredential, name);
+   signInWithCred(authCredential);
   }
   
   
@@ -92,6 +90,16 @@ class Auth implements BaseAuth {
       print(e.toString());
       return null;
     }
+  }
+  _fetchName()async{
+   if(post=="Manager"){
+   displayName = (await FirebaseDatabase.instance.reference().child("/managerList/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
+   }else if(post =="Admin"){
+    displayName = (await FirebaseDatabase.instance.reference().child("/adminsList/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
+   }
+   else{
+    displayName = (await FirebaseDatabase.instance.reference().child("/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
+   }
   }
   _updateNameInDatabase(String name)async{
 
@@ -115,9 +123,10 @@ class Auth implements BaseAuth {
    }
   }
   _loadDeviceSettings() async{
+    String cityCode = Auth.instance.cityCode??"C0";
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child("cities/${Auth.instance.cityCode}/DeviceSettings")
+        .child("cities/$cityCode/DeviceSettings")
         .once(); 
     DeviceSettingModel deviceSettingModel =
         DeviceSettingModel.fromSnapshot(snapshot);
