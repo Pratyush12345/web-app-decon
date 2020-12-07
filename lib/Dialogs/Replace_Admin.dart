@@ -31,6 +31,8 @@ class Replace_Admin extends StatefulWidget {
 
 class _Replace_Admin extends State<Replace_Admin> {
   final _phoneNoController = TextEditingController();
+  final _nameController = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -53,6 +55,31 @@ class _Replace_Admin extends State<Replace_Admin> {
             child: Column(children: [
               
               SizedBox(height: SizeConfig.v * 1.5),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text("Name",
+                    style: TextStyle(
+                        fontSize: SizeConfig.b * 4.07, color: Colors.white)),
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
+                  width: SizeConfig.b * 50,
+                  decoration: BoxDecoration(
+                      color: Color(0xffDEE0E0),
+                      borderRadius: BorderRadius.circular(SizeConfig.b * 1)),
+                  child: TextField(
+                    controller: _nameController,
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Enter Name',
+                      hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ]),
+              SizedBox(height: SizeConfig.v * 4),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text("Mobile Number",
                     style: TextStyle(
@@ -95,6 +122,15 @@ class _Replace_Admin extends State<Replace_Admin> {
                                                                   _map.forEach((key, value) { 
                                                                    FirebaseDatabase.instance.reference().child("/managerList/$key").remove();
                                                                   });
+                        FirebaseDatabase.instance.reference()
+                          .child("adminsList").push().update({
+                          "name": _nameController.text,
+                          "phoneNo": "+91${_phoneNoController.text}",
+                          "post": "Admin",
+                          "cityName": widget.cityName,
+                          "stateName": widget.stateName,
+                          "cityCode": widget.cityCode
+                          }); 
                         Navigator.of(context).pop();
 
                       },

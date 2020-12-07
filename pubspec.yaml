@@ -30,9 +30,13 @@ dependencies:
   cupertino_icons: ^0.1.3
   firebase_auth:
   firebase_core:
+  file_picker: ^1.13.3
+  flutter_image_compress:
   google_sign_in:
   shared_preferences:
   provider:
+  firebase_storage:
+  image_picker:    
   google_maps_flutter:
   geocoder:
   geolocator:
@@ -43,6 +47,8 @@ dependencies:
   progress_dialog:
   flare_loading:
   charts_flutter:
+  firebase_messaging:
+  flutter_local_notifications:
   syncfusion_flutter_charts:
   http:
   intl:  

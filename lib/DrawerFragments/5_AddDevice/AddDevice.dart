@@ -28,7 +28,7 @@ class AddDevice extends StatefulWidget {
 }
 
 class _AddDeviceState extends State<AddDevice> {
-  Future showDelegatesDialog({BuildContext context, bool isUpdating, deviceId}) {
+  Future showAddDeviceDialog({BuildContext context, bool isUpdating, deviceId}) {
     return showDialog(
         barrierDismissible: true,
         context: context,
@@ -38,17 +38,18 @@ class _AddDeviceState extends State<AddDevice> {
   }
   @override
   Widget build(BuildContext context) {
+    
     SizeConfig().init(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xff0099FF),                        
         onPressed: (){
-         showDelegatesDialog(context: context, isUpdating: false);
+         showAddDeviceDialog(context: context, isUpdating: false);
         },
         child: Icon(Icons.add),
         ),
       body: StreamBuilder<Event>( 
-        stream: FirebaseDatabase.instance.reference().child("cities/${widget.cityCode??"C0"}/Series/S1/Devices").onValue ,
+        stream: FirebaseDatabase.instance.reference().child("cities/${widget.cityCode=="Vysion"?"C0":widget.cityCode??"C0"}/Series/S1/Devices").onValue ,
         builder:(BuildContext context, snapshot){
           if(snapshot.hasData){
                   List<DeviceData> _listofDevices = List();
@@ -56,8 +57,8 @@ class _AddDeviceState extends State<AddDevice> {
                   snapshot.data.snapshot?.value?.forEach((key, value){
                    
                     _listofDevices.add(DeviceData(
-                      id: value["id"],battery: value["battery"], latitude: value["latitude"],
-                      longitude: value["longitude"], status: value["simStatus"],
+                      id: value["id"],battery: value["battery"], latitude: value["latitude"]??0.0,
+                      longitude: value["longitude"]??0.0, status: value["simStatus"]??1,
                       distance: value["distance"],
                       wlevel: 0 ,
                       openManhole: value["openManhole"],
@@ -75,8 +76,10 @@ class _AddDeviceState extends State<AddDevice> {
                 itemBuilder: (context, index) {
                   return 
                   InkWell(
+
                         onTap: () {
-                        showDelegatesDialog(context: context, isUpdating: true, deviceId:_listofDevices[index].id  );
+                        if(_listofDevices[index].address=="Empty")  
+                        showAddDeviceDialog(context: context, isUpdating: true, deviceId:_listofDevices[index].id  );
                         
                       },
                         child: Column(children: [
@@ -101,10 +104,21 @@ class _AddDeviceState extends State<AddDevice> {
                                     Container(
                                         padding: EdgeInsets.fromLTRB(
                                             SizeConfig.b * 5.6, 0, 0, 0),
-                                        child: Text(_listofDevices[index].address,
+                                        child: _listofDevices[index].address!="Empty"? Text(_listofDevices[index].address,
                                             style: TextStyle(
                                                 fontSize: SizeConfig.b * 3.054,
-                                                color: Color(0xff0099FF)))),
+                                                color: Color(0xff0099FF))):
+                                               Row(
+                                                 children: [
+                                                   Icon(Icons.location_off_rounded, color: Colors.red,),
+                                                   SizedBox(width: 4.0,),
+                                                   Text("Add Location of this device",
+                                                style: TextStyle(
+                                                fontSize: SizeConfig.b * 3.054,
+                                                color: Colors.red))
+                                                 ],
+                                               )
+                                                ),
                                   ])),
                           Container(
                               child: Column(

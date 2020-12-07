@@ -94,7 +94,7 @@ class DeviceData {
         wlevel = 2;
         else if(distance<Auth.instance.criticalLevelAbove)
         wlevel = 3;
-        status = snapshot.value["simStatus"];
+        status = snapshot.value["simStatus"]??1;
         openManhole = snapshot.value["openManhole"];
         temperature = snapshot.value["temperature"];
         address = snapshot.value["address"]??"Empty";
@@ -158,4 +158,29 @@ class DelegateModel {
    
   }    
 }
-//{informativeLevelAbove=2.0, tempThresholdValue=50.5, criticalLevelAbove=1.0, manHoleDepth=4.0, groundLevelBelow=3.0, nomralLevelAbove=3.0, batteryThresholdValue=80.0}
+class Messages {
+  String key;
+  String url;
+  String selfid;
+  String time;
+  String type;
+  String resolveid;
+  String caption;
+  String cityCode;
+  String location;
+  Messages(this.key, this.url, this.selfid, this.time, this.type, this.caption, this.cityCode, this.location, this.resolveid);
+
+  Messages.fromSnapshot(DataSnapshot snapshot) {
+    key = snapshot.key;
+    url = snapshot.value["url"];
+    selfid = snapshot.value["selfId"];
+    time = snapshot.value["time"];
+    type = snapshot.value["type"];
+    caption = snapshot.value["caption"];
+    cityCode = snapshot.value["cityCode"];
+    location = snapshot.value["location"];
+    resolveid = snapshot.value["resolveid"];
+  }
+  
+}
+

@@ -56,7 +56,7 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    if(VariableGlobal.iscitychanged){
+    if(VariableGlobal.iscitychanged && widget.allDeviceData.length!=0){
     _animateMap();
     }
     

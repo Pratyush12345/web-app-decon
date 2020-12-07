@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Decon/DeconManager/CitiesList.dart';
 import 'package:Decon/DrawerFragments/5_AddDevice/AddDevice.dart';
 import 'package:Decon/DrawerFragments/6_AboutVysion.dart';
+import 'package:Decon/OverflowChat/noticeBoard.dart';
 import 'package:Decon/Services/GlobalVariable.dart';
 import 'package:Decon/Bottom_Navigation/2_AllDevices.dart';
 import 'package:Decon/DrawerFragments/2_DeviceSetting/2_DeviceSetting.dart';
@@ -133,13 +134,15 @@ class HomePageState extends State<HomePage> {
      await _loadDeviceSettings(cityCode);
       _getsheetURL(cityCode);      
     }else{
+      
     _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
     _getsheetURL(cityCode);
     }
+    
     _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
-     _allDeviceData = new List();
     
+  
   }
   _getCitiesList() async{
    DataSnapshot citiesSnapshot =await FirebaseDatabase.instance.reference().child("citiesList").once();
@@ -147,7 +150,6 @@ class HomePageState extends State<HomePage> {
    _citiesMap.forEach((key, value) { 
      list.add(value);
    });
-   print(list);
    setState(() {  
    });
    
@@ -159,6 +161,7 @@ class HomePageState extends State<HomePage> {
      _setQuery("C0");
     }
     else{
+     _getCitiesList(); 
     _setQuery(Auth.instance.cityCode??"C0");
     }
       
@@ -173,16 +176,17 @@ class HomePageState extends State<HomePage> {
   }
 
   onDeviceAdded(Event event) {
+    if(event.snapshot.value["address"]!=null){
     setState(() {
-  
       _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
     });
     _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
-    _allDeviceData
-        .forEach((device) => print("Device is ${device.id.split("_")[2]}"));
+    }
   }
 
   onDeviceChanged(Event event) {
+   try { 
+    if(event.snapshot.value["address"]!=null){
     var oldKey = _allDeviceData.singleWhere((entry) {
       return entry.id.split("_")[2] == event.snapshot.key;
     });
@@ -190,6 +194,14 @@ class HomePageState extends State<HomePage> {
       _allDeviceData[_allDeviceData.indexOf(oldKey)] =
           DeviceData.fromSnapshot(event.snapshot);
     });
+    }
+   }catch(e){
+     setState(() {
+      
+      _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
+    });
+    _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
+   }
   }
 
   Future showErrorDialog(BuildContext context) {
@@ -404,25 +416,12 @@ class HomePageState extends State<HomePage> {
                             color: Colors.black87
                           ),),
     actions: [
-      if(Auth.instance.post == "Manager")
+      
       IconButton(icon: Icon(Icons.add_box, color: Colors.black,), onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel()));
-        // return Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => FlareLoading(
-        //         name: 'assets/gurucool.flr',
-        //         onSuccess: (_) {
-        //           Navigator.of(context).pop();
-        //           return "done";
-        //         },
-        //         onError: (_, __) {},
-        //         startAnimation: 'animation',
-        //         until: () => Future.delayed(Duration(seconds: 10)),
-        //       ),
-        //     ),
-        //   );
-
+        if(context!=null)
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> NoticeBoard(cityMap: _citiesMap,))
+        );
+        
       })
     ],    
         ),

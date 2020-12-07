@@ -1,6 +1,8 @@
+import 'package:Decon/MessagingService/FirebaseMessaging.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -19,26 +21,30 @@ abstract class BaseAuth {
 
 class Auth implements BaseAuth {
   static Auth instance = Auth._();
-  Auth._(){
-    _sharedprefinit();  
+  Auth._() {
+    _sharedprefinit();
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User currentuser;
-  SharedPreferences pref; 
+  SharedPreferences pref;
   String post, displayName;
   String cityName;
   String cityCode, rangeOfDevicesEx;
-  double manholedepth, criticalLevelAbove, informativelevelabove, normalLevelabove, groundlevelbelow,
-  batteryThresholdvalue;
+  double manholedepth,
+      criticalLevelAbove,
+      informativelevelabove,
+      normalLevelabove,
+      groundlevelbelow,
+      batteryThresholdvalue;
   double tempThresholdValue;
   BuildContext changeContext;
 
-  _sharedprefinit() async{
-    pref = await  SharedPreferences.getInstance(); 
+  _sharedprefinit() async {
+    pref = await SharedPreferences.getInstance();
   }
 
-  Stream<User> get appuser{
+  Stream<User> get appuser {
     return _firebaseAuth.authStateChanges().map((user) => user);
   }
 
@@ -46,41 +52,43 @@ class Auth implements BaseAuth {
     IdTokenResult idTokenResult = await currentuser.getIdTokenResult(true);
     print("------------");
     print(idTokenResult.claims['post']);
-    
+
     print(idTokenResult.claims['cityCode']);
-    
+
     print(idTokenResult.claims['cityName']);
     print(idTokenResult.claims['rangeOfDeviceEx']);
     post = idTokenResult.claims['post'];
     cityCode = idTokenResult.claims['cityCode'];
     cityName = idTokenResult.claims['cityName'];
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
-    
-    print("------------"); 
+
+    print("------------");
     _fetchName();
-    if(Auth.instance.post!="Manager")
-    _loadDeviceSettings();
+    _updateToken();
+    if (Auth.instance.post != "Manager") await _loadDeviceSettings();
     return "done";
   }
-  Future<String> delayedLogin(User currentUser) async{
-   Auth.instance.pref.setBool("isSignedIn", true);  
-   await Future.delayed(Duration(seconds: 10));     
-   String value= await updateClaims(currentuser);
-   // _updateNameInDatabase(globalname);
-   return value;
+
+  Future<String> delayedLogin(User currentUser) async {
+    Auth.instance.pref.setBool("isSignedIn", true);
+    await Future.delayed(Duration(seconds: 10));
+    String value = await updateClaims(currentuser);
+    // _updateNameInDatabase(globalname);
+    return value;
   }
-  signInWithCred(cred)async{
-   currentuser= (await _firebaseAuth.signInWithCredential(cred)).user;
-   return "done";
+
+  signInWithCred(cred) async {
+    currentuser = (await _firebaseAuth.signInWithCredential(cred)).user;
+    return "done";
   }
-  
+
   @override
   signInWithOTP(String verid, String smscode) async {
-   AuthCredential authCredential = PhoneAuthProvider.credential(verificationId: verid, smsCode: smscode);
-   signInWithCred(authCredential);
+    AuthCredential authCredential =
+        PhoneAuthProvider.credential(verificationId: verid, smsCode: smscode);
+    signInWithCred(authCredential);
   }
-  
-  
+
   @override
   Future<void> signOut() async {
     try {
@@ -91,52 +99,92 @@ class Auth implements BaseAuth {
       return null;
     }
   }
-  _fetchName()async{
-   if(post=="Manager"){
-   displayName = (await FirebaseDatabase.instance.reference().child("/managerList/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
-   }else if(post =="Admin"){
-    displayName = (await FirebaseDatabase.instance.reference().child("/adminsList/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
-   }
-   else{
-    displayName = (await FirebaseDatabase.instance.reference().child("/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}/name").once()).value;
-   }
-  }
-  _updateNameInDatabase(String name)async{
 
-   if(post=="Manager"){ 
-   await FirebaseDatabase.instance.reference().child("/managerList/${FirebaseAuth.instance.currentUser.uid}").update(
-     {
-       "name" : name
-     });
-   }
-   else if(post =="Admin"){
-     await FirebaseDatabase.instance.reference().child("/adminsList/${FirebaseAuth.instance.currentUser.uid}").update(
-     {
-       "name" : name
-     });
-   }
-   else{
-     await FirebaseDatabase.instance.reference().child("/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}").update(
-     {
-       "name" : name
-     });
-   }
+  _fetchName() async {
+    if (post == "Manager") {
+      displayName = (await FirebaseDatabase.instance
+              .reference()
+              .child(
+                  "/managerList/${FirebaseAuth.instance.currentUser.uid}/name")
+              .once())
+          .value;
+    } else if (post == "Admin") {
+      displayName = (await FirebaseDatabase.instance
+              .reference()
+              .child(
+                  "/adminsList/${FirebaseAuth.instance.currentUser.uid}/name")
+              .once())
+          .value;
+    } else if(post!=null) {
+      displayName = (await FirebaseDatabase.instance
+              .reference()
+              .child(
+                  "/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}/name")
+              .once())
+          .value;
+    }
+    else{
+      displayName = (await FirebaseDatabase.instance
+              .reference()
+              .child(
+                  "/randomUser/${FirebaseAuth.instance.currentUser.uid}/name")
+              .once())
+          .value;
+    }
   }
-  _loadDeviceSettings() async{
-    String cityCode = Auth.instance.cityCode??"C0";
+
+  _loadDeviceSettings() async {
+    String cityCode = Auth.instance.cityCode ?? "C0";
+    print(cityCode);
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child("cities/$cityCode/DeviceSettings")
-        .once(); 
+        .once();
+    print(snapshot.value);    
+       
     DeviceSettingModel deviceSettingModel =
         DeviceSettingModel.fromSnapshot(snapshot);
-    manholedepth = double.parse( deviceSettingModel.manholedepth);
+    manholedepth = double.parse(deviceSettingModel.manholedepth);
     criticalLevelAbove = double.parse(deviceSettingModel.criticallevelabove);
-    informativelevelabove = double.parse(deviceSettingModel.informativelevelabove);
+    informativelevelabove =
+        double.parse(deviceSettingModel.informativelevelabove);
     normalLevelabove = double.parse(deviceSettingModel.nomrallevelabove);
     groundlevelbelow = double.parse(deviceSettingModel.groundlevelbelow);
     tempThresholdValue = double.parse(deviceSettingModel.tempthresholdvalue);
-    batteryThresholdvalue = double.parse(deviceSettingModel.batterythresholdvalue);
+    batteryThresholdvalue =
+        double.parse(deviceSettingModel.batterythresholdvalue);
+  }
 
-  }  
+  _updateToken() {
+    FirebaseMessagingService()
+        .sendNotification(); // initializing messaging handlers
+    FirebaseMessagingService().flutterlocalnotificationplugin.cancelAll();
+
+    FirebaseMessaging().getToken().then((token) {
+      if (post == "Manager") {
+        FirebaseDatabase.instance
+            .reference()
+            .child("/managerList/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"tokenid": token});
+      } else if (post == "Admin") {
+        FirebaseDatabase.instance
+            .reference()
+            .child("/adminsList/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"tokenid": token});
+      } else if(post!=null) {
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "/cities/$cityCode/posts/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"tokenid": token});
+      }
+      else{
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "/randomUser/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"tokenid": token});
+      }
+    });
+  }
 }

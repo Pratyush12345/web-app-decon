@@ -1,3 +1,5 @@
+
+
 import 'package:Decon/Models/AddressCaluclator.dart';
 
 import 'package:Decon/Models/Models.dart';
@@ -58,8 +60,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   temperature: 50.2
 
                  ).toJson());
-                 Navigator.of(context).pop();
-
+                 
   }
   @override
   void initState() {
@@ -124,11 +125,11 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   textColor: Colors.white,
                           elevation: 7.0,
                           color: Colors.blue,
-                  child: widget.isUpdating? Text("Add This Device") : Text("Add Location of this device"),
+                  child: Text("Add Location of this Device"),
                   onPressed:()async {
                    position = await getCurrentLocation();
                    await _updatedatabase(position.latitude,position.longitude);
-                     
+                   Navigator.of(context).pop();  
                    } 
                 ):
                 Column(
@@ -145,7 +146,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                       child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "First Name cannot be empty";
+                            return "cannot be empty";
                           }
                           return null;
                         },
@@ -173,7 +174,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                       child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "First Name cannot be empty";
+                            return "cannot be empty";
                           }
                           return null;
                         },

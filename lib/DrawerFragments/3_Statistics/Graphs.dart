@@ -2,7 +2,6 @@ import 'package:Decon/DrawerFragments/3_Statistics/levelGraph.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/TemperatureGraph.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/ManholeGraph.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
