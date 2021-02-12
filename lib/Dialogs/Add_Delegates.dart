@@ -29,6 +29,8 @@ class _Add_Delegates extends State<Add_Delegates> {
   final _phoneNumberController = TextEditingController();
   final _postnameController = TextEditingController();
   final _nameController = TextEditingController();
+  String errortextname = "", errortextphoneno = "", errortextpostname = "";
+  
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -52,69 +54,97 @@ class _Add_Delegates extends State<Add_Delegates> {
                     
                     SizedBox(height: SizeConfig.v * 1.5),
                     Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Name",
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 4.07,
                                   color: Colors.white)),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 50,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _nameController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: 'Enter Name',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 4),
-                                border: InputBorder.none,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.fromLTRB(
+                                    SizeConfig.b * 5.09, 0, 0, 0),
+                                width: SizeConfig.b * 50,
+                                decoration: BoxDecoration(
+                                    color: Color(0xffDEE0E0),
+                                    borderRadius:
+                                        BorderRadius.circular(SizeConfig.b * 1)),
+                                child: TextField(
+                                  controller: _nameController,
+                                  style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    hintText: 'Enter Name',
+                                    hintStyle:
+                                        TextStyle(fontSize: SizeConfig.b * 4),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (errortextname != "")
+                                      Text(
+                                        errortextname,
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.red),
+                                      ),
+                            ],
                           ),
                         ]),
+                    SizedBox(height: SizeConfig.v * 2),    
                     Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Mobile Number",
+                          Text("Enter Post",
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 4.07,
                                   color: Colors.white)),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 50,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _phoneNumberController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: 'Enter Phone Number',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 4),
-                                border: InputBorder.none,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.fromLTRB(
+                                    SizeConfig.b * 5.09, 0, 0, 0),
+                                width: SizeConfig.b * 50,
+                                decoration: BoxDecoration(
+                                    color: Color(0xffDEE0E0),
+                                    borderRadius:
+                                        BorderRadius.circular(SizeConfig.b * 1)),
+                                child: TextField(
+                                  controller: _postnameController,
+                                  style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    hintText: 'Post',
+                                    hintStyle:
+                                        TextStyle(fontSize: SizeConfig.b * 4),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (errortextpostname != "")
+                                      Text(
+                                        errortextpostname,
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.red),
+                                      ),
+                            ],
                           ),
                         ]),
                     
                     SizedBox(height: SizeConfig.v * 2),
                     Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Enter Post",
+                          Text("Mobile Number",
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 4.07,
                                   color: Colors.white)),
@@ -130,40 +160,77 @@ class _Add_Delegates extends State<Add_Delegates> {
                                     BorderRadius.circular(SizeConfig.b * 1)),
                             child: TextField(
 
-                              controller: _postnameController,
+                              controller: _phoneNumberController,
                               style: TextStyle(fontSize: SizeConfig.b * 4.3),
                               decoration: InputDecoration(
                                 isDense: true,
-                                hintText: 'Post',
+                                hintText: 'Enter Phone Number',
                                 hintStyle:
                                     TextStyle(fontSize: SizeConfig.b * 4),
                                 border: InputBorder.none,
                               ),
                             ),
                           ),
+                          if (errortextphoneno != "")
+                                      Text(
+                                        errortextphoneno,
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.red),
+                                      ),
                         ]),
                     SizedBox(height: SizeConfig.v * 6),
                     SizedBox(
                         child: MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: ()async{
+                        if(_nameController.text == ""){
+                          setState(() {
+                            errortextname = "Name is required";
+                          });
+                          
+                        } 
+                        else{
+                          errortextname = "";
+                          if(_postnameController.text == ""){
+                            setState(() {
+                              errortextpostname = "Post is required";
+                            });
+                          }
+                          else{
+                            errortextpostname = "";
+                          if(_phoneNumberController.text==""){
+                             setState(() {
+                             errortextphoneno = "Phone No required";
+                             }); 
+                            } 
+                            else if(_phoneNumberController.text.length!= 10){
+                              setState(() {
+                              errortextphoneno = "Phone No should be of 10 digits";  
+                              });
+                            }
+                         else{      
                         FirebaseDatabase.instance.reference()
                           .child("cities/${widget.delegateModel.cityCode??"C0"}/posts").push().update({
                           "name": _nameController.text,
                           "phoneNo": "+91${_phoneNumberController.text}",
-                          "post": "${_postnameController.text}",
+                          "post": "${_postnameController.text}@Vysion",
                           "cityName": "${widget.delegateModel.cityName}",
-                          "stateName": "${widget.delegateModel.stateName}"
+                          "stateName": "${widget.delegateModel.stateName}",
+                          "rangeOfDeviceEx": "None"
                           });
                         FirebaseFirestore.instance
                         .collection('CurrentLogins')
                         .doc("+91${_phoneNumberController.text}")
                         .set({
                       "value":
-                          "${_postnameController.text}_${widget.delegateModel.cityName}_${widget.delegateModel.cityCode}_None_${widget.delegateModel.stateName}"
+                          "${_postnameController.text}@Vysion_${widget.delegateModel.cityName}_${widget.delegateModel.cityCode}_None_${widget.delegateModel.stateName}"
                     });
                                   Navigator.of(context).pop();
 
+                            }
+                          }
+                        }
                             },
                             child: Container(
                                 padding: EdgeInsets.symmetric(

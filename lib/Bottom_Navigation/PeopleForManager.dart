@@ -496,7 +496,7 @@ class _People extends State<People> with SingleTickerProviderStateMixin {
                                                                             children: [
                                                                               Container(width: SizeConfig.b * 40.72, child: Text(_listofAdmins[index].name, style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 4.071, fontWeight: FontWeight.w400))),
                                                                               SizedBox(height: SizeConfig.v * 1),
-                                                                              Text(_listofAdmins[index].post, style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 3.054, fontWeight: FontWeight.w400)),
+                                                                              Text(_listofAdmins[index].post.split("@")[1], style: TextStyle(color: Colors.white, fontSize: SizeConfig.b * 3.054, fontWeight: FontWeight.w400)),
                                                                               SizedBox(height: SizeConfig.v * 1),
                                                                               Row(children: [
                                                                                 Container(height: SizeConfig.v * 2.572, width: SizeConfig.b * 4.58, child: IconButton(onPressed: null, padding: EdgeInsets.zero, icon: Icon(Icons.call, color: Colors.green, size: SizeConfig.b * 4))),

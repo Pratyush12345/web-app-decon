@@ -1,10 +1,5 @@
-
-
 import 'package:Decon/Models/AddressCaluclator.dart';
-
 import 'package:Decon/Models/Models.dart';
-import 'package:Decon/Services/Auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -46,6 +41,16 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                String seriescode = _deviceIdText.text.split("_")[1];
                String deviceCode = _deviceIdText.text.split("_")[2];
                String address = await AddressCalculator(latitude,longitude).getLocation();
+               if(widget.isUpdating){
+               await FirebaseDatabase.instance.reference().child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
+               .update({
+                  "latitude": latitude,
+                  "longitude": longitude,
+                  "address": address,
+                  
+               });
+               }
+               else{
                await FirebaseDatabase.instance.reference().child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
                .update(
                  DeviceData(
@@ -60,6 +65,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   temperature: 50.2
 
                  ).toJson());
+               }
                  
   }
   @override
@@ -208,10 +214,18 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                 String cityCode = _deviceIdText.text.split("_")[0];
                String seriescode = _deviceIdText.text.split("_")[1];
                String deviceCode = _deviceIdText.text.split("_")[2];
-               print(cityCode);
-               print(seriescode);
-               print(deviceCode);
+               
                String address = await AddressCalculator(latitude,longitude).getLocation();
+               if(widget.isUpdating){
+               await FirebaseDatabase.instance.reference().child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
+               .update({
+                  "latitude": latitude,
+                  "longitude": longitude,
+                  "address": address,
+                  
+               });
+               }
+               else{
                await FirebaseDatabase.instance.reference().child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
                .update(
                  DeviceData(
@@ -226,6 +240,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   temperature: 50.5
 
                  ).toJson());
+               }
                  Navigator.of(context).pop();
 
                 }

@@ -1,4 +1,4 @@
-package com.example.Decon
+package com.Vysion.Decon
 
 import io.flutter.embedding.android.FlutterActivity
 

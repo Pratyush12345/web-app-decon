@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:Decon/DeconManager/CitiesList.dart';
 import 'package:Decon/DrawerFragments/5_AddDevice/AddDevice.dart';
 import 'package:Decon/DrawerFragments/6_AboutVysion.dart';
 import 'package:Decon/OverflowChat/noticeBoard.dart';
@@ -17,9 +16,7 @@ import 'package:Decon/Services/Auth.dart';
 import 'package:Decon/Services/SplashCarousel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class Item {
   Text title;
@@ -126,6 +123,7 @@ class HomePageState extends State<HomePage> {
         .child("cities/$cityCode/sheetURL")
         .once();
    sheetURL = snapshot.value.toString();
+   
   }
   _setQuery(String cityCode) async{
   
@@ -389,7 +387,7 @@ class HomePageState extends State<HomePage> {
                   }).toList(),
                   onChanged: (newValueSelected) {
                     _itemSelected = newValueSelected;
-                    
+                    _allDeviceData =[];
                     
                     _citiesMap.forEach((key, value) { 
                       if(value == newValueSelected)
@@ -419,6 +417,7 @@ class HomePageState extends State<HomePage> {
       
       IconButton(icon: Icon(Icons.add_box, color: Colors.black,), onPressed: (){
         if(context!=null)
+        //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
         Navigator.of(context).push(MaterialPageRoute(builder: (context)=> NoticeBoard(cityMap: _citiesMap,))
         );
         
@@ -509,24 +508,23 @@ class HomePageState extends State<HomePage> {
         icon: Icon(
           Icons.home,
         ),
-        title: Text('Home'),
+        label: 'Home',
       ),
       BottomNavigationBarItem(
           icon: Icon(
             Icons.memory,
           ),
-          title: Text('Devices')),
+          label: 'Devices'),
       BottomNavigationBarItem(
           icon: Icon(
             Icons.people,
           ),
-          title: Text('Team')),
+          label: 'Team'),
     ],
     onTap: (index) {
       setState(() {
         _isfromDrawer = false;
         _currentIndex = index;
-        // _showTabs(_currentIndex);
       });
     },
         ),

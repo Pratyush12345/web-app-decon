@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
   static double screenWidth;
@@ -27,11 +26,14 @@ class Add_man extends StatefulWidget {
 class _Add_man extends State<Add_man> {
   final _phoneNoController = TextEditingController();
   final _nameController = TextEditingController();
+  String errortextphoneno = "";
+  String errortextname = "";
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return SingleChildScrollView(
-            child: Stack(children: [
+        child: Stack(children: [
       Card(
           margin: EdgeInsets.fromLTRB(
               SizeConfig.screenWidth * 0.05,
@@ -48,78 +50,130 @@ class _Add_man extends State<Add_man> {
                 SizeConfig.b * 2.5, SizeConfig.v * 3),
             child: Column(children: [
               SizedBox(height: SizeConfig.v * 1.5),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text("Enter Name",
-                    style: TextStyle(
-                        fontSize: SizeConfig.b * 4.07, color: Colors.white)),
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                  width: SizeConfig.b * 50,
-                  decoration: BoxDecoration(
-                      color: Color(0xffDEE0E0),
-                      borderRadius: BorderRadius.circular(SizeConfig.b * 1)),
-                  child: TextField(
-                    controller: _nameController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Enter Name',
-                      hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                      border: InputBorder.none,
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Enter Name",
+                        style: TextStyle(
+                            fontSize: SizeConfig.b * 4.07,
+                            color: Colors.white)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          padding:
+                              EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
+                          width: SizeConfig.b * 50,
+                          decoration: BoxDecoration(
+                              color: Color(0xffDEE0E0),
+                              borderRadius:
+                                  BorderRadius.circular(SizeConfig.b * 1)),
+                          child: TextField(
+                            controller: _nameController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              hintText: 'Enter Name',
+                              hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        if (errortextname != "")
+                          Text(
+                            errortextname,
+                            style: TextStyle(fontSize: 12.0, color: Colors.red),
+                          ),
+                      ],
                     ),
-                  ),
-                ),
-              ]),
+                  ]),
               SizedBox(height: SizeConfig.v * 1.5),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text("Mobile Number",
-                    style: TextStyle(
-                        fontSize: SizeConfig.b * 4.07, color: Colors.white)),
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                  width: SizeConfig.b * 50,
-                  decoration: BoxDecoration(
-                      color: Color(0xffDEE0E0),
-                      borderRadius: BorderRadius.circular(SizeConfig.b * 1)),
-                  child: TextField(
-                    controller: _phoneNoController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Enter Phone Number',
-                      hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                      border: InputBorder.none,
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Mobile Number",
+                        style: TextStyle(
+                            fontSize: SizeConfig.b * 4.07,
+                            color: Colors.white)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          padding:
+                              EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
+                          width: SizeConfig.b * 50,
+                          decoration: BoxDecoration(
+                              color: Color(0xffDEE0E0),
+                              borderRadius:
+                                  BorderRadius.circular(SizeConfig.b * 1)),
+                          child: TextField(
+                            controller: _phoneNoController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              hintText: 'Enter Phone Number',
+                              hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        if (errortextphoneno != "")
+                          Text(
+                            errortextphoneno,
+                            style: TextStyle(fontSize: 12.0, color: Colors.red),
+                          ),
+                      ],
                     ),
-                  ),
-                ),
-              ]),
+                  ]),
               SizedBox(height: SizeConfig.v * 4),
               SizedBox(
                   child: MaterialButton(
                       padding: EdgeInsets.zero,
-                      onPressed: (){
-                      FirebaseDatabase.instance.reference()
-                          .child("managerList").push().update({
-                          "name": _nameController.text,
-                          "phoneNo": "+91${_phoneNoController.text}",
-                          "post": "Manager",
-                          "cityName": "Vysion",
-                          "stateName": "Vysion",
-                          "cityCode" : "Vysion"
-                          });  
-                        FirebaseFirestore.instance
-                        .collection('CurrentLogins')
-                        .doc("+91${_phoneNoController.text}")
-                        .set({
-                      "value":
-                          "Manager_Vysion_Vysion_None_Vysion"
-                    });
-                                  Navigator.of(context).pop();
-
+                      onPressed: () {
+                        if (_nameController.text == "") {
+                          setState(() {
+                            errortextname = "Name is reqiured";
+                          });
+                        } else {
+                          errortextname = "";
+                          if (_phoneNoController.text == "") {
+                            setState(() {
+                              errortextphoneno = "Phone No required";
+                            });
+                          } else if (_phoneNoController.text.length != 10) {
+                            setState(() {
+                              errortextphoneno =
+                                  "Phone No should be of 10 digits";
+                            });
+                          } else {
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child("managerList")
+                                .push()
+                                .update({
+                              "name": _nameController.text,
+                              "phoneNo": "+91${_phoneNoController.text}",
+                              "post": "Manager@Vysion",
+                              "cityName": "Vysion",
+                              "stateName": "Vysion",
+                              "cityCode": "Vysion",
+                              "rangeOfDeviceEx": "None"
+                            });
+                            FirebaseFirestore.instance
+                                .collection('CurrentLogins')
+                                .doc("+91${_phoneNoController.text}")
+                                .set({
+                              "value": "Manager@Vysion_Vysion_Vysion_None_Vysion"
+                            });
+                            Navigator.of(context).pop();
+                          }
+                        }
                       },
                       child: Container(
                           padding: EdgeInsets.symmetric(

@@ -37,10 +37,26 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
   DelegateModel _delegateModel;
   String ccode;
   _loadFromDatabase() async{
+  try{  
   DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("adminsList").orderByChild("cityCode").equalTo("${ccode??"C0"}").once();
   setState(() { 
-  _delegateModel = DelegateModel.fromJsonForAdmin(snapshot.value);  
+  _delegateModel = DelegateModel.fromJsonForAdmin(snapshot?.value);  
   });
+  }
+  catch(e){
+  setState(() { 
+  _delegateModel = DelegateModel(
+    cityCode: "C0",
+    cityName: "Demo City",
+    name: "Mr. Decon",
+    numb: "91123456789",
+    post: "Admin@Admin",
+    rangeOfDeviceEx: {},
+    stateName: "Demo State",
+    uid: "123456789"
+  );  
+  });
+  }
   
   }
   @override
@@ -116,7 +132,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                             fontSize: SizeConfig.b * 5.1,
                             fontWeight: FontWeight.w600))),
                 SizedBox(height: SizeConfig.v * 1),
-                Text("${_delegateModel?.post??""}",
+                Text(_delegateModel?.post!=null?"${_delegateModel?.post?.split("@")[1]}": "",
                     style: TextStyle(fontSize: SizeConfig.b * 3.56)),
                 SizedBox(height: SizeConfig.v * 1),
                 Row(children: [
@@ -197,7 +213,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                 List<DelegateModel>
-                                                    _listofdelegates = List();
+                                                    _listofdelegates = [];
                                                 
                                                 List<String>
                                                     _pendingRequestDelegates = Auth
@@ -280,7 +296,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                                                                   fontWeight: FontWeight
                                                                       .w400))),
                                                       Spacer(),
-                                                      Text(_listofdelegates[index].post,
+                                                      Text(_listofdelegates[index].post.split("@")[0],
                                                           style: TextStyle(
                                                               color: Colors.white,
                                                               fontSize:

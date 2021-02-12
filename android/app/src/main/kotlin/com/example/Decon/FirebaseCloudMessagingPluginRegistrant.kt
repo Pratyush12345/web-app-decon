@@ -1,4 +1,4 @@
-package com.example.Decon
+package com.Vysion.Decon
 
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin

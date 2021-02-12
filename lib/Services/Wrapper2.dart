@@ -36,6 +36,7 @@ class Wrapper2 extends StatelessWidget {
 //                 },
 //                 onError: (_, __) {},
 //                 startAnimation: 'animation',
+//                 endAnimation: '',
 //                 until: () => Future.delayed(Duration(seconds: 10)),
 //               ),
 //             ),

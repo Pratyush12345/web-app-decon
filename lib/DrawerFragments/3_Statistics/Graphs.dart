@@ -136,17 +136,16 @@ class _GraphsState extends State<Graphs> {
     _itemSelected = currentMM;
     currentYY = yy.toString();
     yearSelected = currentYY;
-
+    print("SheetUrl====================${widget.sheetURL}");
     _createLevelGraphDatapoints();
   }
 
   _createLevelGraphDatapoints() {
     String searchKey = "$monthNo/$currentYY";
-    String url1 =
-        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
-    _seriesLinearData = List<ChartSeries<LinearData, int>>();
-    _seriesTempData = List<ChartSeries<TempData, int>>();
-    _seriesManHoleData = List<ChartSeries<ManHoleData, int>>();
+    String url1 = "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
+    _seriesLinearData = [];
+    _seriesTempData = [];
+    _seriesManHoleData = [];
 
     getFeedbackList(url1).then((value) {
       int i = 1, ground = 0, normal = 0, informative = 0, critical = 0;

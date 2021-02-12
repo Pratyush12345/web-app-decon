@@ -6,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 String name;
@@ -30,7 +29,7 @@ class Auth implements BaseAuth {
   SharedPreferences pref;
   String post, displayName;
   String cityName;
-  String cityCode, rangeOfDevicesEx;
+  String cityCode, rangeOfDevicesEx, delegate;
   double manholedepth,
       criticalLevelAbove,
       informativelevelabove,
@@ -52,16 +51,17 @@ class Auth implements BaseAuth {
     IdTokenResult idTokenResult = await currentuser.getIdTokenResult(true);
     print("------------");
     print(idTokenResult.claims['post']);
-
     print(idTokenResult.claims['cityCode']);
-
     print(idTokenResult.claims['cityName']);
     print(idTokenResult.claims['rangeOfDeviceEx']);
-    post = idTokenResult.claims['post'];
+    String postdelegate = idTokenResult.claims['post'];
+    if(postdelegate!=null){
+       post = postdelegate?.split("@")[0];
+       delegate = postdelegate?.split("@")[1];
+    }
     cityCode = idTokenResult.claims['cityCode'];
     cityName = idTokenResult.claims['cityName'];
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
-
     print("------------");
     _fetchName();
     _updateToken();

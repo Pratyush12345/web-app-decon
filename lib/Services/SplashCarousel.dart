@@ -1,4 +1,4 @@
-import 'package:flare_loading/flare_loading.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 class SplashCarousel extends StatefulWidget {
   @override
@@ -12,9 +12,9 @@ class _SplashCarouselState extends State<SplashCarousel> {
     
   @override
   void initState() {
-    
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,14 +22,10 @@ class _SplashCarouselState extends State<SplashCarousel> {
         physics: ScrollPhysics(),
         itemCount: _listf.length,
         itemBuilder: (context, index){
-          return FlareLoading(  
-          name: _listf[index],
-          onSuccess: (_) {
-          },
-          onError: (_, __) {},
-          startAnimation: 'animation',
-          //until: () => Future.delayed(Duration(seconds: 4)),
-                );
+          return FlareActor(
+            'assets/detect.flr',
+            animation: 'detect' ,
+          );
           
         },
       ),
