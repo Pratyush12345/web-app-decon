@@ -40,26 +40,29 @@ class HomeState extends State<Home> {
 
   LatLng _latLng;
   double _value;
-  
+
   @override
   void initState() {
-    _latLng = new LatLng(26.123456, 72.234567 );
+    _latLng = new LatLng(26.123456, 72.234567);
     _value = 8.0;
     super.initState();
   }
- _animateMap() async{
-   GoogleMapController controller = await _controller.future;
+
+  _animateMap() async {
+    GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(widget.allDeviceData[0].latitude, widget.allDeviceData[0].longitude),
+        target: LatLng(widget.allDeviceData[0].latitude,
+            widget.allDeviceData[0].longitude),
         zoom: 8.0)));
- }
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    if(VariableGlobal.iscitychanged && widget.allDeviceData.length!=0){
-    _animateMap();
+    if (VariableGlobal.iscitychanged && widget.allDeviceData.length != 0) {
+      _animateMap();
     }
-    
+
     return Scaffold(
       body: Stack(
         children: <Widget>[googlemap(context), searchBar(), showBottomLayout()],
@@ -76,13 +79,16 @@ class HomeState extends State<Home> {
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.1,
-                  SizeConfig.v * 0.8, SizeConfig.b * 1.3, 0),
-              height: SizeConfig.v * 7,
+              height: SizeConfig.v * 5.5,
               width: SizeConfig.b * 89.1,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey,offset: Offset(1,1) , blurRadius: 5.0),],
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(1, 1),
+                        blurRadius: 5.0),
+                  ],
                   borderRadius: BorderRadius.circular(SizeConfig.b * 7.64)),
               child: TextField(
                 controller: deviceNameController,
@@ -96,8 +102,10 @@ class HomeState extends State<Home> {
                   prefixIcon: Icon(
                     Icons.search,
                     color: Colors.black,
-                    size: 30.0,
+                    size: 28.0,
                   ),
+                  contentPadding:
+                      EdgeInsets.only(top: SizeConfig.screenHeight * 9 / 640),
                   hintText: 'Search by Device/ ID/ location',
                   hintStyle: TextStyle(
                       fontSize: SizeConfig.b * 4, color: Colors.black),
@@ -201,21 +209,21 @@ class HomeState extends State<Home> {
   _searching(String val) async {
     print(val);
     DeviceData specificDevice;
-    if(val!=""){
-    var Key = widget.allDeviceData.firstWhere((entry) {
-      if(entry.id.split("_")[2].contains(val.trim())||entry.address.contains(val.trim()))
-      return true ;
-      else
-      return false;
-    });
-    specificDevice = widget.allDeviceData[widget.allDeviceData.indexOf(Key)];
-    _value = 20.0;
-    GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(specificDevice.latitude, specificDevice.longitude),
-        zoom: _value)));
+    if (val != "") {
+      var Key = widget.allDeviceData.firstWhere((entry) {
+        if (entry.id.split("_")[2].contains(val.trim()) ||
+            entry.address.contains(val.trim()))
+          return true;
+        else
+          return false;
+      });
+      specificDevice = widget.allDeviceData[widget.allDeviceData.indexOf(Key)];
+      _value = 20.0;
+      GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(specificDevice.latitude, specificDevice.longitude),
+          zoom: _value)));
     }
-    
   }
 
   _showBottomSheet(int level, double latitude, double longitude) {

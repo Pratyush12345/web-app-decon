@@ -35,7 +35,7 @@ dependencies:
   google_sign_in:
   shared_preferences:
   provider:
-  firebase_storage:
+  firebase_storage: ^7.0.0
   image_picker:    
   google_maps_flutter:
   geocoder:
@@ -72,6 +72,7 @@ flutter:
   assets:
     - assets/f.png
     - assets/DECON.jpg
+    - assets/DECON_1.png
     - assets/gurucool.flr
     - assets/analyse.flr
     - assets/conserve.flr

@@ -1,3 +1,4 @@
+import 'package:Decon/Authentication/EnterOtp.dart';
 import 'package:Decon/Services/Auth.dart';
 import 'package:animator/animator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +34,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
   String verificationID;
   bool codeSent = false;
   List<FocusNode> _listisAutoFocused;
+  String _errorPhoneNo = "";
 
   verifyPhone(context) async {
     final PhoneVerificationCompleted verfiySuccess =
@@ -77,7 +79,6 @@ class _PhoneVerifState extends State<PhoneVerif> {
   }
 
   Widget _getOTPWidget(int pos, bool isAutoFocused, BuildContext context) {
-    
     return Container(
       decoration: BoxDecoration(
           color: Color(0xffDEE0E0),
@@ -121,7 +122,6 @@ class _PhoneVerifState extends State<PhoneVerif> {
 
   @override
   Widget build(BuildContext context) {
-    
     SizeConfig().init(context);
     return Scaffold(
       body: Stack(
@@ -140,7 +140,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
               ),
             ),
           ),
-           Container(
+          Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: ListView(
@@ -162,172 +162,206 @@ class _PhoneVerifState extends State<PhoneVerif> {
                     ),
                   ),
                 ),
-                _isphoneVerif? Animator(
-                  cycles: 1,
-                  tween: Tween<Offset>(
-                      begin: Offset(0, -0.5), end: Offset(0, -0.6)),
-                  duration: Duration(milliseconds: 500),
-                  builder: (context, animatorState, child) =>
-                      FractionalTranslation(
-                          translation: animatorState.value,
-                          child: Container(
-                            height: 150.0,
-                            width: 150.0,
-                            child: Image(
-                                key: UniqueKey(),
-                                width: 150.0,
-                                height: 150.0,
-                                image: AssetImage('assets/DECON.png')),
-                          )),
-                ):Center(
-                  child: Text("VERIFICATION", style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w500,
-                    color: 
-                      Colors.black38,
-                    
-                  ),),
-                ),
-                SizedBox(height: 20.0,),
-                _isphoneVerif? Transform(
-                  transform: Matrix4.translationValues(0, -60.0, 0),
-                  child: Center(
-                    child: Text(
-                      "DECON",
-                      style: TextStyle(
-                        fontSize: 50.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff005A87),
+                _isphoneVerif
+                    ? Animator(
+                        cycles: 1,
+                        tween: Tween<Offset>(
+                            begin: Offset(0, -0.5), end: Offset(0, -0.6)),
+                        duration: Duration(milliseconds: 500),
+                        builder: (context, animatorState, child) =>
+                            FractionalTranslation(
+                                translation: animatorState.value,
+                                child: Container(
+                                  height: 150.0,
+                                  width: 150.0,
+                                  child: Image(
+                                      key: UniqueKey(),
+                                      width: 150.0,
+                                      height: 150.0,
+                                      image: AssetImage('assets/DECON_1.png')),
+                                )),
+                      )
+                    : Center(
+                        child: Text(
+                          "VERIFICATION",
+                          style: TextStyle(
+                            fontSize: SizeConfig.screenWidth * 24 / 360,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff263238),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ):Center(
-                
-                  child: Text("Please type the verification code sent to your entered mobile number", style: TextStyle(
-                    
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal,
-                    color: 
-                      Colors.grey,
-                    
-                  ),
-                  textAlign: TextAlign.center,
-                  ),
-                ),      
-                
                 SizedBox(
-                  height: 30.0,
+                  height: 20.0,
                 ),
                 _isphoneVerif
-                    ? SizedBox(height: 0.0,)
-                    :Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ? Transform(
+                        transform: Matrix4.translationValues(0, -60.0, 0),
+                        child: Center(
+                          child: Text(
+                            "DECON",
+                            style: TextStyle(
+                              fontSize: SizeConfig.screenWidth * 45 / 360,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff005A87),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          "Please type the verification code sent\nto your entered mobile number",
+                          style: TextStyle(
+                            fontSize: SizeConfig.screenWidth * 16 / 360,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xff5D6369),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                SizedBox(
+                  height: SizeConfig.screenHeight * 30 / 640,
+                ),
+                _isphoneVerif
+                    ? SizedBox(
+                        height: 0.0,
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _getOTPWidget(0, true, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                           _getOTPWidget(1, false, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                           _getOTPWidget(2, false, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                           _getOTPWidget(3, false, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                           _getOTPWidget(4, false, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                           _getOTPWidget(5, false, context),
-                          SizedBox(
-                            width: 15.0,
-                          ),
                         ],
-                      ), 
-                    
+                      ),
                 SizedBox(
-                  height: 40.0,
+                  height: SizeConfig.screenHeight * 40 / 640,
                 ),
                 _isphoneVerif
                     ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            alignment: Alignment.center,
-                            width: SizeConfig.b * 10,
-                            child: TextField(
-                              autofocus: false,
-                              controller: _countryCode,
-                              style: TextStyle(fontSize: SizeConfig.b * 4),
-                              decoration: InputDecoration(
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 3.7),
-                                border: InputBorder.none,
+                          Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xffDEE0E0),
+                                    borderRadius: BorderRadius.circular(
+                                        SizeConfig.b * 1)),
+                                alignment: Alignment.center,
+                                width: SizeConfig.b * 10,
+                                child: TextField(
+                                  autofocus: false,
+                                  controller: _countryCode,
+                                  style: TextStyle(
+                                    fontSize: SizeConfig.b * 4,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff848484),
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(
+                                        left: SizeConfig.screenWidth * 6 / 360),
+                                    hintStyle: TextStyle(
+                                      fontSize: SizeConfig.b * 3.7,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (_errorPhoneNo != "")
+                                Text(
+                                  "   ",
+                                  style: TextStyle(
+                                      fontSize: 12.0, color: Colors.red),
+                                ),
+                            ],
                           ),
                           SizedBox(
-                            width: 30.0,
+                            width: SizeConfig.screenWidth * 20 / 360,
                           ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(
-                                SizeConfig.b * 5.09, 0, 0, 0),
-                            width: SizeConfig.b * 70,
-                            decoration: BoxDecoration(
-                                color: Color(0xffDEE0E0),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 1)),
-                            child: TextField(
-                              controller: _phoneNoController,
-                              style: TextStyle(fontSize: SizeConfig.b * 4),
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: 'Enter Your Mobile Number',
-                                hintStyle:
-                                    TextStyle(fontSize: SizeConfig.b * 3.7),
-                                border: InputBorder.none,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.fromLTRB(
+                                    SizeConfig.b * 5.09, 0, 0, 0),
+                                width: SizeConfig.b * 70,
+                                decoration: BoxDecoration(
+                                    color: Color(0xffDEE0E0),
+                                    borderRadius: BorderRadius.circular(
+                                        SizeConfig.b * 1)),
+                                child: TextField(
+                                  controller: _phoneNoController,
+                                  style: TextStyle(fontSize: SizeConfig.b * 4),
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter Your Number',
+                                    hintStyle: TextStyle(
+                                      fontSize: SizeConfig.b * 3.7,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff848484),
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (_errorPhoneNo != "")
+                                Text(
+                                  _errorPhoneNo,
+                                  style: TextStyle(
+                                      fontSize: 12.0, color: Colors.red),
+                                ),
+                            ],
                           )
                         ],
                       )
-                    :SizedBox(
+                    : SizedBox(
                         height: 3.0,
-                      ), 
+                      ),
                 SizedBox(
                   height: 75.0,
                 ),
                 Center(
                   child: _isphoneVerif
                       ? ButtonTheme(
-                          height: 45.0,
-                          minWidth: 100.0,
+                          height: SizeConfig.screenHeight * 30 / 640,
+                          minWidth: SizeConfig.screenWidth * 120 / 360,
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24.0),
-                                side: BorderSide(color: Colors.blue)),
+                              borderRadius: BorderRadius.circular(
+                                  SizeConfig.screenWidth * 6 / 360),
+                              side: BorderSide(color: Colors.blue),
+                            ),
                             onPressed: () async {
-                              
-                              
-                              setState(() {
-                                _isphoneVerif = false;
-                              });
+                              if (_phoneNoController.text.length != 10) {
+                                setState(() {
+                                  _errorPhoneNo =
+                                      "Phone No should be of 10 digits";
+                                });
+                              } else {
+                                setState(() {
+                                  _isphoneVerif = false;
+                                });
+                              }
                               verifyPhone(context);
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) => EnterOTP(phoneNo: _countryCode.text.trim()+_phoneNoController.text.trim() , name: _nameController.text.trim(),)));
                             },
-                            child: Text("Login"),
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: SizeConfig.screenWidth * 14 / 360,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                             textColor: Colors.white,
-                            elevation: 7.0,
+                            elevation: 1.0,
                             color: Colors.blue,
                           ),
                         )
@@ -346,7 +380,7 @@ class _PhoneVerifState extends State<PhoneVerif> {
                             },
                             child: Icon(Icons.arrow_forward),
                             textColor: Colors.white,
-                            elevation: 7.0,
+                            elevation: 3.0,
                             color: Colors.blue,
                           ),
                         ),
