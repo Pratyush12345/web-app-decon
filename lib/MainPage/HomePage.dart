@@ -42,9 +42,11 @@ class HomePageState extends State<HomePage> {
   Query _query;
   Widget middleContainer;
   int _selectedDrawerIndex = 0, _currentIndex = 0;
-  int simStatus = 0, countbattery=0, counttemp=0;
-  String _itemSelected; List<String> list =[];
-  Map _citiesMap;  String ccode = Auth.instance.cityCode;
+  int simStatus = 0, countbattery = 0, counttemp = 0;
+  String _itemSelected;
+  List<String> list = [];
+  Map _citiesMap;
+  String ccode = Auth.instance.cityCode;
   GlobalKey<ScaffoldState> _scafoldKey = GlobalKey<ScaffoldState>();
   String sheetURL;
   _getBottomNavItem(int position) {
@@ -58,20 +60,26 @@ class HomePageState extends State<HomePage> {
           sheetURL: sheetURL,
         );
       case 2:
-        if(Auth.instance.post=="Manager")
-        return People();
+        if (Auth.instance.post == "Manager")
+          return People();
         else
-        return PeopleForAdmin(fromManager: false, cityCode: ccode,);
+          return PeopleForAdmin(
+            fromManager: false,
+            cityCode: ccode,
+          );
     }
   }
 
   _getDrawerItemWidget(int position) {
     switch (position) {
       case 0:
-        return Home(allDeviceData: _allDeviceData );
+        return Home(allDeviceData: _allDeviceData);
         break;
       case 1:
-        return DeviceSettings(allDevicesList: _allDeviceData,cityCode: ccode, );
+        return DeviceSettings(
+          allDevicesList: _allDeviceData,
+          cityCode: ccode,
+        );
         break;
       case 2:
         return Stats(allDeviceData: _allDeviceData, sheetURL: sheetURL);
@@ -80,7 +88,9 @@ class HomePageState extends State<HomePage> {
         return HealthReport();
         break;
       case 4:
-        return AddDevice(cityCode: ccode,);
+        return AddDevice(
+          cityCode: ccode,
+        );
         break;
       case 5:
         return AboutVysion();
@@ -99,70 +109,74 @@ class HomePageState extends State<HomePage> {
       _selectedDrawerIndex = index;
     });
     _scafoldKey.currentState.openEndDrawer();
-    
   }
-  _loadDeviceSettings(String ccode) async{
+
+  _loadDeviceSettings(String ccode) async {
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child("cities/$ccode/DeviceSettings")
-        .once(); 
+        .once();
     DeviceSettingModel deviceSettingModel =
         DeviceSettingModel.fromSnapshot(snapshot);
-    Auth.instance.manholedepth = double.parse( deviceSettingModel.manholedepth);
-    Auth.instance.criticalLevelAbove = double.parse(deviceSettingModel.criticallevelabove);
-    Auth.instance.informativelevelabove = double.parse(deviceSettingModel.informativelevelabove);
-    Auth.instance.normalLevelabove = double.parse(deviceSettingModel.nomrallevelabove);
-    Auth.instance.groundlevelbelow = double.parse(deviceSettingModel.groundlevelbelow);
-    Auth.instance.tempThresholdValue = double.parse(deviceSettingModel.tempthresholdvalue);
-    Auth.instance.batteryThresholdvalue = double.parse(deviceSettingModel.batterythresholdvalue);
-    
+    Auth.instance.manholedepth = double.parse(deviceSettingModel.manholedepth);
+    Auth.instance.criticalLevelAbove =
+        double.parse(deviceSettingModel.criticallevelabove);
+    Auth.instance.informativelevelabove =
+        double.parse(deviceSettingModel.informativelevelabove);
+    Auth.instance.normalLevelabove =
+        double.parse(deviceSettingModel.nomrallevelabove);
+    Auth.instance.groundlevelbelow =
+        double.parse(deviceSettingModel.groundlevelbelow);
+    Auth.instance.tempThresholdValue =
+        double.parse(deviceSettingModel.tempthresholdvalue);
+    Auth.instance.batteryThresholdvalue =
+        double.parse(deviceSettingModel.batterythresholdvalue);
   }
-  _getsheetURL(String cityCode) async{
-   DataSnapshot snapshot = await FirebaseDatabase.instance
+
+  _getsheetURL(String cityCode) async {
+    DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child("cities/$cityCode/sheetURL")
         .once();
-   sheetURL = snapshot.value.toString();
-   
+    sheetURL = snapshot.value.toString();
   }
-  _setQuery(String cityCode) async{
-  
-    if(Auth.instance.post=="Manager"){
-     _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
-     await _loadDeviceSettings(cityCode);
-      _getsheetURL(cityCode);      
-    }else{
-      
-    _query = _database.reference().child("cities/$cityCode/Series/S1/Devices");
-    _getsheetURL(cityCode);
+
+  _setQuery(String cityCode) async {
+    if (Auth.instance.post == "Manager") {
+      _query =
+          _database.reference().child("cities/$cityCode/Series/S1/Devices");
+      await _loadDeviceSettings(cityCode);
+      _getsheetURL(cityCode);
+    } else {
+      _query =
+          _database.reference().child("cities/$cityCode/Series/S1/Devices");
+      _getsheetURL(cityCode);
     }
-    
+
     _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
-    
-  
   }
-  _getCitiesList() async{
-   DataSnapshot citiesSnapshot =await FirebaseDatabase.instance.reference().child("citiesList").once();
-   _citiesMap = citiesSnapshot.value;
-   _citiesMap.forEach((key, value) { 
-     list.add(value);
-   });
-   setState(() {  
-   });
-   
+
+  _getCitiesList() async {
+    DataSnapshot citiesSnapshot =
+        await FirebaseDatabase.instance.reference().child("citiesList").once();
+    _citiesMap = citiesSnapshot.value;
+    _citiesMap.forEach((key, value) {
+      list.add(value);
+    });
+    setState(() {});
   }
+
   @override
   void initState() {
-    if(Auth.instance.post=="Manager"){
-     _getCitiesList();
-     _setQuery("C0");
+    if (Auth.instance.post == "Manager") {
+      _getCitiesList();
+      _setQuery("C0");
+    } else {
+      _getCitiesList();
+      _setQuery(Auth.instance.cityCode ?? "C0");
     }
-    else{
-     _getCitiesList(); 
-    _setQuery(Auth.instance.cityCode??"C0");
-    }
-      
+
     super.initState();
   }
 
@@ -174,32 +188,35 @@ class HomePageState extends State<HomePage> {
   }
 
   onDeviceAdded(Event event) {
-    if(event.snapshot.value["address"]!=null){
-    setState(() {
-      _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
-    });
-    _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
+    if (event.snapshot.value["address"] != null) {
+      setState(() {
+        _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
+      });
+      _allDeviceData.sort((a, b) =>
+          int.parse(a.id.split("_")[2].substring(1, 2))
+              .compareTo(int.parse(b.id.split("_")[2].substring(1, 2))));
     }
   }
 
   onDeviceChanged(Event event) {
-   try { 
-    if(event.snapshot.value["address"]!=null){
-    var oldKey = _allDeviceData.singleWhere((entry) {
-      return entry.id.split("_")[2] == event.snapshot.key;
-    });
-    setState(() {
-      _allDeviceData[_allDeviceData.indexOf(oldKey)] =
-          DeviceData.fromSnapshot(event.snapshot);
-    });
+    try {
+      if (event.snapshot.value["address"] != null) {
+        var oldKey = _allDeviceData.singleWhere((entry) {
+          return entry.id.split("_")[2] == event.snapshot.key;
+        });
+        setState(() {
+          _allDeviceData[_allDeviceData.indexOf(oldKey)] =
+              DeviceData.fromSnapshot(event.snapshot);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
+      });
+      _allDeviceData.sort((a, b) =>
+          int.parse(a.id.split("_")[2].substring(1, 2))
+              .compareTo(int.parse(b.id.split("_")[2].substring(1, 2))));
     }
-   }catch(e){
-     setState(() {
-      
-      _allDeviceData.add(DeviceData.fromSnapshot(event.snapshot));
-    });
-    _allDeviceData.sort((a,b)=>int.parse(a.id.split("_")[2].substring(1,2) ).compareTo(int.parse(b.id.split("_")[2].substring(1,2))));
-   }
   }
 
   Future showErrorDialog(BuildContext context) {
@@ -227,7 +244,6 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
     SizeConfig().init(context);
     final drawerItems = [
       Item(
@@ -307,7 +323,7 @@ class HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w400,
                   fontSize: SizeConfig.b * 4.08)),
           Icon(
-            Icons.person,
+            Icons.logout,
             color: tc,
           )),
     ];
@@ -342,193 +358,206 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       key: _scafoldKey,
-        appBar: AppBar(
-    backgroundColor: Colors.white,     
-    leading: IconButton(icon: Icon(Icons.menu, color: Colors.grey,), onPressed: (){
-      _scafoldKey.currentState.openDrawer();
-    }),      
-    title: Auth.instance.post=="Manager"?
-         Container(
-           alignment: Alignment.center,
-          padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.82, 0, 0, 0),
-          height: SizeConfig.v * 5,
-          width: SizeConfig.b * 80,
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 222, 224, 224),
-              borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
-          
-           child: DropdownButton<String>(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            icon: Icon(
+              Icons.menu,
+              color: Colors.grey,
+            ),
+            onPressed: () {
+              _scafoldKey.currentState.openDrawer();
+            }),
+        title: Auth.instance.post == "Manager"
+            ? Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.0, 0, 0, 0),
+                height: SizeConfig.v * 5,
+                width: SizeConfig.b * 80,
+                decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 222, 224, 224),
+                    borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
+                child: DropdownButton<String>(
+                  icon: Icon(Icons.arrow_drop_down_rounded),
                   elevation: 8,
                   dropdownColor: Color(0xff263238),
                   isDense: false,
-                  underline: SizedBox(height: 0.0,),
+                  underline: SizedBox(
+                    height: 0.0,
+                  ),
                   items: list.map((dropDownStringitem) {
                     return DropdownMenuItem<String>(
-                       
                       value: dropDownStringitem,
                       child: Container(
-                    
-                        padding: EdgeInsets.fromLTRB(12.0,4.0,4.0,4.0),
-                        width: SizeConfig.b*80,
-                        height: SizeConfig.v*4,
+                        padding: EdgeInsets.fromLTRB(12.0, 8.0, 4.0, 4.0),
+                        width: SizeConfig.b * 80,
+                        height: SizeConfig.v * 4,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 222, 224, 224).withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(8.0)
-                        ),
+                            color: Color.fromARGB(255, 222, 224, 224)
+                                .withOpacity(0.3),
+                            borderRadius:
+                                BorderRadius.circular(SizeConfig.b * 2.7)),
                         child: Text(
                           dropDownStringitem,
                           style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87
-                          ),
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87),
                         ),
                       ),
                     );
                   }).toList(),
                   onChanged: (newValueSelected) {
                     _itemSelected = newValueSelected;
-                    _allDeviceData =[];
-                    
-                    _citiesMap.forEach((key, value) { 
-                      if(value == newValueSelected)
-                      ccode = key;
+                    _allDeviceData = [];
+
+                    _citiesMap.forEach((key, value) {
+                      if (value == newValueSelected) ccode = key;
                     });
                     VariableGlobal.iscitychanged = true;
                     setState(() {
-                     context = context;
-                    _setQuery(ccode);  
-                    });  
+                      context = context;
+                      _setQuery(ccode);
+                    });
                   },
                   isExpanded: true,
-                  hint: Text("Dummy City",
-                  style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87
-                          ),),
+                  hint: Text(
+                    "Dummy City",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.black87),
+                  ),
                   value: _itemSelected ?? null,
                 ),
-         )
-        :Text("${Auth.instance.cityName??"Demo City"}",
-        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87
-                          ),),
-    actions: [
-      
-      IconButton(icon: Icon(Icons.add_box, color: Colors.black,), onPressed: (){
-        if(context!=null)
-        //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> NoticeBoard(cityMap: _citiesMap,))
-        );
-        
-      })
-    ],    
-        ),
-        drawer: Drawer(            
-    child: Container(
-      color: Color(0xffF4F3F3),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, SizeConfig.v * 1.25),
-            padding: EdgeInsets.fromLTRB(
-                SizeConfig.b * 1.2,
-                SizeConfig.v * 1.25,
-                SizeConfig.b * 0.8,
-                SizeConfig.v * 1.25),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(width: SizeConfig.b * 3),
-                        CircleAvatar(
-                          radius: SizeConfig.b * 11,
-                          backgroundImage: AssetImage("assets/f.png"),
-                        ),
-                        SizedBox(width: SizeConfig.b * 3),
-                        Expanded(
-                            child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                              Text("${Auth.instance.displayName??""}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: SizeConfig.b * 5.09)),
-                              SizedBox(height: SizeConfig.v * 1.5),
-                              Text("${FirebaseAuth.instance.currentUser?.phoneNumber??""}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: SizeConfig.b * 4.08)),
-                            ]))
-                      ]),
-                ]),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                  Color(0xff263238),
-                  Color(0xff005A87),
-                ])),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: drawerOptions,
-          )
+              )
+            : Text(
+                "${Auth.instance.cityName ?? "Demo City"}",
+                style: TextStyle(
+                    fontWeight: FontWeight.w500, color: Colors.black87),
+              ),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.add_box,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                if (context != null)
+                  //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => NoticeBoard(
+                            cityMap: _citiesMap,
+                          )));
+              })
         ],
       ),
-    ),
+      drawer: Drawer(
+        child: Container(
+          color: Color(0xffF4F3F3),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                margin: EdgeInsets.fromLTRB(0, 0, 0, SizeConfig.v * 1.25),
+                padding: EdgeInsets.fromLTRB(
+                    SizeConfig.b * 1.2,
+                    SizeConfig.v * 1.25,
+                    SizeConfig.b * 0.8,
+                    SizeConfig.v * 1.25),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: SizeConfig.b * 3),
+                            CircleAvatar(
+                              radius: SizeConfig.b * 11,
+                              backgroundImage: AssetImage("assets/f.png"),
+                            ),
+                            SizedBox(width: SizeConfig.b * 3),
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text("${Auth.instance.displayName ?? ""}",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: SizeConfig.b * 5.09)),
+                                  SizedBox(height: SizeConfig.v * 1.5),
+                                  Text(
+                                      "${FirebaseAuth.instance.currentUser?.phoneNumber ?? ""}",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: SizeConfig.b * 4.08)),
+                                ]))
+                          ]),
+                    ]),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                      Color(0xff263238),
+                      Color(0xff005A87),
+                    ])),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: drawerOptions,
+              )
+            ],
+          ),
         ),
-        body: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: _isfromDrawer
-          ? _getDrawerItemWidget(_selectedDrawerIndex)
-          : _getBottomNavItem(_currentIndex)),
-        bottomNavigationBar: BottomNavigationBar(
-    unselectedItemColor: Colors.grey,
-    selectedItemColor: Colors.white,
-    selectedFontSize: 14.0,
-    currentIndex: _currentIndex,
-    type: BottomNavigationBarType.fixed,
-    backgroundColor: Color(0xff263238),
-
-    iconSize: 20.0,
-    //unselectedFontSize: 11.0,
-    items: [
-      BottomNavigationBarItem(
-        icon: Icon(
-          Icons.home,
-        ),
-        label: 'Home',
       ),
-      BottomNavigationBarItem(
-          icon: Icon(
-            Icons.memory,
+      body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: _isfromDrawer
+              ? _getDrawerItemWidget(_selectedDrawerIndex)
+              : _getBottomNavItem(_currentIndex)),
+      bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.white,
+        selectedFontSize: 14.0,
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xff263238),
+
+        iconSize: 20.0,
+        //unselectedFontSize: 11.0,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              size: SizeConfig.screenWidth * 23 / 360,
+            ),
+            label: 'Home',
           ),
-          label: 'Devices'),
-      BottomNavigationBarItem(
-          icon: Icon(
-            Icons.people,
-          ),
-          label: 'Team'),
-    ],
-    onTap: (index) {
-      setState(() {
-        _isfromDrawer = false;
-        _currentIndex = index;
-      });
-    },
-        ),
-      );
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.memory,
+                size: SizeConfig.screenWidth * 23 / 360,
+              ),
+              label: 'Devices'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.people,
+                size: SizeConfig.screenWidth * 23 / 360,
+              ),
+              label: 'Team'),
+        ],
+        onTap: (index) {
+          setState(() {
+            _isfromDrawer = false;
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
   }
 }
 

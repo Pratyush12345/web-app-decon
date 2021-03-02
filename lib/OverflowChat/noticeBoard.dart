@@ -35,7 +35,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
   Query _query;
   Map<String, bool> _isDeleting = {};
   File imageFile;
-  StorageReference _storageReference;
+  var _storageReference;
   int items = 2;
   String resolveid = "-1";
   String cityName, cityCode, location;
@@ -103,10 +103,11 @@ class _NoticeBoardState extends State<NoticeBoard> {
                         ),
                         onPressed: () async {
                           String res = await showDialog(
-                              context: context,
-                              builder: (context) => AreYouSure(
-                                    text: 'Are you sure, You want to delete ?',
-                                  ));
+                            context: context,
+                            builder: (context) => AreYouSure(
+                              text: 'Are you sure, You want to delete ?',
+                            ),
+                          );
                           if (res == 'Yes') {
                             _deleteNotice(message.key);
 
@@ -262,7 +263,6 @@ class _NoticeBoardState extends State<NoticeBoard> {
     });
     Navigator.of(context).pop();
     Navigator.of(context).pop();
-            
   }
 
   _deleteNotice(String key) async {
@@ -342,10 +342,9 @@ class _NoticeBoardState extends State<NoticeBoard> {
             _storageReference = FirebaseStorage.instance
                 .ref()
                 .child('OverflowQueries/$randomkey');
-            StorageUploadTask storageUploadTask =
-                _storageReference.putFile(imageFile);
+            var storageUploadTask = _storageReference.putFile(imageFile);
             double percent = 0;
-            
+
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -356,9 +355,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
                     percent = event.snapshot.bytesTransferred *
                         100 /
                         event.snapshot.totalByteCount;
-                        
                   });
-                  
                 });
                 return UploadDialog(warning: '${percent.toInt()}% Uploaded');
               }),

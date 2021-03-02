@@ -37,104 +37,113 @@ class _Contact extends State<Contact> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return SingleChildScrollView(
-          child: Container(
-          child: Column(children: [
-        SizedBox(height: SizeConfig.v * 6),
-        Row(children: [
-          SizedBox(width: SizeConfig.b * 7),
-          Icon(Icons.mail),
-          SizedBox(width: SizeConfig.b * 2),
-          Text("vysiontechnology@gmail.com",
-              style: TextStyle(fontSize: SizeConfig.b * 4.3))
-        ]),
-        SizedBox(height: SizeConfig.v * 4),
-        Row(children: [
-          SizedBox(width: SizeConfig.b * 7),
-          Icon(Icons.map),
-          SizedBox(width: SizeConfig.b * 2),
-          Expanded(
-              child: Text(
-                  "Estate building, SVNIT Campus, Ichhanath circle, Athwa Lines, Surat, Gujarat",
-                  style: TextStyle(fontSize: SizeConfig.b * 4.3)))
-        ]),
-        SizedBox(height: SizeConfig.v * 6),
-        Container(
-            padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09,
-                SizeConfig.v * 2.142, SizeConfig.b * 5.09, SizeConfig.v * 2.86),
-            decoration: BoxDecoration(
-              color: Color(0xff263238),
-              borderRadius: BorderRadius.circular(SizeConfig.b * 2.55),
-            ),
-            height: SizeConfig.v * 38,
-            width: SizeConfig.b * 94,
-            child: Column(
+      child: Container(
+        child: Column(
+          children: [
+            SizedBox(height: SizeConfig.v * 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    Text("E-Mail",
-                        style: TextStyle(
-                            fontSize: SizeConfig.b * 4.2, color: Colors.white)),
-                    Spacer(),
-                    Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                      width: SizeConfig.b * 67.43,
-                      decoration: BoxDecoration(
-                          color: Color(0xffDEE0E0),
-                          borderRadius: BorderRadius.circular(SizeConfig.b * 1)),
-                      child: TextField(
-                        maxLines: 1,
-                        style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          hintText: 'Enter E-Mail',
-                          hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: SizeConfig.v * 4),
-                Expanded(
-                    child: Container(
-                  alignment: Alignment.topCenter,
-                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                  decoration: BoxDecoration(
-                      color: Color(0xffDEE0E0),
-                      borderRadius: BorderRadius.circular(SizeConfig.b * 1)),
-                  child: TextField(
-                    maxLines: null,
-                    style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Query',
-                      hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                )),
+                Icon(Icons.location_on),
+                SizedBox(width: SizeConfig.b * 6),
+                Text("SVNIT Campus, Surat, Gujarat",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.3))
               ],
-            )),
-        SizedBox(height: SizeConfig.v * 7),
-        SizedBox(
-            child: MaterialButton(
+            ),
+            SizedBox(height: SizeConfig.v * 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.mail),
+                SizedBox(width: SizeConfig.b * 6),
+                Text("vysiontechnology@gmail.com",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.3))
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 6),
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.screenWidth * 16 / 360),
+              child: Text(
+                'GET IN TOUCH',
+                style: TextStyle(
+                  fontSize: SizeConfig.screenWidth * 20 / 360,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff828282),
+                ),
+              ),
+            ),
+            SizedBox(height: SizeConfig.v * 4),
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.screenWidth * 16 / 360),
+              child: TextField(
+                maxLines: 1,
+                style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Mail',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xffDADADA)),
+                  ),
+                  hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: SizeConfig.screenWidth * 10 / 360,
+                    vertical: SizeConfig.screenHeight * 5 / 640,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: SizeConfig.v * 6),
+            Container(
+              alignment: Alignment.topCenter,
+              height: SizeConfig.screenHeight * 135 / 640,
+              margin: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.screenWidth * 16 / 360),
+              padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.screenWidth * 10 / 360),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xffDADADA),
+                ),
+              ),
+              child: TextField(
+                maxLines: null,
+                style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Message',
+                  hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            SizedBox(height: SizeConfig.v * 7),
+            SizedBox(
+              child: MaterialButton(
                 padding: EdgeInsets.zero,
                 onPressed: null,
                 child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: SizeConfig.b * 15.3,
-                        vertical: SizeConfig.v * 1.8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(SizeConfig.b * 6.7),
-                      color: Color(0xff00A3FF),
-                    ),
-                    child: Text('SEND',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: SizeConfig.b * 4.2,
-                            fontWeight: FontWeight.w400)))))
-      ])),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: SizeConfig.b * 15.3,
+                      vertical: SizeConfig.v * 1.8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(SizeConfig.b * 8.0),
+                    color: Color(0xff00A3FF),
+                  ),
+                  child: Text(
+                    'SEND',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: SizeConfig.b * 4.2,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

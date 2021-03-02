@@ -1,3 +1,4 @@
+import 'package:Decon/Authentication/EnterOtp.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/levelGraph.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/TemperatureGraph.dart';
 import 'package:Decon/DrawerFragments/3_Statistics/ManholeGraph.dart';
@@ -142,7 +143,8 @@ class _GraphsState extends State<Graphs> {
 
   _createLevelGraphDatapoints() {
     String searchKey = "$monthNo/$currentYY";
-    String url1 = "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
+    String url1 =
+        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
     _seriesLinearData = [];
     _seriesTempData = [];
     _seriesManHoleData = [];
@@ -202,7 +204,9 @@ class _GraphsState extends State<Graphs> {
         yValueMapper: (LinearData data, _) => data.salesval,
         name: "",
         markerSettings: MarkerSettings(
-            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            isVisible: true,
+            width: 3.0,
+            shape: DataMarkerType.circle,
             height: 3.0),
       ));
       _createTempGraphDatapoints();
@@ -244,7 +248,9 @@ class _GraphsState extends State<Graphs> {
         yValueMapper: (TempData data, _) => data.temp,
         name: "",
         markerSettings: MarkerSettings(
-            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            isVisible: true,
+            width: 3.0,
+            shape: DataMarkerType.circle,
             height: 3.0),
       ));
       _createOpenGraphDatapoints();
@@ -295,7 +301,9 @@ class _GraphsState extends State<Graphs> {
         yValueMapper: (ManHoleData data, _) => data.condn,
         name: "",
         markerSettings: MarkerSettings(
-            isVisible: true, width: 3.0, shape: DataMarkerType.circle,
+            isVisible: true,
+            width: 3.0,
+            shape: DataMarkerType.circle,
             height: 3.0),
       ));
       setState(() {});
@@ -360,7 +368,7 @@ class _GraphsState extends State<Graphs> {
                         SizedBox(width: SizeConfig.v * 1),
                         Row(children: [
                           Icon(Icons.battery_charging_full,
-                              size: SizeConfig.b * 4),
+                              color: Colors.green, size: SizeConfig.b * 4),
                           SizedBox(width: SizeConfig.b * 0.5),
                           Text("${widget.deviceData.battery}%")
                         ]),
@@ -400,12 +408,16 @@ class _GraphsState extends State<Graphs> {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
                       child: Container(
-                        padding: EdgeInsets.only(left: 8.0, top: 8.0),
+                        padding: EdgeInsets.only(
+                            left: SizeConfig.screenWidth * 10 / 360,
+                            top: SizeConfig.screenHeight * 9 / 640),
                         width: SizeConfig.v * 70,
                         height: SizeConfig.b * 11,
                         decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(12.0)),
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(
+                              SizeConfig.screenHeight * 8 / 640),
+                        ),
                         child: Text(
                           dropDownStringitem,
                         ),
@@ -441,12 +453,16 @@ class _GraphsState extends State<Graphs> {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
                       child: Container(
-                        padding: EdgeInsets.only(left: 8.0, top: 8.0),
+                        padding: EdgeInsets.only(
+                            left: SizeConfig.screenWidth * 10 / 360,
+                            top: SizeConfig.screenHeight * 9 / 640),
                         width: SizeConfig.v * 60,
                         height: SizeConfig.b * 11,
                         decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(12.0)),
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(
+                              SizeConfig.screenHeight * 8 / 640),
+                        ),
                         child: Text(
                           dropDownStringitem,
                         ),
@@ -476,16 +492,14 @@ class _GraphsState extends State<Graphs> {
             height: 20.0,
           ),
           TempGraph(
-            seriesTempData: _seriesTempData,
-            lastDay: double.parse(_dataMap[monthNo].toString())
-          ),
+              seriesTempData: _seriesTempData,
+              lastDay: double.parse(_dataMap[monthNo].toString())),
           SizedBox(
             height: 20.0,
           ),
           ManholeGraph(
-            seriesManHoleData: _seriesManHoleData,
-            lastDay: double.parse(_dataMap[monthNo].toString())
-          )
+              seriesManHoleData: _seriesManHoleData,
+              lastDay: double.parse(_dataMap[monthNo].toString()))
         ],
       ),
     );
