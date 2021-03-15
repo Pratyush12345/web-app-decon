@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "987240167971-q26cpt64755gulisa7o4cbtmu0cds4eq.apps.googleusercontent.com",
+          "client_id": "987240167971-90v1mb9i846quelv0rs889lsrmcijv6m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.Vysion.Decon",
@@ -23,47 +23,18 @@
           }
         },
         {
-          "client_id": "987240167971-74oe7mvreu5cfkmngplhp7e31o04m48j.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDJfOrllCIPo80BwFLppgOz8HQS-Eq0MnQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "987240167971-74oe7mvreu5cfkmngplhp7e31o04m48j.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:987240167971:android:a91d4c2ab2d7ea51940f96",
-        "android_client_info": {
-          "package_name": "com.example.Decon"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "987240167971-rlsg2118q6b6p8bhtsdv6mpo66n9u4hq.apps.googleusercontent.com",
+          "client_id": "987240167971-cp34dq1b275a9matfvaqcustkmo2b094.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.Decon",
-            "certificate_hash": "5e27d92bc30ca61cf9210862065d0d3374802d70"
+            "package_name": "com.Vysion.Decon",
+            "certificate_hash": "d9f1dcc6dae8a2cca7de4e90b50c4e406de04526"
           }
         },
         {
-          "client_id": "987240167971-ssl4e1j8fe9qobvqb99slk0s1fbke15g.apps.googleusercontent.com",
+          "client_id": "987240167971-jastfhssvdv3oanlpp94avfmtfihbuk6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.Decon",
+            "package_name": "com.Vysion.Decon",
             "certificate_hash": "c42d4c7b2dc21492fad474c90929b4a235e6beb5"
           }
         },
