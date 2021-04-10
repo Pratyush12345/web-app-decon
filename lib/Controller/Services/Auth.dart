@@ -8,17 +8,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String name;
-String email;
-String imageUrl;
-BuildContext context;
 
-abstract class BaseAuth {
-  Future<void> signInWithOTP(String smscode, String verificationID);
-  signOut();
-}
 
-class Auth implements BaseAuth {
+class Auth  {
   static Auth instance = Auth._();
   Auth._() {
     _sharedprefinit();
@@ -63,8 +55,8 @@ class Auth implements BaseAuth {
     cityName = idTokenResult.claims['cityName'];
     rangeOfDevicesEx = idTokenResult.claims['rangeOfDeviceEx'];
     print("------------");
-    _fetchName();
-    _updateToken();
+    //_fetchName();
+    //_updateToken();
     if (Auth.instance.post != "Manager") await _loadDeviceSettings();
     return "done";
   }

@@ -1,22 +1,31 @@
 import 'package:Decon/View_Android/Authentication/Wait.dart';
 import 'package:Decon/View_Android/MainPage/HomePage.dart';
 import 'package:Decon/Controller/Services/Auth.dart';
-import 'package:Decon/Controller/Services/SplashCarousel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class Wrapper2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    _returnFuture() async{
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      print("issigned in mmmmmmmmmmmmmmmmmmmm");
+      print(pref.getBool("isSignedIn"));
+      print("issigned in mmmmmmmmmmmmmmmmmmmm");
+      return pref.getBool("isSignedIn")!=null ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser);
+    }
     return FutureBuilder(
-        future: Auth.instance.pref.getBool("isSignedIn")??false ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser),
+        //future: Auth.instance.pref.getBool("isSignedIn")??false ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser),
+        future: _returnFuture(),
         builder: (context, snap) {
+          if(snap.connectionState==ConnectionState.done){
+        
           if (snap.hasData) {
-            return HomePage();      
+            return HomePage();
+                  
+          }
+           return Wait();
           } else {
-            // if(Auth.instance.pref.getBool("isSignedIn"))
-            // return Wait();
-            // else
-            // return SplashCarousel();
             return Wait();
           }
         },

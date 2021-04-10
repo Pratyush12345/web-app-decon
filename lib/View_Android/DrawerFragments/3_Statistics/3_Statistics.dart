@@ -1,14 +1,16 @@
+import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
 
-class Stats extends StatefulWidget {
+class Stats extends StatefulWidget { 
   final BuildContext menuScreenContext;
-  final List<DeviceData> allDeviceData;
+  //final List<DeviceData> allDeviceData;
   final String sheetURL;
-  Stats({Key key, this.menuScreenContext, this.sheetURL, this.allDeviceData})
+  Stats({Key key, this.menuScreenContext, this.sheetURL})
       : super(key: key);
 
   @override
@@ -35,10 +37,6 @@ class _StatsState extends State<Stats> {
 
   @override
   void initState() {
-    widget.allDeviceData.forEach((element) {
-      _filteredDeviceData.add(element);
-    });
-    setState(() {});
     super.initState();
   }
 
@@ -46,7 +44,14 @@ class _StatsState extends State<Stats> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      child: Column(
+     child: Consumer<ChangeCity>(
+          builder: (context, changeList, child){
+            _filteredDeviceData =[];
+            changeList.allDeviceData.forEach((element) {
+            _filteredDeviceData.add(element);
+            });
+    
+        return  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: SizeConfig.v * 3),
@@ -64,7 +69,7 @@ class _StatsState extends State<Stats> {
               child: TextField(
                 onChanged: (value) {
                   _filteredDeviceData.clear();
-                  widget.allDeviceData.forEach((element) {
+                  changeList.allDeviceData.forEach((element) {
                     _filteredDeviceData.add(element);
                   });
                   setState(() {
@@ -205,7 +210,9 @@ class _StatsState extends State<Stats> {
             ),
           ),
         ],
-      ),
+      );
+  },
+    ),
     );
   }
 }

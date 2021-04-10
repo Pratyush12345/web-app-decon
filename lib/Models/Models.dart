@@ -192,3 +192,8 @@ class Messages {
     resolveid = snapshot.value["resolveid"];
   }
 }
+class Item {
+  Text title;
+  Icon icon;
+  Item(this.title, this.icon);
+}

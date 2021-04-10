@@ -1,17 +1,18 @@
+import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
-import 'package:Decon/View_Android/MainPage/Layout/Address.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class AllDevices extends StatefulWidget {
   final BuildContext menuScreenContext;
-  final List<DeviceData> allDeviceData;
+  //final List<DeviceData> allDeviceData;
   final String sheetURL;
   AllDevices(
-      {Key key, this.menuScreenContext, this.sheetURL, this.allDeviceData})
+      {Key key, this.menuScreenContext, this.sheetURL})
       : super(key: key);
 
   @override
@@ -51,10 +52,6 @@ class _AllDevicesState extends State<AllDevices> {
 
   @override
   void initState() {
-    widget.allDeviceData.forEach((element) {
-      _filteredDeviceData.add(element);
-    });
-    setState(() {});
     super.initState();
   }
 
@@ -62,7 +59,14 @@ class _AllDevicesState extends State<AllDevices> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      child: Column(
+      child: Consumer<ChangeCity>(
+          builder: (context, changeList, child){
+            _filteredDeviceData =[];
+            changeList.allDeviceData.forEach((element) {
+            _filteredDeviceData.add(element);
+            });
+    
+        return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: SizeConfig.v * 3),
@@ -81,7 +85,7 @@ class _AllDevicesState extends State<AllDevices> {
                 child: TextField(
                   onChanged: (value) {
                     _filteredDeviceData.clear();
-                    widget.allDeviceData.forEach((element) {
+                    changeList.allDeviceData.forEach((element) {
                       _filteredDeviceData.add(element);
                     });
                     setState(() {
@@ -154,36 +158,36 @@ class _AllDevicesState extends State<AllDevices> {
                     setState(() {
                       __itemSelected = newValueSelected;
                       _filteredDeviceData.clear();
-                      for (var i = 0; i < widget.allDeviceData.length; i++) {
+                      for (var i = 0; i < changeList.allDeviceData.length; i++) {
                         if (__itemSelected == "None") {
-                          _filteredDeviceData.add(widget.allDeviceData[i]);
+                          _filteredDeviceData.add(changeList.allDeviceData[i]);
                         } else if (__itemSelected == "Ground Level") {
-                          if (widget.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 0) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "Normal Level") {
-                          if (widget.allDeviceData[i].wlevel == 1) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 1) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "Informative Level") {
-                          if (widget.allDeviceData[i].wlevel == 2) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 2) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "Critical Level") {
-                          if (widget.allDeviceData[i].wlevel == 3) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 3) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "Open Manholes") {
-                          if (widget.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 0) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "High Temperature") {
-                          if (widget.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].wlevel == 0) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         } else if (__itemSelected == "Insufficient Battery") {
-                          if (widget.allDeviceData[i].battery <= 80) {
-                            _filteredDeviceData.add(widget.allDeviceData[i]);
+                          if (changeList.allDeviceData[i].battery <= 80) {
+                            _filteredDeviceData.add(changeList.allDeviceData[i]);
                           }
                         }
                       }
@@ -314,7 +318,9 @@ class _AllDevicesState extends State<AllDevices> {
                         );
                       }))),
         ],
-      ),
+      );
+  },
+    ),
     );
   }
 }

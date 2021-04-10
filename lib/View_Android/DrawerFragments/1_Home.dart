@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'package:Decon/Controller/Services/GlobalVariable.dart';
+import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/View_Android/MainPage/Layout/BottomLayout.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 
 class Home extends StatefulWidget {
-  final List<DeviceData> allDeviceData;
-  Home({this.allDeviceData});
+  Home();
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -33,29 +34,35 @@ class HomeState extends State<Home> {
     super.initState();
   }
 
-  _animateMap() async {
+  _animateMap(double lat, double lon) async {
     GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(widget.allDeviceData[0].latitude,
-            widget.allDeviceData[0].longitude),
+        target: LatLng(lat,lon),
         zoom: 8.0)));
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    if (VariableGlobal.iscitychanged && widget.allDeviceData.length != 0) {
-      _animateMap();
-    }
+    
 
     return Scaffold(
-      body: Stack(
-        children: <Widget>[googlemap(context), searchBar(), showBottomLayout()],
+      body: Consumer<ChangeCity>(
+        builder: (context, changeList, child){
+          if (VariableGlobal.iscitychanged && changeList.allDeviceData.length != 0) {
+           _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
+           }
+          return Stack(
+                 children: <Widget>[googlemap(context, changeList.allDeviceData), 
+                             searchBar(changeList.allDeviceData), 
+                             showBottomLayout(changeList.allDeviceData)],
+        );
+        },
       ),
     );
   }
 
-  Widget searchBar() {
+  Widget searchBar(List<DeviceData> allDeviceData) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,7 +86,7 @@ class HomeState extends State<Home> {
                 controller: deviceNameController,
                 onSubmitted: (val) async {
                   VariableGlobal.iscitychanged = false;
-                  _searching(val);
+                  _searching(val, allDeviceData);
                 },
                 style: TextStyle(fontSize: SizeConfig.b * 4.3),
                 decoration: InputDecoration(
@@ -104,7 +111,7 @@ class HomeState extends State<Home> {
         ]);
   }
 
-  Widget googlemap(BuildContext context) {
+  Widget googlemap(BuildContext context, List<DeviceData> allDeviceData) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.50,
       child: GoogleMap(
@@ -114,13 +121,13 @@ class HomeState extends State<Home> {
         onMapCreated: (GoogleMapController googleMapControler) {
           _controller.complete(googleMapControler);
         },
-        markers: addMarker(widget.allDeviceData),
+        markers: addMarker(allDeviceData),
       ),
     );
   }
 
   Set<Marker> addMarker(List<DeviceData> _allDeviceData) {
-    print("Length is ######: ${widget.allDeviceData.length}");
+    print("Length is ######: ${_allDeviceData.length}");
     Set<Marker> _setOfMarker = new Set();
     if (_allDeviceData.length != 0) {
       for (var i = 0; i < _allDeviceData.length; i++) {
@@ -191,18 +198,18 @@ class HomeState extends State<Home> {
     }
   }
 
-  _searching(String val) async {
+  _searching(String val, List<DeviceData> allDeviceData) async {
     print(val);
     DeviceData specificDevice;
     if (val != "") {
-      var Key = widget.allDeviceData.firstWhere((entry) {
+      var Key = allDeviceData.firstWhere((entry) {
         if (entry.id.split("_")[2].contains(val.trim()) ||
             entry.address.contains(val.trim()))
           return true;
         else
           return false;
       });
-      specificDevice = widget.allDeviceData[widget.allDeviceData.indexOf(Key)];
+      specificDevice = allDeviceData[allDeviceData.indexOf(Key)];
       _value = 20.0;
       GoogleMapController controller = await _controller.future;
       controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
@@ -262,7 +269,7 @@ class HomeState extends State<Home> {
     );
   }
 
-  Widget showBottomLayout() {
+  Widget showBottomLayout(List<DeviceData> allDeviceData) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -270,7 +277,7 @@ class HomeState extends State<Home> {
           padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
           height: MediaQuery.of(context).size.height * (0.29),
           child: BottomLayout(
-            allDeviceData: widget.allDeviceData,
+            allDeviceData: allDeviceData,
           )),
     );
   }
