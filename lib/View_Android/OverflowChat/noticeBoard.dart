@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io'; 
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/View_Android/Dialogs/UploadDialog.dart';
 import 'package:Decon/View_Android/Dialogs/areYouSure.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/View_Android/OverflowChat/ShowMedia.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:Decon/Controller/MessagingService/random_string.dart';
@@ -201,7 +202,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
                               ),
                             ],
                           ),
-                          if (Auth.instance.post != null)
+                          //if (Auth.instance.post != null)
                             RaisedButton(
                               child: Text("Resolve"),
                               onPressed: () {
@@ -436,10 +437,10 @@ class _NoticeBoardState extends State<NoticeBoard> {
   }
 
   bool _isshowableMsg(Messages _messages) {
-    if (Auth.instance.post != null) {
-      if (Auth.instance.cityCode == _messages.cityCode)
+    if (GlobalVar.userDetail.post != null) {
+      if ("" == _messages.cityCode)
         return true;
-      else if (Auth.instance.post == "Manager")
+      else if (GlobalVar.userDetail.post == "Manager")
         return true;
       else
         return false;
@@ -535,7 +536,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
                 ),
               ),
             ),
-            if (Auth.instance.post == null) _buildMessageComposer(context),
+            if (GlobalVar.userDetail.post == null) _buildMessageComposer(context),
           ],
         ),
       ),

@@ -1,37 +1,36 @@
 import 'package:Decon/View_Android/Authentication/Wait.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-class TempGraph extends StatelessWidget {
-  final List<ChartSeries<TempData, int>> seriesTempData;
+class ManholeGraph extends StatelessWidget {
+  final List<ChartSeries<ManHoleData, int>> seriesManHoleData;
   final double lastDay;
-  TempGraph({this.seriesTempData, this.lastDay});
   
+  ManholeGraph({this.seriesManHoleData, this.lastDay});
   @override
   Widget build(BuildContext context) {
-    
-  return Container(
+    return Container(
             padding: EdgeInsets.only(right: 8.0),
             height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width,
-            child: seriesTempData.length!=0? SfCartesianChart(
+            child: seriesManHoleData.length!=0? SfCartesianChart(
               enableMultiSelection: false,
 
               tooltipBehavior: TooltipBehavior(
                 enable: true,
-                header: "Day : Temp",
+                header: "Day : Condn",
               ),
 
-              series: seriesTempData,
+              series: seriesManHoleData,
               enableAxisAnimation: true,
-              title: ChartTitle(text: 'Temperature analysis'),
+              title: ChartTitle(text: 'ManHole Condn analysis'),
               legend: Legend(isVisible: true),
               //tooltipBehavior: TooltipBehavior(enable: true),
               primaryYAxis: NumericAxis(
-                interval: 5,
+                interval: 1,
+                maximum: 1,
                 title: AxisTitle(
-                  text: "Temperature"
+                  text: "ManHole Condn"
                 )
  
 
@@ -46,6 +45,6 @@ class TempGraph extends StatelessWidget {
                 ),
             ):Wait()
           );
-        
+ 
   }
 }

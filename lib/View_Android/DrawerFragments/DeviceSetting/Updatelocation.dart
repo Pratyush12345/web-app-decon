@@ -16,8 +16,6 @@ class Updatelocation extends StatefulWidget {
   _Updatelocation createState() => _Updatelocation();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _Updatelocation extends State<Updatelocation> {
   List<DeviceData> _filteredDeviceData = [];

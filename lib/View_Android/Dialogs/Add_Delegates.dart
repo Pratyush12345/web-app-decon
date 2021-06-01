@@ -186,26 +186,27 @@ class _Add_Delegates extends State<Add_Delegates> {
                                     "Phone No should be of 10 digits";
                               });
                             } else {
+                              String decideTeam = "managerTeam" ?? "adminTeam";
+                              String decideuid;
+                              String byWhome = "ByManager" ?? "ByAdmin";
+
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(
-                                      "cities/${widget.delegateModel.cityCode ?? "C0"}/posts")
+                                      "$decideTeam/$decideuid")
                                   .push()
                                   .update({
                                 "name": _nameController.text,
                                 "phoneNo": "+91${_phoneNumberController.text}",
                                 "post": "${_postnameController.text}@Vysion",
-                                "cityName": "${widget.delegateModel.cityName}",
-                                "stateName":
-                                    "${widget.delegateModel.stateName}",
-                                "rangeOfDeviceEx": "None"
+                                "clientsVisible": "C0,C1"
                               });
                               FirebaseFirestore.instance
                                   .collection('CurrentLogins')
                                   .doc("+91${_phoneNumberController.text}")
                                   .set({
                                 "value":
-                                    "${_postnameController.text}@Vysion_${widget.delegateModel.cityName}_${widget.delegateModel.cityCode}_None_${widget.delegateModel.stateName}"
+                                    "${_postnameController.text}@Vysion_${byWhome}_$decideuid}"
                               });
                               Navigator.of(context).pop();
                             }

@@ -1,26 +1,33 @@
 import 'dart:async';
 
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Models/Models.dart';
+import 'package:Decon/View_Android/DrawerFragments/Home.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePageVM {
   static HomePageVM instance = HomePageVM._();
   HomePageVM._();
+  bool isfromDrawer = true;
+  Widget selectedDrawerWidget = Home();
+  int selectedDrawerIndex = 0;
+  GlobalKey<ScaffoldState> scafoldKey = GlobalKey<ScaffoldState>();
+
   String _sheetURL;
   BuildContext context;
-  Map _citiesMap;
+  Map _clientsMap;
   List<String> citieslist = [];
   Query _query;
   StreamSubscription<Event> _onDataAddedSubscription;
   StreamSubscription<Event> _onDataChangedSubscription;
   List<DeviceData> _allDeviceData = [];
   final FirebaseDatabase _database = FirebaseDatabase.instance;
-  String _ccode = Auth.instance.cityCode;
+  //String _ccode = Auth.instance.cityCode;
   
   
   onDeviceAdded(Event event) {
@@ -73,40 +80,41 @@ class HomePageVM {
   }
 
 
-  _getCitiesList() async { 
+  _getClientsList() async { 
     DataSnapshot citiesSnapshot =
-        await FirebaseDatabase.instance.reference().child("citiesList").once();
-    _citiesMap = citiesSnapshot.value;
-    Provider.of<ChangeWhenGetCity>(context, listen: false).changeWhenGetCity(_citiesMap);
+        await FirebaseDatabase.instance.reference().child("clientsList").once();
+    _clientsMap = citiesSnapshot.value??{};
+    Provider.of<ChangeWhenGetClientsList>(context, listen: false).changeWhenGetClientsList(_clientsMap);
   }
 
-  _setQuery(String cityCode) async {
-    if (Auth.instance.post == "Manager") {
-      _query =
-          _database.reference().child("cities/$cityCode/Series/S1/Devices");
-      await _loadDeviceSettings(cityCode);
-      _getsheetURL(cityCode);
-    } else {
-      _query =
-          _database.reference().child("cities/$cityCode/Series/S1/Devices");
-      _getsheetURL(cityCode);
-    }
+  // _setQuery(String cityCode) async {
+  //   if (Auth.instance.post == "Manager") {
+  //     _query =
+  //         _database.reference().child("cities/$cityCode/Series/S1/Devices");
+  //     await _loadDeviceSettings(cityCode);
+  //     _getsheetURL(cityCode);
+  //   } else {
+  //     _query =
+  //         _database.reference().child("cities/$cityCode/Series/S1/Devices");
+  //     _getsheetURL(cityCode);
+  //   }
 
-    _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
-    _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
-  }
+  //   _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
+  //   _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
+  // }
   void callSetQuery(){
-   _setQuery(_ccode);
+   //_setQuery(_ccode);
   }
   void initialize(BuildContext context){
     this.context = context;
-    if (Auth.instance.post == "Manager") {
-      _getCitiesList();
-      _setQuery("C0");
-    } else {
-      _getCitiesList();
-      _setQuery(Auth.instance.cityCode ?? "C0");
-    }
+    _getClientsList();
+    // if (Auth.instance.post == "Manager") {
+    //   _getClientsList();
+    //  // _setQuery("C0");
+    // } else {
+    //   _getClientsList();
+    //   //_setQuery(Auth.instance.cityCode ?? "C0");
+    // }
   }
 
   void dispose(){
@@ -114,14 +122,15 @@ class HomePageVM {
     _onDataAddedSubscription.cancel();  
   }
 
-  Map get getCitiesMap => _citiesMap;
+  Map get getCitiesMap => _clientsMap;
 
-  String get getCityCode => _ccode;
-  
+  //String get getCityCode => _ccode;
+  String get getCityCode => "C0";
+
   String get getSheetURL => _sheetURL; 
   
   set setCityCode(String cityCode){
-    _ccode = cityCode;
+    //_ccode = cityCode;
   } 
   
 

@@ -4,7 +4,7 @@ import 'package:Decon/View_Android/Dialogs/Add_Manager.dart';
 import 'package:Decon/View_Android/Dialogs/Replace_Admin.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +18,11 @@ class People extends StatefulWidget {
   _People createState() => _People();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _People extends State<People> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<DelegateModel> _listofAdmins = List();
-  List<DelegateModel> _listofManagers = List();
+  List<DelegateModel> _listofAdmins = [];
+  List<DelegateModel> _listofManagers = [];
   String _searcheAdmindValue = "", _searchedManagerValue = "";
   Map _citiesMap;
 
@@ -38,7 +36,7 @@ class _People extends State<People> with SingleTickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
+  } 
 
   Future showManagerDialog(BuildContext context) {
     return showDialog(

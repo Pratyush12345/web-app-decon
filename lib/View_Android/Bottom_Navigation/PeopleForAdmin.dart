@@ -1,6 +1,7 @@
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Delegates.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
@@ -9,8 +10,8 @@ import 'package:flutter/material.dart';
 class PeopleForAdmin extends StatefulWidget {
   final BuildContext menuScreenContext;
   final bool fromManager;
-  final String cityCode;
-  PeopleForAdmin(
+  final String cityCode; 
+  PeopleForAdmin( 
       {Key key, this.menuScreenContext, this.fromManager, this.cityCode})
       : super(key: key);
 
@@ -18,8 +19,6 @@ class PeopleForAdmin extends StatefulWidget {
   _PeopleForAdmin createState() => _PeopleForAdmin();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _PeopleForAdmin extends State<PeopleForAdmin> {
   DelegateModel _delegateModel;
@@ -55,7 +54,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
     if (widget.fromManager) {
       ccode = widget.cityCode;
     } else {
-      ccode = Auth.instance.cityCode;
+      //ccode = Auth.instance.cityCode;
     }
     _loadFromDatabase();
     super.initState();
@@ -107,7 +106,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                 height: 0.0,
               ),
             ),
-      floatingActionButton: Auth.instance.post == "Admin" || widget.fromManager
+      floatingActionButton: GlobalVar.userDetail.post == "Admin" || widget.fromManager
           ? FloatingActionButton(
               backgroundColor: Color(0xff0099FF),
               onPressed: () {
@@ -135,7 +134,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                       Container(
                         width: SizeConfig.b * 45.81,
                         child: Text(
-                          "${_delegateModel?.name ?? Auth.instance.displayName}",
+                          "${_delegateModel?.name ?? GlobalVar.userDetail.name}",
                           style: TextStyle(
                               fontSize: SizeConfig.b * 5.1,
                               fontWeight: FontWeight.w700),
@@ -145,7 +144,7 @@ class _PeopleForAdmin extends State<PeopleForAdmin> {
                       Text(
                           _delegateModel?.post != null
                               ? "${_delegateModel?.post?.split("@")[1]}"
-                              : Auth.instance.post,
+                              : GlobalVar.userDetail.post,
                           style: TextStyle(fontSize: SizeConfig.b * 3.56)),
                       SizedBox(height: SizeConfig.v * 1),
                       Row(children: [

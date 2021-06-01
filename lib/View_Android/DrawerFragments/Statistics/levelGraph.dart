@@ -1,5 +1,5 @@
 import 'package:Decon/View_Android/Authentication/Wait.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

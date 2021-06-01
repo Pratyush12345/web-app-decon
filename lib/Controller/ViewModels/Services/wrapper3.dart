@@ -1,5 +1,5 @@
-import 'package:Decon/Controller/Services/Auth.dart';
-import 'package:Decon/Controller/Services/test.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/View_Android/Authentication/Wait.dart';
 import 'package:Decon/View_Android/MainPage/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';

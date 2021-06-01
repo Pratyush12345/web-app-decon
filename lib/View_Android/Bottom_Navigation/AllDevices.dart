@@ -1,5 +1,5 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
 import 'package:Decon/Models/Models.dart';
@@ -19,8 +19,6 @@ class AllDevices extends StatefulWidget {
   _AllDevicesState createState() => _AllDevicesState();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _AllDevicesState extends State<AllDevices> {
   List<DeviceData> _filteredDeviceData = [];

@@ -1,5 +1,5 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/Graphs.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +17,6 @@ class Stats extends StatefulWidget {
   _StatsState createState() => _StatsState();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _StatsState extends State<Stats> {
   List<DeviceData> _filteredDeviceData = [];

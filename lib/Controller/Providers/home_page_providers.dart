@@ -35,14 +35,20 @@ class ChangeCity extends ChangeNotifier{
   }
 }
 
-class ChangeWhenGetCity extends ChangeNotifier{
+class ChangeWhenGetClientsList extends ChangeNotifier{
    
-   Map citiesMap = {};
-   void changeWhenGetCity(Map _citiesMap){
+   Map clientsMap = {};
+   void changeWhenGetClientsList(Map _clientsMap){
            
-      citiesMap = _citiesMap;
+      clientsMap = _clientsMap;
 
      notifyListeners();
    }
    
+}
+
+class ChangeDrawerItems extends ChangeNotifier {
+  void changeDrawerItem(){
+    notifyListeners();
+  }
 }

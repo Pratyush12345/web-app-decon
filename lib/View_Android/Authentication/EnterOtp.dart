@@ -1,5 +1,5 @@
 import 'package:Decon/View_Android/MainPage/HomePage.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:animator/animator.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:firebase_auth/firebase_auth.dart';

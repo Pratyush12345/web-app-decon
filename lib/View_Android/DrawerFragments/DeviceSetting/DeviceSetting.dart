@@ -2,17 +2,15 @@ import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/device_setting_viewmodel.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
-import 'package:Decon/View_Android/DrawerFragments/2_DeviceSetting/Updatelocation.dart';
+import 'package:Decon/View_Android/DrawerFragments/DeviceSetting/Updatelocation.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class DeviceSettings extends StatefulWidget {
 

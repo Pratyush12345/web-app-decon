@@ -327,7 +327,7 @@ class _Add_admin extends State<Add_admin> {
                                   } else {
                                     dbRef
                                         .reference()
-                                        .child("citiesList")
+                                        .child("clientsList")
                                         .update({
                                       "C${widget.cityLength}":
                                           _cityNameController.text
@@ -335,7 +335,7 @@ class _Add_admin extends State<Add_admin> {
                                     dbRef
                                         .reference()
                                         .child(
-                                            "cities/C${widget.cityLength}/DeviceSettings")
+                                            "clients/C${widget.cityLength}/DeviceSettings")
                                         .update(DeviceSettingModel(
                                                 "4.0",
                                                 "1.0",
@@ -347,14 +347,14 @@ class _Add_admin extends State<Add_admin> {
                                             .toJson());
                                     dbRef
                                         .reference()
-                                        .child("cities/C${widget.cityLength}")
+                                        .child("clients/C${widget.cityLength}")
                                         .update({
                                       "sheetURL": _sheetURLController.text,
                                       "stateName": _stateNameController.text,
                                     });
                                     dbRef
                                         .reference()
-                                        .child("adminsList")
+                                        .child("admins")
                                         .push()
                                         .update({
                                       "name": _nameController.text,
@@ -362,10 +362,8 @@ class _Add_admin extends State<Add_admin> {
                                           "+91${_phoneNumberController.text}",
                                       "post":
                                           "Admin@${_adminpostController.text}",
-                                      "cityName": _cityNameController.text,
-                                      "stateName": _stateNameController.text,
-                                      "cityCode": "C${widget.cityLength}",
-                                      "rangeOfDeviceEx": "None"
+                                       
+                                      "clientsVisible": "C${widget.cityLength}"
                                     });
                                     FirebaseFirestore.instance
                                         .collection('CurrentLogins')
@@ -373,7 +371,7 @@ class _Add_admin extends State<Add_admin> {
                                             "+91${_phoneNumberController.text}")
                                         .set({
                                       "value":
-                                          "Admin@${_adminpostController.text}_${_cityNameController.text}_C${widget.cityLength}_None_${_stateNameController.text}"
+                                          "Admin@${_adminpostController.text}_ByManager"
                                     });
                                     Navigator.of(context).pop();
                                   }

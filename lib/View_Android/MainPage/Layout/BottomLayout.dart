@@ -1,5 +1,5 @@
 import 'package:Decon/Models/Models.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 

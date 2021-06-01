@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:Decon/Controller/Services/GlobalVariable.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/View_Android/MainPage/Layout/BottomLayout.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
@@ -49,7 +49,7 @@ class HomeState extends State<Home> {
     return Scaffold(
       body: Consumer<ChangeCity>(
         builder: (context, changeList, child){
-          if (VariableGlobal.iscitychanged && changeList.allDeviceData.length != 0) {
+          if (GlobalVar.isclientchanged && changeList.allDeviceData.length != 0) {
            _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
            }
           return Stack(
@@ -85,7 +85,7 @@ class HomeState extends State<Home> {
               child: TextField(
                 controller: deviceNameController,
                 onSubmitted: (val) async {
-                  VariableGlobal.iscitychanged = false;
+                  GlobalVar.isclientchanged = false;
                   _searching(val, allDeviceData);
                 },
                 style: TextStyle(fontSize: SizeConfig.b * 4.3),

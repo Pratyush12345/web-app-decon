@@ -1,7 +1,7 @@
 import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/levelGraph.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/TemperatureGraph.dart';
-import 'package:Decon/View_Android/DrawerFragments/3_Statistics/ManholeGraph.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/levelGraph.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/TemperatureGraph.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/ManholeGraph.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

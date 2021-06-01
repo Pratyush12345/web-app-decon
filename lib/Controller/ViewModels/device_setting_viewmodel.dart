@@ -1,4 +1,4 @@
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase_database/firebase_database.dart';

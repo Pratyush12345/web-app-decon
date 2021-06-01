@@ -11,8 +11,6 @@ class AboutVysion extends StatefulWidget {
   _AboutVysion createState() => _AboutVysion();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _AboutVysion extends State<AboutVysion> {
   @override

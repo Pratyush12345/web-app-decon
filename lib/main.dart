@@ -1,7 +1,7 @@
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/Controller/Services/Wrapper.dart';
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Wrapper.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
       
       child: MultiProvider(
         providers: [
-           ChangeNotifierProvider(create: (context)=> ChangeWhenGetCity(),),
+           ChangeNotifierProvider(create: (context)=> ChangeDrawerItems(),),
+           ChangeNotifierProvider(create: (context)=> ChangeWhenGetClientsList(),),
            ChangeNotifierProvider(create: (context)=> ChangeCity(),),
            ChangeNotifierProvider(create: (context)=> ChangeDeviceSeting(),),
           ],

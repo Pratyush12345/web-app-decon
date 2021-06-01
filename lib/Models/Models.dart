@@ -1,4 +1,4 @@
-import 'package:Decon/Controller/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -195,5 +195,34 @@ class Messages {
 class Item {
   Text title;
   Icon icon;
-  Item(this.title, this.icon);
+  Widget screen;
+  Item({this.title, this.icon, this.screen});
+}
+
+
+class UserDetailModel {
+  String clientsVisible;
+  String name;
+  String phoneNo;
+  String post;
+  String delegate;
+
+  UserDetailModel({this.clientsVisible, this.name, this.phoneNo, this.post, this.delegate});
+
+  UserDetailModel.fromJson(Map<dynamic, dynamic> json) {
+    clientsVisible = json['clientsVisibile'];
+    name = json['name'];
+    phoneNo = json['phoneNo'];
+    post = json['post'].toString().split("@")[0];
+    delegate = json['post'].toString().split("@")[1];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['clientsVisible'] = this.clientsVisible;
+    data['name'] = this.name;
+    data['phoneNo'] = this.phoneNo;
+    data['post'] = this.post;
+    return data;
+  }
 }

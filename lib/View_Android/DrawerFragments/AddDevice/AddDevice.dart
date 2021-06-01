@@ -1,6 +1,6 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
-import 'package:Decon/View_Android/DrawerFragments/5_AddDevice/ClickOnAddDevice.dart';
+import 'package:Decon/View_Android/DrawerFragments/AddDevice/ClickOnAddDevice.dart';
 
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';

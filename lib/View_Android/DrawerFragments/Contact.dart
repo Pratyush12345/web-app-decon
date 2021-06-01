@@ -9,8 +9,6 @@ class Contact extends StatefulWidget {
   _Contact createState() => _Contact();
 }
 
-const gc = Colors.black;
-const tc = Color(0xff263238);
 
 class _Contact extends State<Contact> {
   @override
