@@ -9,6 +9,7 @@ class AllClients extends StatefulWidget {
 }
 
 class _AllClientsState extends State<AllClients> {
+  Map _clientsMap = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,22 +17,22 @@ class _AllClientsState extends State<AllClients> {
      floatingActionButton: FloatingActionButton(
        child: Icon(Icons.add),
        onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: "C${_clientsMap?.length??0}",)));
        },
      ),
      body: StreamBuilder<Event>(
        stream: FirebaseDatabase.instance.reference().child("clientsList").onValue,
        builder: (context, snapshot){
          if(snapshot.hasData){
-            Map _citiesMap = snapshot.data.snapshot.value;
+            _clientsMap = snapshot.data.snapshot.value;
             if(snapshot.data.snapshot.value!=null)
               return ListView.builder(
-            itemCount: _citiesMap.length,
+            itemCount: _clientsMap.length,
             itemBuilder: (context, index){
             return Card(
               child: ListTile(
-                leading: Text("${_citiesMap.keys.toList()[index]}"),
-                title: Text("${_citiesMap.values.toList()[index]}"),
+                leading: Text("${_clientsMap.keys.toList()[index]}"),
+                title: Text("${_clientsMap.values.toList()[index]}"),
               ),
             );
             });

@@ -28,7 +28,7 @@ class _Add_man extends State<Add_man> {
                           "name": _nameController.text,
                           "phoneNo": "+91${_phoneNoController.text}",
                           "post": "Manager@Vysion",
-                          "clientsVisible": "C0,C1"
+                          "clientsVisible": ""
                         });
                         FirebaseFirestore.instance
                             .collection('CurrentLogins')

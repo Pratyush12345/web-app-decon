@@ -206,15 +206,19 @@ class UserDetailModel {
   String phoneNo;
   String post;
   String delegate;
+  bool isSelected;
+  String key;
 
-  UserDetailModel({this.clientsVisible, this.name, this.phoneNo, this.post, this.delegate});
+  UserDetailModel({this.key,this.clientsVisible, this.name, this.phoneNo, this.post, this.delegate});
 
-  UserDetailModel.fromJson(Map<dynamic, dynamic> json) {
+  UserDetailModel.fromJson( String uid, Map<dynamic, dynamic> json) {
     clientsVisible = json['clientsVisibile'];
     name = json['name'];
     phoneNo = json['phoneNo'];
     post = json['post'].toString().split("@")[0];
     delegate = json['post'].toString().split("@")[1];
+    key = uid;
+    isSelected = false;
   }
 
   Map<String, dynamic> toJson() {
@@ -223,6 +227,60 @@ class UserDetailModel {
     data['name'] = this.name;
     data['phoneNo'] = this.phoneNo;
     data['post'] = this.post;
+    return data;
+  }
+}
+
+
+class ClientDetailModel {
+  String clientName;
+  String departmentName;
+  String cityName;
+  String districtName;
+  String stateName;
+  String selectedSeries;
+  String selectedManager;
+
+  ClientDetailModel(
+      {this.clientName,
+      this.departmentName,
+      this.cityName,
+      this.districtName,
+      this.stateName,
+      this.selectedSeries,
+      this.selectedManager});
+
+  ClientDetailModel.fromJson(Map<String, dynamic> json) {
+    clientName = json['clientName'];
+    departmentName = json['departmentName'];
+    cityName = json['cityName'];
+    districtName = json['districtName'];
+    stateName = json['stateName'];
+    selectedSeries = json['selectedSeries'];
+    selectedManager = json['selectedManager'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['clientName'] = this.clientName;
+    data['departmentName'] = this.departmentName;
+    data['cityName'] = this.cityName;
+    data['districtName'] = this.districtName;
+    data['stateName'] = this.stateName;
+    data['selectedSeries'] = this.selectedSeries;
+    data['selectedManager'] = this.selectedManager;
+    return data;
+  }
+}
+
+
+class ClientListModel {
+  String clientCode;
+  String clientName;
+  ClientListModel({this.clientCode, this.clientName});
+  Map<String, dynamic> toJson(){
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data[this.clientCode] = this.clientName;
     return data;
   }
 }
