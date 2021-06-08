@@ -1,3 +1,4 @@
+import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/Wrapper.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       
       child: MultiProvider(
         providers: [
+           ChangeNotifierProvider(create: (context)=> PeopleProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeDrawerItems(),),
            ChangeNotifierProvider(create: (context)=> ChangeWhenGetClientsList(),),
            ChangeNotifierProvider(create: (context)=> ChangeCity(),),

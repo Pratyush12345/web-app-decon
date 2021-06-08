@@ -6,6 +6,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class ManagersList extends StatefulWidget {
+  String managerUid;
+  ManagersList({@required this.managerUid});
   @override
   _ManagersListState createState() => _ManagersListState();
 }
@@ -53,12 +55,15 @@ class _ManagersListState extends State<ManagersList> {
        stream: FirebaseDatabase.instance.reference().child("managers").onValue,
        builder: (context, snapshot){
          if(snapshot.hasData){
-            print(snapshot.data.snapshot.value);
-            Map datamap = snapshot.data.snapshot.value;
-            _listUserDetailModel = [];
-            datamap.forEach((key, value) {
-              _listUserDetailModel.add(UserDetailModel.fromJson(key.toString(), value));
-             });
+              Map datamap = snapshot.data.snapshot.value;
+              _listUserDetailModel = [];
+              datamap.forEach((key, value) {
+                _listUserDetailModel.add(UserDetailModel.fromJson(key.toString(), value));
+              });
+              if(widget.managerUid!=null){
+                _selectedIndex = _listUserDetailModel.indexWhere((element) => element.key == widget.managerUid);
+                widget.managerUid = null;
+              }
             if(snapshot.data.snapshot.value!=null)
               return ListView.builder(
             itemCount: _listUserDetailModel.length,

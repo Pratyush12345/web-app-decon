@@ -16,12 +16,13 @@ abstract class BaseCall{
   }
 
   @protected
-  Future<dynamic> databaseUpdateCall(String databaseUrl, Map value) async{
+  Future<dynamic> databaseUpdateCall(String databaseUrl, Map<String, dynamic> value) async{
    try{
    await _dbRef.child(databaseUrl).update(value);
    return "Successfully Created";
    }
    catch(e){
+     print(e.toString());
      return e.toString();
    }
   }

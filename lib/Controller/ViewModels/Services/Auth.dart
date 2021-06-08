@@ -41,10 +41,10 @@ class Auth  {
 
    getUserCredentails() async{
     if(GlobalVar.strAccessLevel == "1"){
-       GlobalVar.userDetail =  await _databaseCallServices.getSuperAdminCrdentails(FirebaseAuth.instance.currentUser.uid);
+       GlobalVar.userDetail =  await _databaseCallServices.getSuperAdminCredentails(FirebaseAuth.instance.currentUser.uid);
     }
     else if(GlobalVar.strAccessLevel == "2"){
-      GlobalVar.userDetail =  await _databaseCallServices.getManagerCrdentails(FirebaseAuth.instance.currentUser.uid);
+      GlobalVar.userDetail =  await _databaseCallServices.getManagerCredentails(FirebaseAuth.instance.currentUser.uid);
     }
   }
 

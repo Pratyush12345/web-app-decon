@@ -14,8 +14,6 @@ class Add_man extends StatefulWidget {
 class _Add_man extends State<Add_man> {
   final _phoneNoController = TextEditingController();
   final _nameController = TextEditingController();
-  String errortextphoneno = "";
-  String errortextname = "";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
   void validate(){

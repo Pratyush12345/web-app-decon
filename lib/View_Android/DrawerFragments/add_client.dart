@@ -4,10 +4,12 @@ import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/DrawerFragments/managers_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddClient extends StatefulWidget {
   final String clientCode;
-  AddClient({@required this.clientCode});
+  final bool isedit;
+  AddClient({@required this.clientCode, @required this.isedit});
   @override
   _AddClientState createState() => _AddClientState();
 }
@@ -22,6 +24,10 @@ class _AddClientState extends State<AddClient> {
 
    _initializeData() async{
     AddClientVM.instance.init(); 
+    if(widget.isedit){
+    await AddClientVM.instance.getClientDetail(widget.clientCode);
+    _userDetailModel = await AddClientVM.instance.getManagerDetail();
+    }
     await AddClientVM.instance.getSeriesList();
     setState(() {});
    }
@@ -58,7 +64,20 @@ class _AddClientState extends State<AddClient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Client"),),
+      appBar: AppBar(title: Text("Add Client"),
+      actions: [
+        if(widget.isedit)
+        MaterialButton(
+          onPressed: (){
+            AddClientVM.instance.onDeactivatePressed(widget.clientCode);
+          },
+          child: Text( "Deactivate",
+          style: TextStyle(
+            color: Colors.white
+          ),),
+        )
+      ],
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(12.0),
         child: AddClientVM.instance.seriesList == null? AppConstant.circulerProgressIndicator():
@@ -67,7 +86,7 @@ class _AddClientState extends State<AddClient> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             TextField(
-              controller: _nameController,
+              controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
               decoration: InputDecoration(
                 hintText: "Enter Name"
               ),
@@ -77,7 +96,7 @@ class _AddClientState extends State<AddClient> {
             ),
             SizedBox(height: 15.0,),
             TextField(
-              controller: _departmentNameController,
+              controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
               decoration: InputDecoration(
                 hintText: "Enter Department Name"
               ),
@@ -87,7 +106,7 @@ class _AddClientState extends State<AddClient> {
             ),
             SizedBox(height: 15.0,),
             TextField(
-              controller: _cityController,
+              controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
               decoration: InputDecoration(
                 hintText: "Enter City"
               ),
@@ -97,7 +116,7 @@ class _AddClientState extends State<AddClient> {
             ),
             SizedBox(height: 15.0,),
             TextField(
-              controller: _districtController,
+              controller: _districtController..text = AddClientVM.instance.clientDetailModel?.districtName,
               decoration: InputDecoration(
                 hintText: "Enter District"
               ),
@@ -107,7 +126,7 @@ class _AddClientState extends State<AddClient> {
             ),
             SizedBox(height: 15.0,),
             TextField(
-              controller: _stateController,
+              controller: _stateController..text = AddClientVM.instance.clientDetailModel?.stateName,
               decoration: InputDecoration(
                 hintText: "Enter State"
               ),
@@ -161,7 +180,7 @@ class _AddClientState extends State<AddClient> {
               color: Colors.blue,
               child: Text(_userDetailModel.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
               onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList())).
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel.key,))).
                 then((value){ 
                   if(value!=null)
                   _userDetailModel = value;
@@ -171,7 +190,7 @@ class _AddClientState extends State<AddClient> {
             SizedBox(height: 40.0,),  
             MaterialButton(
               color: Colors.blue,
-              child: Text("Done"),
+              child: Text(widget.isedit?"Update": "Done"),
               onPressed: (){
                 ClientListModel clientListModel = ClientListModel(
                   clientCode: widget.clientCode,

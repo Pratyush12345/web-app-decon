@@ -80,7 +80,7 @@ class HomePageVM {
   }
 
 
-  _getClientsList() async { 
+  _getClientsList() async {  
     DataSnapshot citiesSnapshot =
         await FirebaseDatabase.instance.reference().child("clientsList").once();
     _clientsMap = citiesSnapshot.value??{};

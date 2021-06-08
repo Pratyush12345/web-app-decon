@@ -17,7 +17,7 @@ class _AllClientsState extends State<AllClients> {
      floatingActionButton: FloatingActionButton(
        child: Icon(Icons.add),
        onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: "C${_clientsMap?.length??0}",)));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: "C${_clientsMap?.length??0}",isedit: false,)));
        },
      ),
      body: StreamBuilder<Event>(
@@ -31,6 +31,9 @@ class _AllClientsState extends State<AllClients> {
             itemBuilder: (context, index){
             return Card(
               child: ListTile(
+                onTap: (){
+                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: "${_clientsMap.keys.toList()[index]}", isedit: true,)));
+                },
                 leading: Text("${_clientsMap.keys.toList()[index]}"),
                 title: Text("${_clientsMap.values.toList()[index]}"),
               ),

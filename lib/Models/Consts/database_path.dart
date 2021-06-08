@@ -6,5 +6,7 @@ class DatabasePath{
   static String getAdminTeamCredentials = "adminTeam";
   static String getSeriesList = "seriesList";
   static String setClientDetail = "clients";
+  static String getClientDetail = "clients";
+  static String client = "clients";
   static String setClientList = "clientsList";
 }

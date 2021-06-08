@@ -14,7 +14,7 @@ import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/View_Android/Bottom_Navigation/AllDevices.dart';
 import 'package:Decon/View_Android/DrawerFragments/DeviceSetting/DeviceSetting.dart';
 import 'package:Decon/View_Android/Bottom_Navigation/PeopleForAdmin.dart';
-import 'package:Decon/View_Android/Bottom_Navigation/PeopleForManager.dart';
+import 'package:Decon/View_Android/Bottom_Navigation/People_tabbar.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
 import 'package:Decon/View_Android/DrawerFragments/HealthReport.dart';
 import 'package:Decon/View_Android/DrawerFragments/Home.dart';
@@ -48,8 +48,8 @@ class HomePageState extends State<HomePage> {
           sheetURL: HomePageVM.instance.getSheetURL,
         );
       case 2:
-        if (GlobalVar.userDetail.post == "Manager")
-          return People();
+        if (GlobalVar.strAccessLevel == "1")
+          return PeopleTabBar();
         else
           return PeopleForAdmin(
             fromManager: false,
@@ -69,9 +69,6 @@ class HomePageState extends State<HomePage> {
     HomePageVM.instance.dispose();
     super.dispose();
   }
-
-  
-  
 
   @override
   Widget build(BuildContext context) {

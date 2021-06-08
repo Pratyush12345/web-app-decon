@@ -212,7 +212,7 @@ class UserDetailModel {
   UserDetailModel({this.key,this.clientsVisible, this.name, this.phoneNo, this.post, this.delegate});
 
   UserDetailModel.fromJson( String uid, Map<dynamic, dynamic> json) {
-    clientsVisible = json['clientsVisibile'];
+    clientsVisible = json['clientsVisibile']??json['clientsVisible'];
     name = json['name'];
     phoneNo = json['phoneNo'];
     post = json['post'].toString().split("@")[0];
@@ -240,6 +240,7 @@ class ClientDetailModel {
   String stateName;
   String selectedSeries;
   String selectedManager;
+  String selectedAdmin;
 
   ClientDetailModel(
       {this.clientName,
@@ -248,9 +249,11 @@ class ClientDetailModel {
       this.districtName,
       this.stateName,
       this.selectedSeries,
-      this.selectedManager});
+      this.selectedManager,
+      this.selectedAdmin});
 
-  ClientDetailModel.fromJson(Map<String, dynamic> json) {
+  ClientDetailModel.fromJson(Map<dynamic, dynamic> json) {
+    print("json================$json");
     clientName = json['clientName'];
     departmentName = json['departmentName'];
     cityName = json['cityName'];
@@ -258,6 +261,7 @@ class ClientDetailModel {
     stateName = json['stateName'];
     selectedSeries = json['selectedSeries'];
     selectedManager = json['selectedManager'];
+    selectedAdmin = json['selectedAdmin'];
   }
 
   Map<String, dynamic> toJson() {
@@ -269,6 +273,7 @@ class ClientDetailModel {
     data['stateName'] = this.stateName;
     data['selectedSeries'] = this.selectedSeries;
     data['selectedManager'] = this.selectedManager;
+    data['selectedAdmin'] = this.selectedAdmin;
     return data;
   }
 }
