@@ -12,8 +12,7 @@ import 'package:Decon/View_Android/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Android/OverflowChat/noticeBoard.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/View_Android/Bottom_Navigation/AllDevices.dart';
-import 'package:Decon/View_Android/DrawerFragments/DeviceSetting/DeviceSetting.dart';
-import 'package:Decon/View_Android/Bottom_Navigation/PeopleForAdmin.dart';
+import 'package:Decon/View_Android/Bottom_Navigation/All_people.dart';
 import 'package:Decon/View_Android/Bottom_Navigation/People_tabbar.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
 import 'package:Decon/View_Android/DrawerFragments/HealthReport.dart';
@@ -51,9 +50,13 @@ class HomePageState extends State<HomePage> {
         if (GlobalVar.strAccessLevel == "1")
           return PeopleTabBar();
         else
-          return PeopleForAdmin(
-            fromManager: false,
-            cityCode: HomePageVM.instance.getCityCode,
+          return Consumer<ChangeClient>(
+          builder: (context, model, child)=>
+            AllPeople(
+              key: UniqueKey(),
+              clientCode: HomePageVM.instance.getClientCode,
+              clientDetailModel: model.clientDetailModel,
+            ),
           );
     }
   }
@@ -86,73 +89,116 @@ class HomePageState extends State<HomePage> {
               HomePageVM.instance.scafoldKey.currentState.openDrawer();
             }),
         title: GlobalVar.strAccessLevel != null
-            ?  Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.0, 0, 0, 0),
-                  height: SizeConfig.v * 5,
-                  width: SizeConfig.b * 80,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 222, 224, 224),
-                      borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
-                  child: 
-                    Consumer<ChangeWhenGetClientsList>(
-                 builder: (context, object,child ){
-                  return
-                    Consumer<ChangeCity>(
-                      builder: (context, changeList, child)=>
-                      object.clientsMap == null? AppConstant.circulerProgressIndicator():
-                      object.clientsMap.isEmpty? AppConstant.addClient():
-            
-                        DropdownButton<String>(
-                      icon: Icon(Icons.arrow_drop_down_rounded),
-                      elevation: 8,
-                      dropdownColor: Color(0xff263238),
-                      isDense: false,
-                      underline: SizedBox(
-                        height: 0.0,
-                      ),
-                      items: object.clientsMap.values.map((dropDownStringitem) {
-                        return DropdownMenuItem<String>(
-                          value: dropDownStringitem,
-                          child: Container(
-                            padding: EdgeInsets.fromLTRB(12.0, 8.0, 4.0, 4.0),
-                            width: SizeConfig.b * 80,
-                            height: SizeConfig.v * 4,
-                            decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 222, 224, 224)
-                                    .withOpacity(0.3),
-                                borderRadius:
-                                    BorderRadius.circular(SizeConfig.b * 2.7)),
-                            child: Text(
-                              dropDownStringitem,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87),
+            ?  Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.0, 0, 0, 0),
+                        height: SizeConfig.v * 5,
+                        width: SizeConfig.b * 40,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 222, 224, 224),
+                            borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
+                        child: 
+                          Consumer<ChangeWhenGetClientsList>(
+                       builder: (context, object,child ){
+                        return
+                          Consumer<ChangeClient>(
+                            builder: (context, changeList, child)=>
+                            object.clientsMap == null? AppConstant.circulerProgressIndicator():
+                            object.clientsMap.isEmpty? AppConstant.addClient():
+                  
+                              DropdownButton<String>(
+                            icon: Icon(Icons.arrow_drop_down_rounded),
+                            elevation: 8,
+                            dropdownColor: Color(0xff263238),
+                            isDense: false,
+                            underline: SizedBox(
+                              height: 0.0,
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newValueSelected) {
-                        _itemSelected = newValueSelected;
-                        Provider.of<ChangeCity>(context, listen: false).reinitialize();
-
-                        object.clientsMap.forEach((key, value) {
-                          
-                          if (value == newValueSelected) HomePageVM.instance.setCityCode = key;
-                        });
-                        GlobalVar.isclientchanged = true;
-                        HomePageVM.instance.callSetQuery();
-                      },
-                      isExpanded: true,
-                      hint: Text(
-                        "Demo Client",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, color: Colors.black87),
+                            items: object.clientsMap.values.map((dropDownStringitem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownStringitem,
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(12.0, 8.0, 4.0, 4.0),
+                                  width: SizeConfig.b * 30,
+                                  height: SizeConfig.v * 4,
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 222, 224, 224)
+                                          .withOpacity(0.3),
+                                      borderRadius:
+                                          BorderRadius.circular(SizeConfig.b * 2.7)),
+                                  child: Text(
+                                    dropDownStringitem,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black87),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (newValueSelected) {
+                              _itemSelected = newValueSelected;
+                               object.clientsMap.forEach((key, value) { 
+                                if (value == newValueSelected) HomePageVM.instance.setClientCode = key;
+                              });
+                              GlobalVar.isclientchanged = true;
+                              HomePageVM.instance.onChangeClient();
+                            },
+                            isExpanded: true,
+                            hint: Text(
+                              "Demo Client",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, color: Colors.black87),
+                            ),
+                            value: _itemSelected ?? null,
+                        ),
+                          );},
                       ),
-                      value: _itemSelected ?? null,
                   ),
-                    );},
                 ),
+                SizedBox(width: 10.0,),
+                Expanded(
+                    flex: 1,
+                    child: Consumer<ChangeSeries>(
+            builder: (context, model, child)=>
+             Container(
+               width: 80.0,
+               child: Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: DropdownButtonFormField<String>(
+                          isExpanded: false,
+                          onChanged: (value){
+                             HomePageVM.instance.setSeriesCode = "$value";
+                             HomePageVM.instance.onChangeSeries();
+                             Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
+                             },
+
+                          decoration: InputDecoration(
+                            hintText: 'Select',
+                            labelText: 'Select Series',
+                          ),
+                          value: model.selectedSeries ,
+                          items: (model.seriesList??[]).map((e) => DropdownMenuItem<String>(
+                                        child: Text(e),
+                                        value: e.toString(),
+                                      )).toList(),
+                          onSaved: (val) {
+
+                          },
+                          validator: (val) {
+                            print('value is $val');
+                            if (val == null) return 'Please choose an option.';
+                            return null;
+                          },
+                        )),
+             ),
+          ),
+                  ),
+                  
+              ],
             )
             : Text(
                 "Demo Client",
@@ -181,14 +227,14 @@ class HomePageState extends State<HomePage> {
             model.clientsMap == null? AppConstant.circulerProgressIndicator():
             model.clientsMap.isEmpty? ClientsNotFound():
             Consumer<ChangeDrawerItems>(
-              builder: (context, _, child)=>
-              Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: HomePageVM.instance.isfromDrawer
-                  ? HomePageVM.instance.selectedDrawerWidget
-                  : _getBottomNavItem(_currentIndex)),
-            ),
+                builder: (context, _, child)=>
+                Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: HomePageVM.instance.isfromDrawer
+                    ? HomePageVM.instance.selectedDrawerWidget
+                    : _getBottomNavItem(_currentIndex)),
+              )
       ),
 
         bottomNavigationBar: BottomNavigationBar(

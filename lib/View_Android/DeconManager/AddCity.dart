@@ -83,17 +83,17 @@ class _AddCityState extends State<AddCity> {
                      "C${widget.cityLength}" : _cityNameController.text
                     });
                     
-                          dbRef.reference()
-                          .child("cities/C${widget.cityLength}/DeviceSettings")
-                          .update(DeviceSettingModel(
-                                  "4.0",
-                                  "1.0",
-                                  "2.0",
-                                  "3.0",
-                                  "3.0",
-                                  "50.0",
-                                  "20.0")
-                              .toJson());
+                          // dbRef.reference()
+                          // .child("cities/C${widget.cityLength}/DeviceSettings")
+                          // .update(S1DeviceSettingModel(
+                          //         "4.0",
+                          //         "1.0",
+                          //         "2.0",
+                          //         "3.0",
+                          //         "3.0",
+                          //         "50.0",
+                          //         "20.0")
+                          //     .toJson());
                             
 
                     Navigator.of(context).pop();

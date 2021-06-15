@@ -22,13 +22,6 @@ class Auth  {
   DatabaseCallServices _databaseCallServices = DatabaseCallServices();
   User currentuser;
   SharedPreferences pref;
-  double manholedepth,
-      criticalLevelAbove,
-      informativelevelabove,
-      normalLevelabove,
-      groundlevelbelow,
-      batteryThresholdvalue;
-  double tempThresholdValue;
   BuildContext changeContext;
 
   _sharedprefinit() async {

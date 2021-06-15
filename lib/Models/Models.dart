@@ -1,33 +1,35 @@
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/View_Android/series_S1/DeviceSetting_S1.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 
-class DeviceSettingModel {
-  final String manholedepth;
-  final String criticallevelabove;
-  final String informativelevelabove;
-  final String nomrallevelabove;
-  final String groundlevelbelow;
-  final String tempthresholdvalue;
-  final String batterythresholdvalue;
+class S1DeviceSettingModel {
+  final double manholedepth;
+  final double criticallevelabove;
+  final double informativelevelabove;
+  final double nomrallevelabove;
+  final double groundlevelbelow;
+  final double tempthresholdvalue;
+  final int batterythresholdvalue;
 
-  DeviceSettingModel(
+  S1DeviceSettingModel({
       this.manholedepth,
       this.criticallevelabove,
       this.informativelevelabove,
       this.nomrallevelabove,
       this.groundlevelbelow,
       this.tempthresholdvalue,
-      this.batterythresholdvalue);
+      this.batterythresholdvalue});
 
-  DeviceSettingModel.fromSnapshot(DataSnapshot snapshot)
-      : manholedepth = snapshot.value["manHoleDepth"],
-        criticallevelabove = snapshot.value["criticalLevelAbove"],
-        informativelevelabove = snapshot.value["informativeLevelAbove"],
-        nomrallevelabove = snapshot.value["nomralLevelAbove"],
-        groundlevelbelow = snapshot.value["groundLevelBelow"],
-        tempthresholdvalue = snapshot.value["tempThresholdValue"],
-        batterythresholdvalue = snapshot.value["batteryThresholdValue"];
+  S1DeviceSettingModel.fromSnapshot(DataSnapshot snapshot)
+      : manholedepth = double.parse(snapshot.value["manHoleDepth"].toString()),
+        criticallevelabove = double.parse(snapshot.value["criticalLevelAbove"].toString()),
+        informativelevelabove = double.parse(snapshot.value["informativeLevelAbove"].toString()),
+        nomrallevelabove =  double.parse(snapshot.value["nomralLevelAbove"].toString()),
+        groundlevelbelow = double.parse(snapshot.value["groundLevelBelow"].toString()),
+        tempthresholdvalue = double.parse(snapshot.value["tempThresholdValue"].toString()),
+        batterythresholdvalue = int.parse(snapshot.value["batteryThresholdValue"].toString());
 
   toJson() {
     return {
@@ -38,6 +40,45 @@ class DeviceSettingModel {
       "groundLevelBelow": groundlevelbelow,
       "tempThresholdValue": tempthresholdvalue,
       "batteryThresholdValue": batterythresholdvalue
+    };
+  }
+
+  toDefaultJson() {
+    return <String, dynamic>{
+      "manHoleDepth": 75.5,
+      "criticalLevelAbove": 60.5  ,
+      "informativeLevelAbove": 40.5,
+      "nomralLevelAbove": 20.5,
+      "groundLevelBelow": 10.5,
+      "tempThresholdValue": 55.2,
+      "batteryThresholdValue": 80
+    };
+  }
+}
+
+class S0DeviceSettingModel {
+  final double manholedepth;
+  final int batterythresholdvalue;
+
+  S0DeviceSettingModel({
+      this.manholedepth,
+      this.batterythresholdvalue});
+
+  S0DeviceSettingModel.fromSnapshot(DataSnapshot snapshot)
+      : manholedepth = double.parse(snapshot.value["manHoleDepth"].toString()),
+        batterythresholdvalue = int.parse(snapshot.value["batteryThresholdValue"].toString());
+
+  toJson() {
+    return {
+      "manHoleDepth": manholedepth,
+      "batteryThresholdValue": batterythresholdvalue
+    };
+  }
+
+  toDefaultJson() {
+    return <String, dynamic> {
+      "manHoleDepth": 75.5,
+      "batteryThresholdValue": 80
     };
   }
 }
@@ -75,50 +116,95 @@ class DeviceData {
   dynamic temperature;
 
   DeviceData(
-      {@required this.id,
+      {
+      @required this.id,
       @required this.battery,
       @required this.latitude,
       @required this.longitude,
-      @required this.distance,
+      this.distance,
       this.wlevel,
       @required this.status,
       @required this.openManhole,
       @required this.address,
-      @required this.temperature});
+      this.temperature});
 
-  DeviceData.fromSnapshot(DataSnapshot snapshot) {
+  DeviceData.fromSnapshot(DataSnapshot snapshot, String _seriesCode) {
     id = snapshot.value["id"];
     latitude = snapshot.value["latitude"];
     longitude = snapshot.value["longitude"];
     battery = snapshot.value["battery"];
     distance = snapshot.value["distance"];
-    if (distance >= Auth.instance.groundlevelbelow)
+    if(_seriesCode == "S0"){
+      wlevel = snapshot.value["wLevel"];
+    }
+    else if(_seriesCode == "S1"){
+      S1DeviceSettingModel _s1DeviceSettingModel = (GlobalVar.seriesMap["S1"].model as S1DeviceSettingModel);
+      if (distance >= _s1DeviceSettingModel.groundlevelbelow)
       wlevel = 0;
-    else if (distance >= Auth.instance.informativelevelabove &&
-        distance < Auth.instance.normalLevelabove)
+      else if (distance >= _s1DeviceSettingModel.informativelevelabove &&
+      distance < _s1DeviceSettingModel.nomrallevelabove)
       wlevel = 1;
-    else if (distance >= Auth.instance.criticalLevelAbove &&
-        distance < Auth.instance.informativelevelabove)
+      else if (distance >= _s1DeviceSettingModel.criticallevelabove &&
+      distance < _s1DeviceSettingModel.informativelevelabove)
       wlevel = 2;
-    else if (distance < Auth.instance.criticalLevelAbove) wlevel = 3;
+      else if (distance < _s1DeviceSettingModel.criticallevelabove) 
+      wlevel = 3;
+    }
     status = snapshot.value["simStatus"] ?? 1;
     openManhole = snapshot.value["openManhole"];
     temperature = snapshot.value["temperature"];
     address = snapshot.value["address"] ?? "Empty";
   }
+DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
+    id = json["id"];
+    latitude = json["latitude"];
+    longitude = json["longitude"];
+    battery = json["battery"];
+    distance = json["distance"];
+    if(_seriesCode == "S0"){
+      wlevel = json["wLevel"];
+    }
+    else if(_seriesCode == "S1"){
+      S1DeviceSettingModel _s1DeviceSettingModel = (GlobalVar.seriesMap["S1"].model as S1DeviceSettingModel);
+      if (distance >= _s1DeviceSettingModel.groundlevelbelow)
+      wlevel = 0;
+      else if (distance >= _s1DeviceSettingModel.informativelevelabove &&
+      distance < _s1DeviceSettingModel.nomrallevelabove)
+      wlevel = 1;
+      else if (distance >= _s1DeviceSettingModel.criticallevelabove &&
+      distance < _s1DeviceSettingModel.informativelevelabove)
+      wlevel = 2;
+      else if (distance < _s1DeviceSettingModel.criticallevelabove) wlevel = 3;
+    }
+    status = json["simStatus"] ?? 1;
+    openManhole = json["openManhole"];
+    temperature = json["temperature"];
+    address = json["address"] ?? "Empty";
+  }
 
-  toJson() {
-    return {
+  toS1Json() {
+    return <String, dynamic>{
       "id": id,
       "battery": battery,
       "latitude": latitude,
       "longitude": longitude,
-      "wLevel": wlevel,
       "distance": distance,
       "simStatus": status,
       "openManhole": openManhole,
       "address": address,
       "temperature": temperature
+    };
+  }
+  toS0Json() {
+    return <String, dynamic>{
+      "id": id,
+      "battery": battery,
+      "latitude": latitude,
+      "longitude": longitude,
+      "wLevel": wlevel,
+      "simStatus": status,
+      "openManhole": openManhole,
+      "address": address,
     };
   }
 }
@@ -241,6 +327,7 @@ class ClientDetailModel {
   String selectedSeries;
   String selectedManager;
   String selectedAdmin;
+  String sheetURL;
 
   ClientDetailModel(
       {this.clientName,
@@ -250,10 +337,10 @@ class ClientDetailModel {
       this.stateName,
       this.selectedSeries,
       this.selectedManager,
-      this.selectedAdmin});
+      this.selectedAdmin,
+      this.sheetURL});
 
   ClientDetailModel.fromJson(Map<dynamic, dynamic> json) {
-    print("json================$json");
     clientName = json['clientName'];
     departmentName = json['departmentName'];
     cityName = json['cityName'];
@@ -262,6 +349,7 @@ class ClientDetailModel {
     selectedSeries = json['selectedSeries'];
     selectedManager = json['selectedManager'];
     selectedAdmin = json['selectedAdmin'];
+    sheetURL = json['sheetURL'];
   }
 
   Map<String, dynamic> toJson() {
@@ -274,6 +362,7 @@ class ClientDetailModel {
     data['selectedSeries'] = this.selectedSeries;
     data['selectedManager'] = this.selectedManager;
     data['selectedAdmin'] = this.selectedAdmin;
+    data['sheetURL'] = this.sheetURL;
     return data;
   }
 }
@@ -289,3 +378,12 @@ class ClientListModel {
     return data;
   }
 }
+
+
+class SeriesInfo {
+  Object model;
+  final Widget bottomLayout;
+  final Widget deviceSetting;
+  SeriesInfo({@required this.model, @required this.bottomLayout, @required this.deviceSetting});
+}
+

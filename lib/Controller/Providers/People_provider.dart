@@ -2,9 +2,9 @@ import 'package:Decon/Models/Models.dart';
 import 'package:flutter/cupertino.dart';
 
 class PeopleProvider extends ChangeNotifier {
- List<ClientDetailModel> listClientDetailModel = [];
+ Map<String, ClientDetailModel> listClientDetailModel = {};
   
- void changeClientDetail(List<ClientDetailModel> _list ){
+ void changeClientDetail(Map<String, ClientDetailModel> _list ){
   listClientDetailModel = _list;
   notifyListeners();
  }

@@ -13,6 +13,15 @@ class AppConstant {
       ),
     );
   }
+  static Widget whitenoDataFound(){
+    return Center(
+      child: Text("No Data Found",
+      style: TextStyle(
+        color: Colors.white
+      ),
+      ),
+    );
+  }
   static Widget noClientFound(){
     return Center(
       child: Text("No Client Found",

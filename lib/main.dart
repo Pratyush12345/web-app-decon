@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
            ChangeNotifierProvider(create: (context)=> PeopleProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeDrawerItems(),),
            ChangeNotifierProvider(create: (context)=> ChangeWhenGetClientsList(),),
-           ChangeNotifierProvider(create: (context)=> ChangeCity(),),
+           ChangeNotifierProvider(create: (context)=> ChangeClient(),),
+           ChangeNotifierProvider(create: (context)=> ChangeSeries(),),
+           ChangeNotifierProvider(create: (context)=> ChangeDeviceData(),),
            ChangeNotifierProvider(create: (context)=> ChangeDeviceSeting(),),
           ],
         child: MaterialApp(

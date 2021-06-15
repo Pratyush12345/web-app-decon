@@ -13,6 +13,7 @@ class Add_admin extends StatefulWidget {
 
 
 class _Add_admin extends State<Add_admin> {
+  
   final _phoneNumberController = TextEditingController();
   final _nameController = TextEditingController();
   final _adminpostController = TextEditingController();
@@ -24,11 +25,11 @@ class _Add_admin extends State<Add_admin> {
     if(_formKey.currentState.validate()){
           
 
-                                      dbRef
+           DatabaseReference ref =     dbRef
                                           .reference()
                                           .child("admins")
-                                          .push()
-                                          .update({
+                                          .push();
+                            ref.update({
                                         "name": _nameController.text,
                                         "phoneNo":
                                             "+91${_phoneNumberController.text}",
@@ -37,6 +38,11 @@ class _Add_admin extends State<Add_admin> {
                                          
                                         "clientsVisible": _clientController.text.trim(),
                                     
+                                      });
+                                      FirebaseDatabase.instance.reference()
+                                          .child("clients/${_clientController.text.trim()}/Detail")
+                                          .update({
+                                        "selectedAdmin": ref.key,         
                                       });
                                       FirebaseFirestore.instance
                                           .collection('CurrentLogins')

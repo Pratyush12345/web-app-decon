@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 class Updatelocation extends StatefulWidget {
   final BuildContext menuScreenContext;
-  //final List<DeviceData> allDeviceList;
   Updatelocation({Key key, this.menuScreenContext,})
       : super(key: key);
 
@@ -29,7 +28,7 @@ class _Updatelocation extends State<Updatelocation> {
         context: context,
         builder: (context) {
           return LocationDialog(
-            cityid: device.id,
+            deviceId: device.id,
             initalAddress: device.address,
             initialLatitude: device.latitude,
             initialLongitude: device.longitude,
@@ -45,7 +44,7 @@ class _Updatelocation extends State<Updatelocation> {
         title: Text("Update Location"),
       ),
       body: Container(
-        child: Consumer<ChangeCity>(
+        child: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
             _filteredDeviceData = [];
             changeList.allDeviceData.forEach((element) {
@@ -178,7 +177,7 @@ class _Updatelocation extends State<Updatelocation> {
                                     ),
                                     child: SizedBox(
                                         height: SizeConfig.v * 3.9,
-                                        child: RaisedButton(
+                                        child: MaterialButton(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: SizeConfig.b * 2),
                                             color: Color(0xff263238),

@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationDialog extends StatefulWidget {
-  final String cityid;
+  final String deviceId;
   final String initalAddress;
   final double initialLatitude, initialLongitude;
   LocationDialog(
-      {@required this.cityid,
+      {@required this.deviceId,
       @required this.initalAddress,
       @required this.initialLatitude,
       @required this.initialLongitude});
@@ -135,7 +135,7 @@ class _LocationDialog extends State<LocationDialog> {
             Container(
                 width: 200,
                 child: Text(
-                    "Are You sure?\nLocation of ${widget.cityid.split("_")[2].replaceAll("D", "Device ")} is :",
+                    "Are You sure?\nLocation of ${widget.deviceId.split("_")[2].replaceAll("D", "Device ")} is :",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Colors.white, fontSize: SizeConfig.b * 4.09))),
@@ -213,7 +213,7 @@ class _LocationDialog extends State<LocationDialog> {
                           await FirebaseDatabase.instance
                               .reference()
                               .child(
-                                  "cities/${widget.cityid.split("_")[0]}/Series/${widget.cityid.split("_")[1]}/Devices/${widget.cityid.split("_")[2]}")
+                                  "clients/${widget.deviceId.split("_")[0]}/series/${widget.deviceId.split("_")[1]}/devices/${widget.deviceId.split("_")[2]}")
                               .update({
                             "latitude": _lat,
                             "longitude": _lon,

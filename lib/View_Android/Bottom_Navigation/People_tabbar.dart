@@ -1,13 +1,14 @@
 import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/ViewModels/people_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/View_Android/Bottom_Navigation/PeopleForAdmin.dart';
+import 'package:Decon/View_Android/Bottom_Navigation/All_people.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Admin.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Manager.dart';
 import 'package:Decon/View_Android/Dialogs/Replace_Admin.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/View_Android/Dialogs/Replace_Manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class PeopleTabBar extends StatefulWidget {
 class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMixin {
   TabController _tabController;
   List<UserDetailModel> _listUserDetailModelAdmins = [];
-  List<ClientDetailModel> _listClientDetailModel = [];
+  Map<String ,ClientDetailModel> _listClientDetailModel = {};
   List<UserDetailModel> _listUserDetailModelManager;
 
   @override
@@ -55,29 +56,36 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_admin(
-          );
+          return Add_admin();
         });
   }
 
-  Future showReplaceAdminDialog(BuildContext context, String cityCode,
-      String cityName, String stateName, String phoneNo) {
+  Future showReplaceAdminDialog(BuildContext context, String clientVisible, String uid) {
     return showDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
           return Replace_Admin(
-            cityCode: cityCode,
-            cityName: cityName,
-            stateName: stateName,
-            phoneNo: phoneNo,
+            clientVisible: clientVisible ,
+            uid: uid,
           );
         });
   }
-  _getClientDetail(String clientCode) async{
-    print("cliendcode=============$clientCode");
+  
+  Future showReplaceManagerDialog(BuildContext context, String clientVisible, String uid) {
+    return showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return Replace_Manager(
+            clientVisible: clientVisible ,
+            uid: uid,
+          );
+        });
+  }
+  _getClientDetail(String clientCode, String uid) async{
    ClientDetailModel clientDetailModel = await PeopleVM.instance.getClientDetail(clientCode);
-   _listClientDetailModel.add(clientDetailModel);
+   _listClientDetailModel[uid] = (clientDetailModel);
    Provider.of<PeopleProvider>(context, listen: false).changeClientDetail(_listClientDetailModel);
 
   }
@@ -223,36 +231,13 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                   int index) {
                                                 return InkWell(
                                                   onLongPress: () {
-                                                    showDeleteDialog(context)
-                                                        .then((value) async {
-                                                      print(value);
-                                                      if (value == "Yes") {
-                                                        DataSnapshot snapshot =
-                                                            await FirebaseDatabase
-                                                                .instance
-                                                                .reference()
-                                                                .child(
-                                                                    "/managerList/")
-                                                                .orderByChild(
-                                                                    "phoneNo")
-                                                                .equalTo(
-                                                                    _listUserDetailModelManager[
-                                                                            index]
-                                                                        .phoneNo)
-                                                                .once();
-                                                        Map _map =
-                                                            snapshot.value;
-                                                        _map.forEach(
-                                                            (key, value) {
-                                                          FirebaseDatabase
-                                                              .instance
-                                                              .reference()
-                                                              .child(
-                                                                  "/managerList/$key")
-                                                              .remove();
-                                                        });
-                                                      }
-                                                    });
+                                                    {
+                                                    showReplaceManagerDialog(
+                                                        context,
+                                                        _listUserDetailModelAdmins[index].clientsVisible,
+                                                        _listUserDetailModelAdmins[index].key,
+                                                        );
+                                                  }
                                                   },
                                                   child: Column(children: [
                                                     Container(
@@ -418,7 +403,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                             UserDetailModel userDetailModel = UserDetailModel.fromJson(key.toString(), value); 
                                             _listUserDetailModelAdmins.add(userDetailModel);
                                             
-                                          _getClientDetail(userDetailModel.clientsVisible);
+                                          _getClientDetail(userDetailModel.clientsVisible, userDetailModel.key);
                                           });
 
                                         if(snapshot.data.snapshot.value!=null)
@@ -430,132 +415,133 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                               itemCount: _listUserDetailModelAdmins.length,
                                               itemBuilder: (BuildContext ctxt,
                                                   int index) {
-                                                return InkWell(
-                                                  onLongPress: () {
-                                                    showReplaceAdminDialog(
-                                                        context,
-                                                        _listUserDetailModelAdmins[index].clientsVisible,
-                                                        "cityname",
-                                                        "statename",
-                                                        _listUserDetailModelAdmins[index].phoneNo,
-                                                        );
-                                                  },
-                                                  onTap: () {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PeopleForAdmin(
-                                                          fromManager: true,
-                                                          cityCode:
-                                                              "clientCode",
+                                                return Consumer<PeopleProvider>(
+                                                                builder: (context, model, child)=>(
+                                                  InkWell(
+                                                    onLongPress: () {
+                                                      showReplaceAdminDialog(
+                                                          context,
+                                                          _listUserDetailModelAdmins[index].clientsVisible,
+                                                          _listUserDetailModelAdmins[index].key,
+                                                          );
+                                                    },
+                                                    onTap: () {
+                                                      Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AllPeople(
+                                                            clientCode:_listUserDetailModelAdmins[index].clientsVisible,
+                                                            clientDetailModel: model.listClientDetailModel[_listUserDetailModelAdmins[index].key],
+                                                                
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0xFFECECEC),
-                                                          borderRadius: BorderRadius.circular(SizeConfig.b *1),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.grey.withOpacity(0.5),
-                                                              spreadRadius: 2,
-                                                              blurRadius: 3,
-                                                              offset: Offset(0,2), // changes position of shadow
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        margin: EdgeInsets.fromLTRB(SizeConfig.b *5.1,1,SizeConfig.b *5.1,1),
-                                                        padding:EdgeInsets.fromLTRB(
-                                                                SizeConfig.b *5.1,
-                                                                SizeConfig.v *1,
-                                                                SizeConfig.b * 5.1,
-                                                                SizeConfig.v *1),
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children: [
-                                                                    Container(
-                                                                      width: SizeConfig.b *40.72,
-                                                                      child:
-                                                                          Text(_listUserDetailModelAdmins[index].name,
-                                                                        style:TextStyle(
-                                                                          color: Colors.black,
-                                                                          fontSize: SizeConfig.b * 4.5,
-                                                                          fontWeight: FontWeight.w700,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(height:SizeConfig.v *1),
-                                                                    Text(_listUserDetailModelAdmins[index].delegate,
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontSize: SizeConfig.b *3.1,
-                                                                          fontWeight: FontWeight.w500),
-                                                                    ),
-                                                                    SizedBox(height:SizeConfig.v *1),
-                                                                    Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            height:SizeConfig.v * 2.572,
-                                                                             width: SizeConfig.b * 4.58,
-                                                                            child:
-                                                                                IconButton(
-                                                                              onPressed: null,
-                                                                              padding: EdgeInsets.zero,
-                                                                              icon: Icon(Icons.call, color: Colors.green, size: SizeConfig.b * 4),
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              width: SizeConfig.b * 2),
-                                                                          Text(
-                                                                            _listUserDetailModelAdmins[index].phoneNo,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Colors.black,
-                                                                              fontSize: SizeConfig.b * 3.1,
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
-                                                                          ),
-                                                                        ]),
-                                                                  ]),
-                                                            ),
-                                                            Spacer(),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Consumer<PeopleProvider>(
-                                                                builder: (context, model, child)=>
-                                                                 Column(
-                                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                      );
+                                                    },
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            color: Color(0xFFECECEC),
+                                                            borderRadius: BorderRadius.circular(SizeConfig.b *1),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors.grey.withOpacity(0.5),
+                                                                spreadRadius: 2,
+                                                                blurRadius: 3,
+                                                                offset: Offset(0,2), // changes position of shadow
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          margin: EdgeInsets.fromLTRB(SizeConfig.b *5.1,1,SizeConfig.b *5.1,1),
+                                                          padding:EdgeInsets.fromLTRB(
+                                                                  SizeConfig.b *5.1,
+                                                                  SizeConfig.v *1,
+                                                                  SizeConfig.b * 5.1,
+                                                                  SizeConfig.v *1),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                                     children: [
-                                                                      Text("${model.listClientDetailModel[index]?.cityName??"Loading..."}",
-                                                                        style:TextStyle(
-                                                                          color: Colors.black,
-                                                                          fontSize: SizeConfig.b *4.1,
-                                                                          fontWeight: FontWeight.w500,
+                                                                      Container(
+                                                                        width: SizeConfig.b *40.72,
+                                                                        child:
+                                                                            Text(_listUserDetailModelAdmins[index].name,
+                                                                          style:TextStyle(
+                                                                            color: Colors.black,
+                                                                            fontSize: SizeConfig.b * 4.5,
+                                                                            fontWeight: FontWeight.w700,
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                      SizedBox(height: SizeConfig.v *1),
-                                                                      Text("${model.listClientDetailModel[index]?.stateName??""}",
-                                                                          style: TextStyle(
-                                                                              color: Colors.black,
-                                                                              fontSize: SizeConfig.b * 3.0)),
+                                                                      SizedBox(height:SizeConfig.v *1),
+                                                                      Text(_listUserDetailModelAdmins[index].delegate,
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .black,
+                                                                            fontSize: SizeConfig.b *3.1,
+                                                                            fontWeight: FontWeight.w500),
+                                                                      ),
+                                                                      SizedBox(height:SizeConfig.v *1),
+                                                                      Row(
+                                                                          children: [
+                                                                            Container(
+                                                                              height:SizeConfig.v * 2.572,
+                                                                               width: SizeConfig.b * 4.58,
+                                                                              child:
+                                                                                  IconButton(
+                                                                                onPressed: null,
+                                                                                padding: EdgeInsets.zero,
+                                                                                icon: Icon(Icons.call, color: Colors.green, size: SizeConfig.b * 4),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                                width: SizeConfig.b * 2),
+                                                                            Text(
+                                                                              _listUserDetailModelAdmins[index].phoneNo,
+                                                                              style:
+                                                                                  TextStyle(
+                                                                                color: Colors.black,
+                                                                                fontSize: SizeConfig.b * 3.1,
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
+                                                                          ]),
                                                                     ]),
                                                               ),
-                                                            )
-                                                          ],
+                                                              Spacer(),
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: 
+                                                                   Column(
+                                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                                      children: [
+                                                                        Text("${model.listClientDetailModel[_listUserDetailModelAdmins[index].key]?.cityName??"Loading..."}",
+                                                                          style:TextStyle(
+                                                                            color: Colors.black,
+                                                                            fontSize: SizeConfig.b *4.1,
+                                                                            fontWeight: FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(height: SizeConfig.v *1),
+                                                                        Text("${model.listClientDetailModel[_listUserDetailModelAdmins[index].key]?.stateName??""}",
+                                                                            style: TextStyle(
+                                                                                color: Colors.black,
+                                                                                fontSize: SizeConfig.b * 3.0)),
+                                                                      ]),
+                                                                ),
+                                                              
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                          height: SizeConfig.v * 1),
-                                                    ],
-                                                  ),
+                                                        SizedBox(
+                                                            height: SizeConfig.v * 1),
+                                                      ],
+                                                    ),
+                                                  )
+                                                                )
                                                 );
                                               });
                                               else

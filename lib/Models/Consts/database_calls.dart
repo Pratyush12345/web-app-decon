@@ -18,6 +18,49 @@ class DatabaseCallServices extends BaseCall{
    DataSnapshot snapshot = await databaseOnceCall(url);
    return UserDetailModel.fromJson(snapshot.key, snapshot.value);
   }
+  Future setManagerClientVisible(String uid, String clientsVisible) async {
+   String url = "${DatabasePath.getManagerCredentials}/$uid";
+   return await databaseUpdateCall(url, {"clientsVisible": clientsVisible });
+  }
+  
+
+  Future<UserDetailModel> getAdminCredentails(String uid) async {
+   String url = "${DatabasePath.getAdminCredentials}/$uid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+  }
+
+  Future<UserDetailModel> getManagerTeamCredentails(String managerUid, String uid) async {
+   String url = "${DatabasePath.getManagerTeamCredentials}/$managerUid/$uid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+  }
+
+  Future<UserDetailModel> getadminTeamCredentails(String adminUid, String uid) async {
+   String url = "${DatabasePath.getAdminCredentials}/$adminUid/$uid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+  }
+
+  Future<List<UserDetailModel>> getManagerTeamCredentailsList(String managerUid) async {
+   String url = "${DatabasePath.getManagerTeamCredentials}/$managerUid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   List<UserDetailModel> _list = [];
+   (snapshot.value as Map)?.forEach((key, value) { 
+     _list.add(UserDetailModel.fromJson(key, value));
+   });
+    return _list;
+    }
+
+  Future<List<UserDetailModel>> getAdminTeamCredentailsList(String adminUid) async {
+   String url = "${DatabasePath.getAdminTeamCredentials}/$adminUid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   List<UserDetailModel> _list = [];
+   (snapshot.value as Map)?.forEach((key, value) { 
+     _list.add(UserDetailModel.fromJson(key, value));
+   });
+    return _list;
+    }  
 
   Future<ClientDetailModel> getClientDetail(String clientCode) async {
    String url = "${DatabasePath.getClientDetail}/$clientCode/Detail";
@@ -49,9 +92,28 @@ class DatabaseCallServices extends BaseCall{
     return await databaseUpdateCall(url, {"isActive" : 0} );
   }
 
+
   Future activateClient(String clientCode) async{
     String url = "${DatabasePath.client}/$clientCode";
     return await databaseUpdateCall(url, {"isActive" : 1} );
   }
 
+  Future setDeviceSettingDefault(String clientCode, String seriesCode) async{
+    String url = "${DatabasePath.client}/$clientCode/series/$seriesCode/DeviceSetting";
+    if(seriesCode == "S0"){
+    return await databaseUpdateCall(url, S0DeviceSettingModel().toDefaultJson());
+    }
+    else if(seriesCode == "S1"){
+    return await databaseUpdateCall(url, S1DeviceSettingModel().toDefaultJson());
+    }
+  }
+ Future setDeviceSetting(String clientCode, String seriesCode, Map<String, dynamic> jsonData ) async{
+    String url = "${DatabasePath.client}/$clientCode/series/$seriesCode/DeviceSetting";
+    if(seriesCode == "S0"){
+    return await databaseUpdateCall(url, jsonData);
+    }
+    else if(seriesCode == "S1"){
+    return await databaseUpdateCall(url, jsonData);
+    }
+  }
 }

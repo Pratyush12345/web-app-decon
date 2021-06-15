@@ -20,13 +20,17 @@ class _AddClientState extends State<AddClient> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _sheetController = TextEditingController();
+ 
   UserDetailModel _userDetailModel;
+  UserDetailModel _previousUserDetailModel;
 
    _initializeData() async{
     AddClientVM.instance.init(); 
     if(widget.isedit){
     await AddClientVM.instance.getClientDetail(widget.clientCode);
     _userDetailModel = await AddClientVM.instance.getManagerDetail();
+    _previousUserDetailModel = _userDetailModel;
     }
     await AddClientVM.instance.getSeriesList();
     setState(() {});
@@ -46,7 +50,6 @@ class _AddClientState extends State<AddClient> {
              else{
              AddClientVM.instance.selectedSeries = AddClientVM.instance.selectedSeries.replaceAll(","+e.trim(), "");
              }
-             print(AddClientVM.instance.selectedSeries);
              
              setState(() {});
          })
@@ -134,39 +137,18 @@ class _AddClientState extends State<AddClient> {
                 fontSize: 12.0
               ),
             ),
+            TextField(
+              controller: _sheetController..text = AddClientVM.instance.clientDetailModel?.sheetURL,
+              decoration: InputDecoration(
+                hintText: "Enter Sheet URL"
+              ),
+              style: TextStyle(
+                fontSize: 12.0
+              ),
+            ),
+            
             SizedBox(height: 15.0,),
             _getSeriesWidget(),
-            // Padding(
-            //       padding: EdgeInsets.all(12.0),
-            //       child: DropdownButtonFormField<String>(
-            //         onChanged: (value) async {
-            //            AddClientVM.instance.seriesValue = value;
-            //            setState(() {
-                         
-            //            });
-            //          },
-
-            //         decoration: InputDecoration(
-            //           hintText: 'Select',
-            //           labelText: 'Select Series',
-            //         ),
-            //         value: AddClientVM.instance.seriesValue ,
-            //         items:    
-            //               AddClientVM.instance.seriesList.map((e) => 
-            //               DropdownMenuItem<String>(
-            //                       child: Text(e),
-            //                       value: e.toString(),
-            //                     )
-            //               ).toList(),
-            //         onSaved: (val) {
-            //          // widget.saveOrderLine.intContractId = int.parse(val);
-            //         },
-            //         validator: (val) {
-            //           print('value is $val');
-            //           if (val == null) return 'Please choose an option.';
-            //           return null;
-            //         },
-            //       )),
             SizedBox(height: 15.0,),
             if(_userDetailModel.key !=null)
             Card(
@@ -194,7 +176,7 @@ class _AddClientState extends State<AddClient> {
               onPressed: (){
                 ClientListModel clientListModel = ClientListModel(
                   clientCode: widget.clientCode,
-                  clientName: _cityController.text.trim()
+                  clientName: _nameController.text.trim()
                 );
                 ClientDetailModel model = ClientDetailModel(
                   cityName: _cityController.text.trim(),
@@ -203,10 +185,11 @@ class _AddClientState extends State<AddClient> {
                   districtName: _districtController.text.trim(),
                   selectedSeries: AddClientVM.instance.selectedSeries,
                   stateName: _stateController.text.trim(),
-                  selectedManager: _userDetailModel.key
+                  selectedManager: _userDetailModel.key,
+                  selectedAdmin: "",
+                  sheetURL: _sheetController.text.trim()
                 );
-                AddClientVM.instance.onPressedDone(context, widget.clientCode, model, clientListModel);  
-                
+                AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
             }),      
           ],
         ),

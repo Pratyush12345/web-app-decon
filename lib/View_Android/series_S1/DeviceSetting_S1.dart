@@ -1,28 +1,25 @@
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/Controller/ViewModels/device_setting_viewmodel.dart';
+import 'package:Decon/View_Android/series_S1/device_setting_viewmodel_S1.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
-import 'package:Decon/View_Android/DrawerFragments/DeviceSetting/Updatelocation.dart';
+
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/View_Android/DrawerFragments/Updatelocation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 
-class DeviceSettings extends StatefulWidget {
-
-  String cityCode;
-  DeviceSettings({Key key, this.cityCode})
-      : super(key: key);
+class DeviceSettingsS1 extends StatefulWidget {
 
   @override
   _DeviceSettings createState() => _DeviceSettings();
 }
 
-class _DeviceSettings extends State<DeviceSettings> {
+class _DeviceSettings extends State<DeviceSettingsS1> {
   
   @override
   void initState() {
@@ -71,7 +68,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.maholesdepth,
+                              controller: DeviceSettingS1VM.instance.maholesdepth,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -118,7 +115,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.crticallevelabove,
+                              controller: DeviceSettingS1VM.instance.crticallevelabove,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -159,7 +156,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.informativelevelabove,
+                              controller: DeviceSettingS1VM.instance.informativelevelabove,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -200,7 +197,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.normallevelabove,
+                              controller: DeviceSettingS1VM.instance.normallevelabove,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -241,7 +238,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.groundlevelbelow,
+                              controller: DeviceSettingS1VM.instance.groundlevelbelow,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -287,7 +284,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.tempthresholdvalue,
+                              controller: DeviceSettingS1VM.instance.tempthresholdvalue,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -328,7 +325,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                                 borderRadius:
                                     BorderRadius.circular(SizeConfig.b * 1.1)),
                             child: TextField(
-                              controller: DeviceSettingVM.instance.batterythresholdvalue,
+                              controller: DeviceSettingS1VM.instance.batterythresholdvalue,
                               style: TextStyle(fontSize: SizeConfig.b * 3.2),
                               decoration: InputDecoration(
                                 isDense: true,
@@ -352,7 +349,7 @@ class _DeviceSettings extends State<DeviceSettings> {
                       width: SizeConfig.screenWidth * 100 / 360,
                       child: MaterialButton(
                         onPressed: () {
-                          DeviceSettingVM.instance.onAddPressed();
+                          DeviceSettingS1VM.instance.onAddPressed();
                         },
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),

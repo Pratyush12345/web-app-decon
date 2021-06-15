@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/View_Android/MainPage/Layout/BottomLayout.dart';
+import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
+import 'package:Decon/View_Android/series_S0/BottomLayout_S0.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
@@ -47,7 +48,7 @@ class HomeState extends State<Home> {
     
 
     return Scaffold(
-      body: Consumer<ChangeCity>(
+      body: Consumer<ChangeDeviceData>(
         builder: (context, changeList, child){
           if (GlobalVar.isclientchanged && changeList.allDeviceData.length != 0) {
            _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
@@ -55,7 +56,7 @@ class HomeState extends State<Home> {
           return Stack(
                  children: <Widget>[googlemap(context, changeList.allDeviceData), 
                              searchBar(changeList.allDeviceData), 
-                             showBottomLayout(changeList.allDeviceData)],
+                             showBottomLayout()],
         );
         },
       ),
@@ -106,7 +107,7 @@ class HomeState extends State<Home> {
               ),
             ),
           ]),
-          SizedBox(height: SizeConfig.v * 1.5),
+          SizedBox(height: SizeConfig.v * 1.5),  
           Spacer()
         ]);
   }
@@ -269,16 +270,17 @@ class HomeState extends State<Home> {
     );
   }
 
-  Widget showBottomLayout(List<DeviceData> allDeviceData) {
+  Widget showBottomLayout() {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
-          height: MediaQuery.of(context).size.height * (0.29),
-          child: BottomLayout(
-            allDeviceData: allDeviceData,
-          )),
+      child: Consumer<ChangeSeries>(
+        builder: (context, _, child)=>
+            Container(
+            color: Colors.white,
+            padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
+            height: MediaQuery.of(context).size.height * (0.29),
+            child: GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout),
+      ),
     );
   }
 }

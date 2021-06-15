@@ -1,42 +1,65 @@
-import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
-import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
-class Add_man extends StatefulWidget {
+class Replace_Manager extends StatefulWidget {
+  final String clientVisible;
+  final String uid;
+  Replace_Manager({this.clientVisible, this.uid});
   @override
-  _Add_man createState() => _Add_man();
+  _Replace_Manager createState() => _Replace_Manager();
 }
 
-class _Add_man extends State<Add_man> {
+class _Replace_Manager extends State<Replace_Manager> {
+  
   final _phoneNoController = TextEditingController();
   final _nameController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
-  void validate(){
+  void validate() async{
     if(_formKey.currentState.validate()){
-      FirebaseDatabase.instance
-                            .reference()
-                            .child("managers")
-                            .push()
-                            .update({
-                          "name": _nameController.text,
-                          "phoneNo": "+91${_phoneNoController.text}",
-                          "post": "Manager@Vysion",
-                          "clientsVisible": ""
-                        });
-                        FirebaseFirestore.instance
-                            .collection('CurrentLogins')
-                            .doc("+91${_phoneNoController.text}")
-                            .set({
-                          "value" : "Manager_BySuperAdmin"
-                        });
-                        //post_clientsVisible
-                        Navigator.of(context).pop();
-                      
+          
+
+                              FirebaseFirestore.instance
+                              .collection('CurrentLogins')
+                              .doc("+91${_phoneNoController.text}")
+                              .set({
+                            "value":
+                                "Manager_BySuperAdmin"
+                          });
+
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child("managers/${widget.uid}")
+                                .remove();
+                          
+                          DatabaseReference ref =  FirebaseDatabase.instance.reference()
+                                          .child("managers")
+                                          .push();
+                          ref.update({
+                                        "name": _nameController.text,
+                                        "phoneNo":
+                                            "+91${_phoneNoController.text}",
+                                        "post":
+                                            "Manager@Vysion",
+                                         
+                                        "clientsVisible": widget.clientVisible,
+                                    
+                                      });                
+                       List<String> clientsList =  widget.clientVisible.split(","); 
+                       for(int i =0; i<clientsList.length;i++){
+                          FirebaseDatabase.instance.reference()
+                                          .child("clients/${clientsList[i]}/Detail")
+                                          .update({
+                                        "selectedManager": ref.key,
+                                        
+                                      });            
+                         
+                       }                
+                          Navigator.of(context).pop();
+                         
     }
     else{
       print("Not Validated");
@@ -45,23 +68,24 @@ class _Add_man extends State<Add_man> {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context); 
+    SizeConfig().init(context);
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(
+        insetPadding: EdgeInsets.symmetric(
         horizontal: SizeConfig.screenWidth * 25 / 360,
-      ),
+        ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(SizeConfig.b * 2.25),
       ),
+    
       child: Container(
         padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 4.0),
         decoration: BoxDecoration(
-          color: Color(0xff263238),
-          borderRadius: BorderRadius.circular(SizeConfig.b * 2.25)
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
+        color: Color(0xff263238),
+        borderRadius: BorderRadius.circular(SizeConfig.b * 2.25)
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: SizeConfig.v * 2.5),
@@ -71,24 +95,22 @@ class _Add_man extends State<Add_man> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Text(
-                        "Enter Name",
-                        style: TextStyle(
-                            fontSize: SizeConfig.b * 4.07,
-                            color: Colors.white),
-                      ),
+                      child: Text("Name",
+                          style: TextStyle(
+                              fontSize: SizeConfig.b * 4.07,
+                              color: Colors.white)),
                     ),
-                    Expanded(
-                      flex: 2,
+                     Expanded(
+                       flex: 2,
                       child: TextFormField(
                         validator: (val){
-                          if(val.isEmpty)
-                          return "Name Cannot be empty";
-                          else
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
+                        if(val.isEmpty)
+                        return "Name Cannot be empty";
+                        else
+                        return null;
+                      },
                         controller: _nameController,
+                        keyboardType: TextInputType.text,
                         style: TextStyle(fontSize: SizeConfig.b * 4.3),
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
@@ -98,7 +120,7 @@ class _Add_man extends State<Add_man> {
                           hintText: 'Enter Name',
                           hintStyle:
                               TextStyle(fontSize: SizeConfig.b * 4),
-                          border: OutlineInputBorder(),
+                          border: InputBorder.none,
                         ),
                       ),
                     ),
@@ -110,7 +132,7 @@ class _Add_man extends State<Add_man> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Text("Mobile Number",
+                      child: Text("Phone Number",
                           style: TextStyle(
                               fontSize: SizeConfig.b * 4.07,
                               color: Colors.white)),
@@ -128,24 +150,25 @@ class _Add_man extends State<Add_man> {
                         keyboardType: TextInputType.number,
                         style: TextStyle(fontSize: SizeConfig.b * 4.3),
                         decoration: InputDecoration(
-                          
                           contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-                          fillColor: Colors.white,
-                          filled: true,
+                            fillColor: Colors.white,
+                            filled: true,
                           isDense: true,
                           hintText: 'Enter Phone Number',
                           hintStyle:
                               TextStyle(fontSize: SizeConfig.b * 4),
-                          border: OutlineInputBorder(),),
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
+                    
                   ]),
-              SizedBox(height: SizeConfig.v * 4),
+              SizedBox(height: SizeConfig.v * 2),
               SizedBox(
-                width: SizeConfig.screenWidth * 100 / 360,
+                width: SizeConfig.screenWidth * 120 / 360,
                 child: MaterialButton(
                   padding: EdgeInsets.zero,
-                  onPressed: () {
+                  onPressed: (){
                     validate();
                   },
                   shape: RoundedRectangleBorder(
@@ -153,7 +176,7 @@ class _Add_man extends State<Add_man> {
                   ),
                   color: Color(0xff00A3FF),
                   child: Text(
-                    'ADD',
+                    'Replace',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: SizeConfig.b * 4.2,
@@ -163,7 +186,7 @@ class _Add_man extends State<Add_man> {
               ),
             ],
           ),
-        ),
+      ),
       ),
     );
   }

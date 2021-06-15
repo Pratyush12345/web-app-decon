@@ -1,11 +1,10 @@
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 
-class ChangeCity extends ChangeNotifier{
+class ChangeDeviceData extends ChangeNotifier{
   
   List<DeviceData> allDeviceData = [];
-
+  
   void _sortList(){
     allDeviceData.sort((a, b) =>
           int.parse(a.id.split("_")[2].substring(1, 2))
@@ -17,22 +16,57 @@ class ChangeCity extends ChangeNotifier{
     notifyListeners();
   }
 
-  void changecity(String methodName, {int index, DeviceData newDeviceData } ){
+  void changeDeviceData(String methodName, { DeviceData newDeviceData } ){
     
     if(methodName == "onDeviceAdded"){
       allDeviceData.add(newDeviceData);
       _sortList();
     }
-    else if(methodName == "onDeviceChanged" && index!=null){
-      allDeviceData[index] = newDeviceData;
+    else if(methodName == "onDeviceChanged" ){
+      int index = allDeviceData.indexWhere((element) => element.id == newDeviceData.id); 
+      if(index!=-1){
+        allDeviceData[index] = newDeviceData;
+      }else{
+        allDeviceData.add(newDeviceData);
+        _sortList();
+      }
     }
-    else if(methodName == "onDeviceChanged" && index==null){
-      allDeviceData.add(newDeviceData);
-      _sortList();
-    }
-    
     notifyListeners();
   }
+
+  
+}
+
+class ChangeClient extends ChangeNotifier {
+  ClientDetailModel clientDetailModel;
+
+  reinitialize(){
+    clientDetailModel = ClientDetailModel();
+    notifyListeners();
+  }
+
+  void changeClientDetail(ClientDetailModel _clientDetailModel){
+    clientDetailModel = _clientDetailModel;
+    notifyListeners();
+  }
+
+}
+
+class ChangeSeries extends ChangeNotifier {
+  String selectedSeries;
+  List<String> seriesList;
+
+  reinitialize(){
+    selectedSeries = "";
+    seriesList = [];
+  }
+
+  void changeDeconSeries(String _selectedSeries, List<String> _seriesList){
+    selectedSeries = _selectedSeries;
+    seriesList = _seriesList;
+    notifyListeners();
+  }
+
 }
 
 class ChangeWhenGetClientsList extends ChangeNotifier{

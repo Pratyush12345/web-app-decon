@@ -57,7 +57,7 @@ class _AllDevicesState extends State<AllDevices> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      child: Consumer<ChangeCity>(
+      child: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
             _filteredDeviceData =[];
             changeList.allDeviceData.forEach((element) {

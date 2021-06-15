@@ -1,4 +1,4 @@
-import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
+import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -27,25 +27,36 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
   }
 
   _updatedatabase(double latitude, double longitude) async {
-    String cityCode = _deviceIdText.text.split("_")[0];
-    String seriescode = _deviceIdText.text.split("_")[1];
-    String deviceCode = _deviceIdText.text.split("_")[2];
+    String clientCode = HomePageVM.instance.getClientCode;
+    String seriescode = HomePageVM.instance.getSeriesCode;
+    String deviceCode = _deviceIdText.text;
     String address = await AddressCalculator(latitude, longitude).getLocation();
     if (widget.isUpdating) {
       await FirebaseDatabase.instance
           .reference()
-          .child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
+          .child("clients/$clientCode/series/$seriescode/devices/$deviceCode")
           .update({
         "latitude": latitude,
         "longitude": longitude,
         "address": address,
       });
     } else {
-      await FirebaseDatabase.instance
-          .reference()
-          .child("cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
-          .update(DeviceData(
-                  id: _deviceIdText.text,
+      Map<String, dynamic> _deviceData;
+      if(seriescode == "S0"){
+        _deviceData = DeviceData(
+                  id: "${clientCode}_${seriescode}_${_deviceIdText.text}",
+                  battery: 100,
+                  latitude: latitude,
+                  longitude: longitude,
+                  status: 1,
+                  wlevel: 0,
+                  openManhole: "No Data",
+                  address: address,
+        ).toS0Json();
+      }
+      else if(seriescode == "S1"){
+        _deviceData =  DeviceData(
+                  id: "${clientCode}_${seriescode}_${_deviceIdText.text}",
                   battery: 100,
                   latitude: latitude,
                   longitude: longitude,
@@ -54,7 +65,12 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   openManhole: "No Data",
                   address: address,
                   temperature: 50.2)
-              .toJson());
+              .toS1Json();
+      }
+      await FirebaseDatabase.instance
+          .reference()
+          .child("clients/$clientCode/series/$seriescode/devices/$deviceCode")
+          .update(_deviceData);
     }
   }
 
@@ -115,14 +131,14 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                 height: SizeConfig.screenHeight * 15 / 640,
               ),
               !_addDeviceManually
-                  ? RaisedButton(
+                  ? MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.0),
                           side: BorderSide(color: Colors.blue)),
                       textColor: Colors.white,
                       elevation: 7.0,
                       color: Colors.blue,
-                      child: Text("Add Location of this Device"),
+                      child: Text("Get Current Location"),
                       onPressed: () async {
                         position = await getCurrentLocation();
                         await _updatedatabase(
@@ -190,7 +206,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
               SizedBox(
                 height: SizeConfig.screenHeight * 13 / 640,
               ),
-              RaisedButton(
+              MaterialButton(
                   onPressed: () async {
                     if (!_addDeviceManually)
                       setState(() {
@@ -202,10 +218,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                       double latitude = double.parse(_latitudeText.text);
                       double longitude = double.parse(_longitudeText.text);
                       //await _updatedatabase(double.parse(_latitudeText.text), double.parse(_longitudeText.text));
-                      String cityCode = _deviceIdText.text.split("_")[0];
-                      String seriescode = _deviceIdText.text.split("_")[1];
-                      String deviceCode = _deviceIdText.text.split("_")[2];
-
+                      String clientCode = HomePageVM.instance.getClientCode;
+                      String seriescode = HomePageVM.instance.getSeriesCode;
+                      String deviceCode = _deviceIdText.text;
+    
                       String address =
                           await AddressCalculator(latitude, longitude)
                               .getLocation();
@@ -213,28 +229,45 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                         await FirebaseDatabase.instance
                             .reference()
                             .child(
-                                "cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
+                                "clients/$clientCode/series/$seriescode/devices/$deviceCode")
                             .update({
                           "latitude": latitude,
                           "longitude": longitude,
                           "address": address,
                         });
                       } else {
+                        Map<String, dynamic> _deviceData;
+      if(seriescode == "S0"){
+        _deviceData = DeviceData(
+                  id: "${clientCode}_${seriescode}_${_deviceIdText.text}",
+                  battery: 100,
+                  latitude: latitude,
+                  longitude: longitude,
+                  status: 1,
+                  wlevel: 0,
+                  openManhole: "No Data",
+                  address: address,
+        ).toS0Json();
+      }
+      else if(seriescode == "S1"){
+        _deviceData =  DeviceData(
+                  id: "${clientCode}_${seriescode}_${_deviceIdText.text}",
+                  battery: 100,
+                  latitude: latitude,
+                  longitude: longitude,
+                  status: 1,
+                  distance: 3.9,
+                  openManhole: "No Data",
+                  address: address,
+                  temperature: 50.2)
+              .toS1Json();
+      }
+      
                         await FirebaseDatabase.instance
                             .reference()
                             .child(
-                                "cities/$cityCode/Series/$seriescode/Devices/$deviceCode")
-                            .update(DeviceData(
-                                    id: _deviceIdText.text,
-                                    battery: 100,
-                                    latitude: latitude,
-                                    longitude: longitude,
-                                    status: 1,
-                                    distance: 3.9,
-                                    openManhole: "No Data",
-                                    address: address,
-                                    temperature: 50.5)
-                                .toJson());
+                                "clients/$clientCode/series/$seriescode/devices/$deviceCode")
+                            .update(_deviceData);
                       }
                       Navigator.of(context).pop();
                     }

@@ -7,7 +7,7 @@ import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Android/DrawerFragments/AddDevice/AddDevice.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
-import 'package:Decon/View_Android/DrawerFragments/DeviceSetting/DeviceSetting.dart';
+import 'package:Decon/View_Android/DrawerFragments/Device_Setting.dart';
 import 'package:Decon/View_Android/DrawerFragments/HealthReport.dart';
 import 'package:Decon/View_Android/DrawerFragments/Home.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Statistics.dart';
@@ -54,10 +54,8 @@ Future showErrorDialog(BuildContext context) {
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
       HomePageVM.instance.scafoldKey.currentState.openEndDrawer();
   }
-
-  @override
-  Widget build(BuildContext context) {
-     final drawerItems = [
+  List<Widget> _getDrawerWidget(){
+    final drawerItems = [
       if(GlobalVar.strAccessLevel == "1")
       Item(
          title: Text("All Clients",
@@ -94,9 +92,7 @@ Future showErrorDialog(BuildContext context) {
             Icons.settings,
             color: tc,
           ),
-         screen: DeviceSettings(
-          cityCode: HomePageVM.instance.getCityCode,
-        )),
+         screen: DeviceSetting()),
          
       Item(
          title: Text("Statistics",
@@ -165,7 +161,7 @@ Future showErrorDialog(BuildContext context) {
             color: tc,
           )),
     ];
-    var drawerOptions = <Widget>[];
+    List<Widget> drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
       if (i != drawerItems.length-1) {
         drawerOptions.add(ListTile(
@@ -192,7 +188,12 @@ Future showErrorDialog(BuildContext context) {
         ));
       }
     }
-    SizeConfig().init(context);
+    return drawerOptions;
+  }
+  @override
+  Widget build(BuildContext context) {
+
+     SizeConfig().init(context);
     return Drawer(
         child: Container(
           color: Color(0xffF4F3F3),
@@ -251,7 +252,7 @@ Future showErrorDialog(BuildContext context) {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: drawerOptions,
+                children: _getDrawerWidget(),
               )
             ],
           ),
