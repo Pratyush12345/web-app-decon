@@ -258,7 +258,7 @@ class _AllPeople extends State<AllPeople> {
                       child: SingleChildScrollView(
                         physics: ScrollPhysics(),
                         child: StreamBuilder<Event>(
-                          stream: FirebaseDatabase.instance.reference().child("managerTeam/${widget.clientDetailModel?.selectedManager}").onValue,
+                          stream: FirebaseDatabase.instance.reference().child("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               List<UserDetailModel> _listOfManagerTeam = [];
@@ -278,7 +278,7 @@ class _AllPeople extends State<AllPeople> {
                                         showDeleteDialog(context).then((value) async {
                                         
                                           if (value == "Yes") {
-                                              FirebaseDatabase.instance.reference().child("managerTeam/${widget.clientDetailModel?.selectedManager}/${_listOfManagerTeam[index].key}").remove(); 
+                                              FirebaseDatabase.instance.reference().child("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
                                           }
                                         });
                                       },
@@ -383,7 +383,7 @@ class _AllPeople extends State<AllPeople> {
                       child: SingleChildScrollView(
                         physics: ScrollPhysics(),
                         child: StreamBuilder<Event>(
-                          stream: FirebaseDatabase.instance.reference().child("adminTeam/${widget.clientDetailModel?.selectedAdmin}").onValue,
+                          stream: FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               List<UserDetailModel> _listOfAdminTeam = [];
@@ -403,7 +403,7 @@ class _AllPeople extends State<AllPeople> {
                                         showDeleteDialog(context).then((value) async {
                                         
                                           if (value == "Yes") {
-                                              FirebaseDatabase.instance.reference().child("adminTeam/${widget.clientDetailModel?.selectedManager}/${_listOfAdminTeam[index].key}").remove(); 
+                                              FirebaseDatabase.instance.reference().child("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
                                           }
                                         });
                                       },

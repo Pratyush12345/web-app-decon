@@ -50,8 +50,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   longitude: longitude,
                   status: 1,
                   wlevel: 0,
-                  openManhole: "No Data",
+                  openManhole: 0,
                   address: address,
+                  lightIntensity: 0,
+                  signalStrength: 0
         ).toS0Json();
       }
       else if(seriescode == "S1"){
@@ -62,9 +64,11 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   longitude: longitude,
                   status: 1,
                   distance: 3.9,
-                  openManhole: "No Data",
+                  openManhole: 0,
                   address: address,
-                  temperature: 50.2)
+                  temperature: 50.2,
+                  lightIntensity: 0,
+                  signalStrength: 0)
               .toS1Json();
       }
       await FirebaseDatabase.instance
@@ -245,8 +249,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   longitude: longitude,
                   status: 1,
                   wlevel: 0,
-                  openManhole: "No Data",
+                  openManhole: 0,
                   address: address,
+                  lightIntensity: 0,
+                  signalStrength: 0
         ).toS0Json();
       }
       else if(seriescode == "S1"){
@@ -257,9 +263,11 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   longitude: longitude,
                   status: 1,
                   distance: 3.9,
-                  openManhole: "No Data",
+                  openManhole: 0,
                   address: address,
-                  temperature: 50.2)
+                  temperature: 50.2,
+                  lightIntensity: 0,
+                  signalStrength: 0)
               .toS1Json();
       }
       

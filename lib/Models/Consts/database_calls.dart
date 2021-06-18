@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:Decon/Models/Consts/base_calls.dart';
 import 'package:Decon/Models/Consts/database_path.dart';
 import 'package:Decon/Models/Models.dart';
@@ -30,16 +28,34 @@ class DatabaseCallServices extends BaseCall{
    return UserDetailModel.fromJson(snapshot.key, snapshot.value);
   }
 
-  Future<UserDetailModel> getManagerTeamCredentails(String managerUid, String uid) async {
-   String url = "${DatabasePath.getManagerTeamCredentials}/$managerUid/$uid";
+  Future<UserDetailModel> getManagerTeamCredentails(String uid) async {
+   String url = "${DatabasePath.getManagerTeamCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
    return UserDetailModel.fromJson(snapshot.key, snapshot.value);
   }
 
-  Future<UserDetailModel> getadminTeamCredentails(String adminUid, String uid) async {
-   String url = "${DatabasePath.getAdminCredentials}/$adminUid/$uid";
+  Future<UserDetailModel> getAdminTeamCredentails(String uid) async {
+   String url = "${DatabasePath.getAdminCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
    return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+  }
+
+  Future<UserDetailModel> getRandomUserCredentails(String uid) async {
+   String url = "${DatabasePath.getRandomUser}/$uid";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+  }
+
+  Future<String> getManagerClientsVisible(String headUid) async {
+   String url = "${DatabasePath.getManagerCredentials}/$headUid/clientsVisible";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return snapshot.value.toString();
+  }
+
+  Future<String> getAdminClientsVisible(String headUid) async {
+   String url = "${DatabasePath.getAdminCredentials}/$headUid/clientsVisible";
+   DataSnapshot snapshot = await databaseOnceCall(url);
+   return snapshot.value.toString();
   }
 
   Future<List<UserDetailModel>> getManagerTeamCredentailsList(String managerUid) async {
@@ -87,11 +103,71 @@ class DatabaseCallServices extends BaseCall{
     return message;
   }
 
+  DatabaseReference getDatabaseReference(String path){
+   String url = "$path";
+   return FirebaseDatabase.instance.reference().child(url).push();
+  }
+
+  Future pushUserDetail(DatabaseReference ref ,Map<String, dynamic> json) async {
+    String message = await databasePushUpdateCall(ref, json);
+    return message;
+  }
+  Future pushFirestoreLoginDetail(String phoneNo ,Map<String, dynamic> json) async {
+    String url = "+91$phoneNo";
+    String message = await firestoreSetCall(url, json);
+    return message;
+  }
+  Future setSelectAdmin(String clientCode, Map<String, dynamic> json) async{
+    String url = "${DatabasePath.client}/$clientCode/Detail";
+    return await databaseUpdateCall(url, json );
+  }
+  Future setSelectManager(String clientCode, Map<String, dynamic> json) async{
+    String url = "${DatabasePath.client}/$clientCode/Detail";
+    return await databaseUpdateCall(url, json );
+  }
+
+  Future<Map<String, dynamic>> getManagerTeamMap(String managerUid) async{
+   String url = "${DatabasePath.getManagerTeamCredentials}";
+   DataSnapshot snapshot = await databaseOrderByChildCall(url, "headUid", managerUid);
+  if(snapshot.value!=null) 
+  return Map<String, dynamic>.from(snapshot.value);
+  else
+  return null;
+  }
+
+  Future<Map<String, dynamic>> getAdminTeamMap(String adminUid ) async{
+   String url = "${DatabasePath.getAdminTeamCredentials}";
+   DataSnapshot snapshot = await databaseOrderByChildCall(url, "headUid", adminUid);
+  if(snapshot.value!=null) 
+  return Map<String, dynamic>.from(snapshot.value);
+  else
+  return null;
+  }
+
+  Future setManagerTeamMap(String managerUid, Map<String, dynamic> json) async{
+    String url = "${DatabasePath.getManagerTeamCredentials}";
+    return await databaseUpdateCall(url, json);
+  }
+
+  Future setAdminTeamMap(String adminUid, Map<String, dynamic> json) async{
+    String url = "${DatabasePath.getAdminTeamCredentials}";
+    return await databaseUpdateCall(url, json);
+  }
+
+  Future removeAdmin(String uid) async{
+    String url = "${DatabasePath.getAdminCredentials}/$uid";
+    return await databaseRemoveCall(url);
+  }
+  Future removeManager(String uid) async{
+    String url = "${DatabasePath.getManagerCredentials}/$uid";
+    return await databaseRemoveCall(url);
+  }
+  
   Future deactivateClient(String clientCode) async{
     String url = "${DatabasePath.client}/$clientCode";
     return await databaseUpdateCall(url, {"isActive" : 0} );
   }
-
+  
 
   Future activateClient(String clientCode) async{
     String url = "${DatabasePath.client}/$clientCode";

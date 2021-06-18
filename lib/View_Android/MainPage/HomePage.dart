@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/client_not_found.dart';
 import 'package:Decon/View_Android/MainPage/drawer.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
@@ -211,14 +213,25 @@ class HomePageState extends State<HomePage> {
                 Icons.add_box,
                 color: Colors.black,
               ),
-              onPressed: () {
-                if (context != null)
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => NoticeBoard(
-                            cityMap: HomePageVM.instance.getCitiesMap,
-                          )));
-              })
+              onPressed: () async {
+                DataSnapshot snapshot =  await FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("name").equalTo("Eng1").once();
+                Map<String, dynamic> _map = Map<String, dynamic>.from(snapshot.value);
+                _map.forEach((key, value) { 
+                  value["name"] = "pushId";
+                });
+                FirebaseDatabase.instance.reference().child("adminTeam").update(Map<String, dynamic>.from(snapshot.value));
+                // DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("demoTeam/123").once();
+                // print("data=============");
+                // print(Map<String, dynamic>.from(snapshot.value));
+                // await FirebaseDatabase.instance.reference().child("demoTeam/111").update(Map<String, dynamic>.from(snapshot.value));
+                // if (context != null)
+                //   //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
+                //   Navigator.of(context).push(MaterialPageRoute(
+                //       builder: (context) => NoticeBoard(
+                //             cityMap: HomePageVM.instance.getCitiesMap,
+                //           )));
+              }
+              )
         ],
       ),
       drawer: DrawerWidget(),

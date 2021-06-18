@@ -13,7 +13,7 @@ class Wrapper3 extends StatelessWidget {
       return "done";
     }
     _returnFuture() async{
-      return Auth.instance.pref.getBool("isSignedIn")??false ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser);
+      return Auth.instance.pref.getBool("isSignedIn")??false ? Auth.instance.alreadyLogin(FirebaseAuth.instance.currentUser)  : Auth.instance.firstTimeLogin(FirebaseAuth.instance.currentUser);
     }
     return FutureBuilder(
       //future: _returnfuture(),

@@ -57,7 +57,7 @@ class _ManagersListState extends State<ManagersList> {
          if(snapshot.hasData){
               Map datamap = snapshot.data.snapshot.value;
               _listUserDetailModel = [];
-              datamap.forEach((key, value) {
+              datamap?.forEach((key, value) {
                 _listUserDetailModel.add(UserDetailModel.fromJson(key.toString(), value));
               });
               if(widget.managerUid!=null){

@@ -1,8 +1,5 @@
-import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
-import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
@@ -18,25 +15,7 @@ class _Add_man extends State<Add_man> {
   
   void validate(){
     if(_formKey.currentState.validate()){
-      FirebaseDatabase.instance
-                            .reference()
-                            .child("managers")
-                            .push()
-                            .update({
-                          "name": _nameController.text,
-                          "phoneNo": "+91${_phoneNoController.text}",
-                          "post": "Manager@Vysion",
-                          "clientsVisible": ""
-                        });
-                        FirebaseFirestore.instance
-                            .collection('CurrentLogins')
-                            .doc("+91${_phoneNoController.text}")
-                            .set({
-                          "value" : "Manager_BySuperAdmin"
-                        });
-                        //post_clientsVisible
-                        Navigator.of(context).pop();
-                      
+      DialogVM.instance.onAddManagerPressed(context, _nameController.text.trim(), _phoneNoController.text.trim());                
     }
     else{
       print("Not Validated");

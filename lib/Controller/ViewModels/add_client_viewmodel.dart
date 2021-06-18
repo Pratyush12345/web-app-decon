@@ -56,9 +56,10 @@ class AddClientVM {
      String res3 = await _databaseCallServices.activateClient(clientListModel.clientCode);
      String clientsVisible =  previousClientsVisible + "," + clientListModel.clientCode;
      String res4 = await _databaseCallServices.setManagerClientVisible(clientDetailModel.selectedManager, clientsVisible);
-     if(isedit && clientDetailModel.selectedManager != previousManagerModel.key  ){
-      previousManagerModel.clientsVisible = previousManagerModel.clientsVisible.replaceAll(",${clientListModel.clientCode}", "");
-      String res5 = await _databaseCallServices.setManagerClientVisible(previousManagerModel.key, previousManagerModel.clientsVisible );   
+     
+     if(isedit && previousManagerModel!=null && clientDetailModel.selectedManager != previousManagerModel?.key  ){
+      previousManagerModel.clientsVisible = previousManagerModel?.clientsVisible?.replaceAll(",${clientListModel.clientCode}", "");
+      String res5 = await _databaseCallServices.setManagerClientVisible(previousManagerModel?.key, previousManagerModel.clientsVisible );   
       print(res5);
      }
      _setDeviceSetting( clientListModel.clientCode, clientDetailModel.selectedSeries.replaceFirst(",","" ).split(","));

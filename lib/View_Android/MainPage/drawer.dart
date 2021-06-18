@@ -104,7 +104,7 @@ Future showErrorDialog(BuildContext context) {
             Icons.assessment,
             color: tc,
           ),
-          screen: Stats(sheetURL: HomePageVM.instance.getSheetURL)
+          screen: Stats()
           ),
       Item(
          title: Text("Maintainence Report",

@@ -111,9 +111,12 @@ class DeviceData {
   dynamic distance;
   String id;
   int status;
-  String openManhole;
   String address;
   dynamic temperature;
+  int openManhole;
+  int signalStrength;
+  int lightIntensity;
+
 
   DeviceData(
       {
@@ -126,7 +129,9 @@ class DeviceData {
       @required this.status,
       @required this.openManhole,
       @required this.address,
-      this.temperature});
+      this.temperature,
+      this.lightIntensity,
+      this.signalStrength});
 
   DeviceData.fromSnapshot(DataSnapshot snapshot, String _seriesCode) {
     id = snapshot.value["id"];
@@ -154,6 +159,8 @@ class DeviceData {
     openManhole = snapshot.value["openManhole"];
     temperature = snapshot.value["temperature"];
     address = snapshot.value["address"] ?? "Empty";
+    signalStrength = snapshot.value["signalStrength"];
+    lightIntensity = snapshot.value["lightIntensity"];
   }
 DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
     id = json["id"];
@@ -180,6 +187,8 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
     openManhole = json["openManhole"];
     temperature = json["temperature"];
     address = json["address"] ?? "Empty";
+    signalStrength = json["signalStrength"];
+    lightIntensity = json["lightIntensity"];
   }
 
   toS1Json() {
@@ -192,7 +201,9 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
       "simStatus": status,
       "openManhole": openManhole,
       "address": address,
-      "temperature": temperature
+      "temperature": temperature,
+      "signalStrength" : signalStrength,
+      "lightIntensity" : lightIntensity
     };
   }
   toS0Json() {
@@ -205,6 +216,8 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
       "simStatus": status,
       "openManhole": openManhole,
       "address": address,
+      "signalStrength" : signalStrength,
+      "lightIntensity" : lightIntensity
     };
   }
 }
@@ -294,6 +307,7 @@ class UserDetailModel {
   String delegate;
   bool isSelected;
   String key;
+  String headUid;
 
   UserDetailModel({this.key,this.clientsVisible, this.name, this.phoneNo, this.post, this.delegate});
 
@@ -305,6 +319,7 @@ class UserDetailModel {
     delegate = json['post'].toString().split("@")[1];
     key = uid;
     isSelected = false;
+    headUid = json['headUid'];
   }
 
   Map<String, dynamic> toJson() {

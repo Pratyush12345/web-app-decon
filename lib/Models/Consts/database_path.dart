@@ -4,6 +4,7 @@ class DatabasePath{
   static String getAdminCredentials = "admins";
   static String getManagerTeamCredentials = "managerTeam";
   static String getAdminTeamCredentials = "adminTeam";
+  static String getRandomUser = "randomUser";
   static String getSeriesList = "seriesList";
   static String setClientDetail = "clients";
   static String getClientDetail = "clients";

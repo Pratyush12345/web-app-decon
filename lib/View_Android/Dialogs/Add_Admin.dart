@@ -23,38 +23,10 @@ class _Add_admin extends State<Add_admin> {
 
   void validate() async{
     if(_formKey.currentState.validate()){
-          
+          DialogVM.instance.onAddAdminPressed(context, _nameController.text.trim(),
+          _phoneNumberController.text.trim(), _adminpostController.text.trim(), _clientController.text.trim() );
 
-           DatabaseReference ref =     dbRef
-                                          .reference()
-                                          .child("admins")
-                                          .push();
-                            ref.update({
-                                        "name": _nameController.text,
-                                        "phoneNo":
-                                            "+91${_phoneNumberController.text}",
-                                        "post":
-                                            "Admin@${_adminpostController.text}",
-                                         
-                                        "clientsVisible": _clientController.text.trim(),
-                                    
-                                      });
-                                      FirebaseDatabase.instance.reference()
-                                          .child("clients/${_clientController.text.trim()}/Detail")
-                                          .update({
-                                        "selectedAdmin": ref.key,         
-                                      });
-                                      FirebaseFirestore.instance
-                                          .collection('CurrentLogins')
-                                          .doc(
-                                              "+91${_phoneNumberController.text}")
-                                          .set({
-                                        "value":
-                                            "Admin@${_adminpostController.text}_ByManager"
-                                      });
-                                      Navigator.of(context).pop();
-                                   
-    }
+           }
     else{
       print("Not Validated");
     }

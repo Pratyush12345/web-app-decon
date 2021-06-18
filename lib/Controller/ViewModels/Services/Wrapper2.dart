@@ -12,7 +12,7 @@ class Wrapper2 extends StatelessWidget {
       print("issigned in mmmmmmmmmmmmmmmmmmmm");
       print(pref.getBool("isSignedIn"));
       print("issigned in mmmmmmmmmmmmmmmmmmmm");
-      return pref.getBool("isSignedIn")!=null ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser);
+      return pref.getBool("isSignedIn")!=null ? Auth.instance.alreadyLogin(FirebaseAuth.instance.currentUser)  : Auth.instance.firstTimeLogin(FirebaseAuth.instance.currentUser);
     }
     return FutureBuilder(
         //future: Auth.instance.pref.getBool("isSignedIn")??false ? Auth.instance.updateClaims(FirebaseAuth.instance.currentUser)  : Auth.instance.delayedLogin(FirebaseAuth.instance.currentUser),

@@ -13,7 +13,7 @@ class AllPeopleVM{
   init(){
     managerDetailModel = null;
     adminDetailModel = null;
-    listOfAdminTeam = null;
+    listOfAdminTeam = null; 
     listOfMangerTeam = null;
   }
   

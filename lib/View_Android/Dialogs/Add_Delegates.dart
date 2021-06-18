@@ -1,4 +1,5 @@
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,37 +21,7 @@ class _Add_Delegates extends State<Add_Delegates> {
   
   void validate(){
     if(_formKey.currentState.validate()){
-
-      String decidedTeam, byWhom;
-      if(GlobalVar.strAccessLevel == "2"){
-       decidedTeam = "managerTeam";
-       byWhom  = "ByManager";
-      }
-      else if(GlobalVar.strAccessLevel == "3"){
-       decidedTeam = "adminTeam";
-       byWhom = "ByAdmin";
-      }
-
-                              FirebaseDatabase.instance
-                                  .reference()
-                                  .child(
-                                      "$decidedTeam/${GlobalVar.userDetail.key}")
-                                  .push()
-                                  .update({
-                                "name": _nameController.text,
-                                "phoneNo": "+91${_phoneNumberController.text}",
-                                "post": "${_postnameController.text}@Vysion",
-                                "clientsVisible": ""
-                              });
-                              FirebaseFirestore.instance
-                                  .collection('CurrentLogins')
-                                  .doc("+91${_phoneNumberController.text}")
-                                  .set({
-                                "value":
-                                    "${_postnameController.text}@Vysion_${byWhom}_${GlobalVar.userDetail.key}"
-                              });
-                              Navigator.of(context).pop();
-                            
+       DialogVM.instance.onAddDelegatePressed(context, _nameController.text.trim(), _postnameController.text.trim(), _phoneNumberController.text.trim());
         }
     else{
       print("Not Validated");

@@ -150,19 +150,19 @@ class _AddClientState extends State<AddClient> {
             SizedBox(height: 15.0,),
             _getSeriesWidget(),
             SizedBox(height: 15.0,),
-            if(_userDetailModel.key !=null)
+            if(_userDetailModel?.key !=null)
             Card(
               child: ListTile(
-                leading: Text("${_userDetailModel.clientsVisible??""}"),
-                title: Text("${_userDetailModel.name}"),
-                subtitle: Text("${_userDetailModel.phoneNo}")
+                leading: Text("${_userDetailModel?.clientsVisible??""}"),
+                title: Text("${_userDetailModel?.name}"),
+                subtitle: Text("${_userDetailModel?.phoneNo}")
             )
             ),
             MaterialButton(
               color: Colors.blue,
-              child: Text(_userDetailModel.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
+              child: Text(_userDetailModel?.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
               onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel.key,))).
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
                 then((value){ 
                   if(value!=null)
                   _userDetailModel = value;
@@ -190,6 +190,7 @@ class _AddClientState extends State<AddClient> {
                   sheetURL: _sheetController.text.trim()
                 );
                 AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
+                
             }),      
           ],
         ),

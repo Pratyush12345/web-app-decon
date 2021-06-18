@@ -1,5 +1,6 @@
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,42 +23,8 @@ class _Replace_Admin extends State<Replace_Admin> {
   
   void validate() async{
     if(_formKey.currentState.validate()){
-          
-
-                              FirebaseFirestore.instance
-                              .collection('CurrentLogins')
-                              .doc("+91${_phoneNoController.text}")
-                              .set({
-                            "value":
-                                "Admin@${_adminpostController.text}_ByManager"
-                          });
-
-                            FirebaseDatabase.instance
-                                .reference()
-                                .child("/admins/${widget.uid}")
-                                .remove();
-                          
-                          DatabaseReference ref =  FirebaseDatabase.instance.reference()
-                                          .child("admins")
-                                          .push();
-                          ref.update({
-                                        "name": _nameController.text,
-                                        "phoneNo":
-                                            "+91${_phoneNoController.text}",
-                                        "post":
-                                            "Admin@${_adminpostController.text}",
-                                         
-                                        "clientsVisible": widget.clientVisible,
-                                    
-                                      });                
-                                          
-                          FirebaseDatabase.instance.reference()
-                                          .child("clients/${widget.clientVisible}/Detail")
-                                          .update({
-                                        "selectedAdmin": ref.key,         
-                                      });            
-                          Navigator.of(context).pop();
-                         
+          DialogVM.instance.onReplaceAdminPressed(context, _nameController.text.trim(), 
+          widget.clientVisible, _phoneNoController.text.trim(), _adminpostController.text.trim(), widget.uid);
     }
     else{
       print("Not Validated");

@@ -1,4 +1,6 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
 
-class Stats extends StatefulWidget { 
-  final BuildContext menuScreenContext;
-  //final List<DeviceData> allDeviceData;
-  final String sheetURL;
-  Stats({Key key, this.menuScreenContext, this.sheetURL})
+class Stats extends StatefulWidget {
+  Stats({Key key})
       : super(key: key);
 
   @override
@@ -117,7 +116,7 @@ class _StatsState extends State<Stats> {
                         MaterialPageRoute(
                           builder: (context) => Graphs(
                             deviceData: _filteredDeviceData[index],
-                            sheetURL: widget.sheetURL,
+                            sheetURL: HomePageVM.instance.getSheetURL,
                           ),
                         ),
                       );

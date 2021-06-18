@@ -1,4 +1,5 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -21,45 +22,8 @@ class _Replace_Manager extends State<Replace_Manager> {
   void validate() async{
     if(_formKey.currentState.validate()){
           
-
-                              FirebaseFirestore.instance
-                              .collection('CurrentLogins')
-                              .doc("+91${_phoneNoController.text}")
-                              .set({
-                            "value":
-                                "Manager_BySuperAdmin"
-                          });
-
-                            FirebaseDatabase.instance
-                                .reference()
-                                .child("managers/${widget.uid}")
-                                .remove();
-                          
-                          DatabaseReference ref =  FirebaseDatabase.instance.reference()
-                                          .child("managers")
-                                          .push();
-                          ref.update({
-                                        "name": _nameController.text,
-                                        "phoneNo":
-                                            "+91${_phoneNoController.text}",
-                                        "post":
-                                            "Manager@Vysion",
-                                         
-                                        "clientsVisible": widget.clientVisible,
-                                    
-                                      });                
-                       List<String> clientsList =  widget.clientVisible.split(","); 
-                       for(int i =0; i<clientsList.length;i++){
-                          FirebaseDatabase.instance.reference()
-                                          .child("clients/${clientsList[i]}/Detail")
-                                          .update({
-                                        "selectedManager": ref.key,
-                                        
-                                      });            
-                         
-                       }                
-                          Navigator.of(context).pop();
-                         
+    DialogVM.instance.onReplaceManagerPressed(context, _nameController.text.trim(), widget.clientVisible,
+     _phoneNoController.text.trim(), widget.uid);
     }
     else{
       print("Not Validated");

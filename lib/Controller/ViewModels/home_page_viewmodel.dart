@@ -78,6 +78,7 @@ class HomePageVM {
     ClientDetailModel _clientDetailModel =  await _databaseCallServices.getClientDetail(clientCode);
     _seriesList = _clientDetailModel.selectedSeries.replaceFirst(",","").split(",");
     _scode = _seriesList[0];
+    _sheetURL = _clientDetailModel.sheetURL;
     Provider.of<ChangeClient>(context, listen: false).changeClientDetail(_clientDetailModel);
    }
    catch(e){

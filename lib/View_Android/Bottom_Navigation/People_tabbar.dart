@@ -234,8 +234,8 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                     {
                                                     showReplaceManagerDialog(
                                                         context,
-                                                        _listUserDetailModelAdmins[index].clientsVisible,
-                                                        _listUserDetailModelAdmins[index].key,
+                                                        _listUserDetailModelManager[index].clientsVisible,
+                                                        _listUserDetailModelManager[index].key,
                                                         );
                                                   }
                                                   },
