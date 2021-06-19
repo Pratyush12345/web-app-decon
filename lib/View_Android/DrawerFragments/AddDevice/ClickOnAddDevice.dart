@@ -53,7 +53,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   openManhole: 0,
                   address: address,
                   lightIntensity: 0,
-                  signalStrength: 0
+                  signalStrength: 0,
+                  lastUpdated: "${DateTime.now()}"
         ).toS0Json();
       }
       else if(seriescode == "S1"){
@@ -68,7 +69,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   address: address,
                   temperature: 50.2,
                   lightIntensity: 0,
-                  signalStrength: 0)
+                  signalStrength: 0,
+                  lastUpdated: "${DateTime.now()}")
               .toS1Json();
       }
       await FirebaseDatabase.instance
@@ -252,7 +254,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   openManhole: 0,
                   address: address,
                   lightIntensity: 0,
-                  signalStrength: 0
+                  signalStrength: 0,
+                  lastUpdated: "${DateTime.now()}"
         ).toS0Json();
       }
       else if(seriescode == "S1"){
@@ -267,7 +270,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   address: address,
                   temperature: 50.2,
                   lightIntensity: 0,
-                  signalStrength: 0)
+                  signalStrength: 0,
+                  lastUpdated: "${DateTime.now()}")
               .toS1Json();
       }
       

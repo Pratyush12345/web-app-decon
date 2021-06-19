@@ -115,6 +115,7 @@ class _StatsState extends State<Stats> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => Graphs(
+                            scriptEditorURL: HomePageVM.instance.getScriptEditorURL,
                             deviceData: _filteredDeviceData[index],
                             sheetURL: HomePageVM.instance.getSheetURL,
                           ),

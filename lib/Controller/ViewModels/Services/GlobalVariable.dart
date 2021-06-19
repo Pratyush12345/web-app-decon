@@ -11,7 +11,7 @@ class GlobalVar {
   static String strAccessLevel;
   static UserDetailModel userDetail;
   static Map<String, SeriesInfo > seriesMap = {
-    "S0" : SeriesInfo(model: S0DeviceSettingModel() ,bottomLayout: BottomLayoutS0(), deviceSetting: DeviceSettingsS0() ),
-    "S1" : SeriesInfo(model: S1DeviceSettingModel(), bottomLayout: BottomLayoutS1(), deviceSetting: DeviceSettingsS1() )
+    "S0" : SeriesInfo(model: S0DeviceSettingModel() ,graphs: ["S0_levelSheet","S0_openManholeSheet"]  ,bottomLayout: BottomLayoutS0(), deviceSetting: DeviceSettingsS0() ),
+    "S1" : SeriesInfo(model: S1DeviceSettingModel(),graphs: ["S1_levelSheet","S1_openManholeSheet", "S1_temperatureSheet"], bottomLayout: BottomLayoutS1(), deviceSetting: DeviceSettingsS1() )
   };
 }

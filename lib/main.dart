@@ -3,6 +3,7 @@ import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/Wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
            ChangeNotifierProvider(create: (context)=> ChangeSeries(),),
            ChangeNotifierProvider(create: (context)=> ChangeDeviceData(),),
            ChangeNotifierProvider(create: (context)=> ChangeDeviceSeting(),),
+           ChangeNotifierProvider(create: (context)=> LinearGraphProvider(),),
+           ChangeNotifierProvider(create: (context)=> TempGraphProvider(),),
+           ChangeNotifierProvider(create: (context)=> OpenManholeGraphProvider(),),
           ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

@@ -1,97 +1,27 @@
-import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_provider.dart';
+import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_viewmodel.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/levelGraph.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/TemperatureGraph.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/ManholeGraph.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:provider/provider.dart';
 
 
 class Graphs extends StatefulWidget {
   final DeviceData deviceData;
   final String sheetURL;
-  Graphs({@required this.deviceData, @required this.sheetURL});
+  final String scriptEditorURL;
+  Graphs({@required this.deviceData, @required this.scriptEditorURL, @required this.sheetURL});
   @override
   _GraphsState createState() => _GraphsState();
 }
 
 class _GraphsState extends State<Graphs> {
-  List<ChartSeries<LinearData, int>> _seriesLinearData;
-  List<ChartSeries<TempData, int>> _seriesTempData;
-  List<ChartSeries<ManHoleData, int>> _seriesManHoleData;
-  String currentMM, currentYY;
-  String monthNo;
-  String url;
-  String _itemSelected, yearSelected;
-  List<LinearData> data1 = [];
-  List<TempData> data2 = [];
-  List<ManHoleData> data3 = [];
-  Map<String, String> _monthstonum = {
-    "January": "01",
-    "February": "02",
-    "March": "03",
-    "April": "04",
-    "May": "05",
-    "June": "06",
-    "July": "07",
-    "August": "08",
-    "September": "09",
-    "October": "10",
-    "November": "11",
-    "December": "12"
-  };
-  Map<int, String> _numtomonths = {
-    1: "January",
-    2: "February",
-    3: "March",
-    4: "April",
-    5: "May",
-    6: "June",
-    7: "July",
-    8: "August",
-    9: "September",
-    10: "October",
-    11: "November",
-    12: "December"
-  };
-  List<String> list = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  List<String> listyear = [
-    "2019",
-    "2020",
-    "2021",
-    "2022",
-  ];
-  Map<String, int> _dataMap = {
-    "01": 31,
-    "02": 28,
-    "03": 31,
-    "04": 30,
-    "05": 31,
-    "06": 30,
-    "07": 31,
-    "08": 31,
-    "09": 30,
-    "10": 31,
-    "11": 30,
-    "12": 31,
-  };
-  final Map<int, String> levels = {
+  final Map<int, String> _levels = {
     0: "Ground level",
     1: "Normal Level",
     2: "Infromative Level",
@@ -103,202 +33,17 @@ class _GraphsState extends State<Graphs> {
     2: Color(0xffE1E357),
     3: Color(0xffD93D3D)
   };
-  int i;
-
-  Future<List<FeedbackForm>> getFeedbackList(String _url) async {
-    return await http.get(_url).then((response) {
-      var jsonFeedback = convert.jsonDecode(response.body) as List;
-      return jsonFeedback.map((json) => FeedbackForm.fromJson(json)).toList();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    var _date = DateTime.now();
-    int mm = _date.month;
-    int yy = _date.year;
-    monthNo = mm.toString().length == 1 ? "0$mm" : "$mm";
-    currentMM = _numtomonths[mm];
-    _itemSelected = currentMM;
-    currentYY = yy.toString();
-    yearSelected = currentYY;
-    print("SheetUrl====================${widget.sheetURL}");
-    _createLevelGraphDatapoints();
-  }
+    GraphsVM.intsance.init(context,widget.sheetURL, widget.scriptEditorURL, widget.deviceData);
+    }
 
-  _createLevelGraphDatapoints() {
-    String searchKey = "$monthNo/$currentYY";
-    String url1 =
-        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet1";
-    _seriesLinearData = [];
-    _seriesTempData = [];
-    _seriesManHoleData = [];
-
-    getFeedbackList(url1).then((value) {
-      int i = 1, ground = 0, normal = 0, informative = 0, critical = 0;
-      data1.clear();
-      for (i = 1; i <= _dataMap[monthNo]; i++) {
-        ground = 0;
-        normal = 0;
-        informative = 0;
-        critical = 0;
-        value.forEach((element) {
-          String date = i.toString().length == 1 ? "0$i" : "$i";
-          if (element.date.contains("$date/$monthNo/$currentYY\n")) {
-            if (element.value == "0") {
-              ground++;
-            } else if (element.value == "1") {
-              normal++;
-            } else if (element.value == "2") {
-              informative++;
-            } else if (element.value == "3") {
-              critical++;
-            }
-          }
-        });
-
-        if (ground == 0 && normal == 0 && informative == 0 && critical == 0) {
-          data1.add(LinearData(i, 0));
-        } else {
-          if (critical >= normal &&
-              critical >= informative &&
-              critical >= ground) {
-            data1.add(LinearData(i, 3));
-          } else if (informative >= normal &&
-              informative >= ground &&
-              informative >= critical) {
-            data1.add(LinearData(i, 2));
-          } else if (normal >= informative &&
-              normal >= ground &&
-              normal >= critical) {
-            data1.add(LinearData(i, 1));
-          } else {
-            data1.add(LinearData(i, 0));
-          }
-        }
-      }
-      _seriesLinearData.add(LineSeries(
-        dataSource: data1,
-        isVisibleInLegend: false,
-        animationDuration: 1000,
-        xAxisName: "Days",
-        yAxisName: "Levels",
-        color: Color(0xff990099),
-        enableTooltip: true,
-        xValueMapper: (LinearData data, _) => data.yearval,
-        yValueMapper: (LinearData data, _) => data.salesval,
-        name: "",
-        markerSettings: MarkerSettings(
-            isVisible: true,
-            width: 3.0,
-            shape: DataMarkerType.circle,
-            height: 3.0),
-      ));
-      _createTempGraphDatapoints();
-    });
-  }
-
-  _createTempGraphDatapoints() {
-    String searchKey = "$monthNo/$currentYY";
-    String url2 =
-        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet2";
-
-    getFeedbackList(url2).then((value) {
-      int i = 1;
-      data2.clear();
-      for (i = 1; i <= _dataMap[monthNo]; i++) {
-        value.forEach((element) {
-          print(element.date);
-          String date = i.toString().length == 1 ? "0$i" : "$i";
-          if (element.date.contains("$date/$monthNo/$currentYY\n")) {
-            data2.add(TempData(i, double.parse(element.value)));
-          } else {
-            if (data2.length >= 1)
-              data2.add(TempData(i, data2[data2.length - 1].temp));
-            else {
-              data2.add(TempData(i, 0.0));
-            }
-          }
-        });
-      }
-      _seriesTempData.add(LineSeries(
-        dataSource: data2,
-        isVisibleInLegend: false,
-        animationDuration: 1000,
-        xAxisName: "Days",
-        yAxisName: "Temperature",
-        color: Color(0xff990099),
-        enableTooltip: true,
-        xValueMapper: (TempData data, _) => data.yearval,
-        yValueMapper: (TempData data, _) => data.temp,
-        name: "",
-        markerSettings: MarkerSettings(
-            isVisible: true,
-            width: 3.0,
-            shape: DataMarkerType.circle,
-            height: 3.0),
-      ));
-      _createOpenGraphDatapoints();
-    });
-  }
-
-  _createOpenGraphDatapoints() {
-    String searchKey = "$monthNo/$currentYY";
-    String url3 =
-        "https://script.google.com/macros/s/AKfycbxhhXD1omW3H-nZcJUvfPZje2BdMGgvdTwc2X4x89F0Sh3O_egA/exec?searchKey=$searchKey&deviceNo=${widget.deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=${widget.sheetURL}&sheetNo=Sheet3";
-
-    getFeedbackList(url3).then((value) {
-      int i = 1, open = 0, close = 0;
-      data3.clear();
-      for (i = 1; i <= _dataMap[monthNo]; i++) {
-        open = 0;
-        close = 0;
-        value.forEach((element) {
-          String date = i.toString().length == 1 ? "0$i" : "$i";
-          if (element.date.contains("$date/$monthNo/$currentYY\n")) {
-            if (element.value == "0") {
-              open++;
-            } else if (element.value == "1") {
-              close++;
-            }
-          }
-        });
-
-        if (open == 0 && close == 0) {
-          data3.add(ManHoleData(i, 0));
-        } else {
-          if (close >= open) {
-            data3.add(ManHoleData(i, 1));
-          } else {
-            data3.add(ManHoleData(i, 0));
-          }
-        }
-      }
-      _seriesManHoleData.add(StepLineSeries(
-        dataSource: data3,
-        isVisibleInLegend: false,
-        animationDuration: 1000,
-        xAxisName: "Days",
-        yAxisName: "ManHole Condn",
-        color: Color(0xff990099),
-        enableTooltip: true,
-        xValueMapper: (ManHoleData data, _) => data.yearval,
-        yValueMapper: (ManHoleData data, _) => data.condn,
-        name: "",
-        markerSettings: MarkerSettings(
-            isVisible: true,
-            width: 3.0,
-            shape: DataMarkerType.circle,
-            height: 3.0),
-      ));
-      setState(() {});
-    });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return Scaffold(
       appBar: AppBar(title: Text("Graph")),
       body: ListView(
@@ -314,24 +59,24 @@ class _GraphsState extends State<Graphs> {
                     "${widget.deviceData.id.split("_")[2].replaceAll("D", "Device ")}",
                     style: TextStyle(fontSize: 20.0),
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     Text("Last Updated: 28/nov/2019"),
-                  //     Container(
-                  //         padding: EdgeInsets.symmetric(
-                  //             horizontal: SizeConfig.b * 1,
-                  //             vertical: SizeConfig.v * 0.6),
-                  //         decoration: BoxDecoration(
-                  //             borderRadius:
-                  //                 BorderRadius.circular(SizeConfig.b * 2),
-                  //             color: Color(0xff0099FF)),
-                  //         child: Text(widget.deviceData.id,
-                  //             style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontSize: SizeConfig.b * 3.57))),
-                  //   ],
-                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text("Last Updated: ${GraphsVM.intsance.formattedDate(widget.deviceData.lastUpdated)}"),
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.b * 1,
+                              vertical: SizeConfig.v * 0.6),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(SizeConfig.b * 2),
+                              color: Color(0xff0099FF)),
+                          child: Text(widget.deviceData.id,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: SizeConfig.b * 3.57))),
+                    ],
+                  ),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -342,7 +87,7 @@ class _GraphsState extends State<Graphs> {
                               backgroundColor:
                                   _levelsColor[widget.deviceData.wlevel]),
                           SizedBox(width: SizeConfig.b * 0.5),
-                          Text("${levels[widget.deviceData.wlevel]}",
+                          Text("${_levels[widget.deviceData.wlevel]}",
                               style: TextStyle(fontSize: SizeConfig.b * 3.57))
                         ]),
                         SizedBox(width: SizeConfig.v * 1),
@@ -390,7 +135,7 @@ class _GraphsState extends State<Graphs> {
                     height: 0.0,
                   ),
                   elevation: 8,
-                  items: list.map((dropDownStringitem) {
+                  items: GraphsVM.intsance.monthslist.map((dropDownStringitem) {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
                       child: Container(
@@ -412,15 +157,12 @@ class _GraphsState extends State<Graphs> {
                   }).toList(),
                   onChanged: (newValueSelected) {
                     setState(() {
-                      _itemSelected = newValueSelected;
-                      monthNo = _monthstonum[_itemSelected].toString();
-                      print(monthNo);
-                      _createLevelGraphDatapoints();
-                    });
+                      GraphsVM.intsance.onChangeMonth(newValueSelected);
+                      });
                   },
                   isExpanded: true,
                   hint: Text("Select Month"),
-                  value: _itemSelected ?? null,
+                  value: GraphsVM.intsance.monthSelected ?? null,
                 ),
               ),
               SizedBox(
@@ -435,7 +177,7 @@ class _GraphsState extends State<Graphs> {
                     height: 0.0,
                   ),
                   elevation: 8,
-                  items: listyear.map((dropDownStringitem) {
+                  items: GraphsVM.intsance.yearlist.map((dropDownStringitem) {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
                       child: Container(
@@ -457,55 +199,48 @@ class _GraphsState extends State<Graphs> {
                   }).toList(),
                   onChanged: (newValueSelected) {
                     setState(() {
-                      yearSelected = newValueSelected;
-                      currentYY = yearSelected.toString();
-                      print(currentYY);
-                      _createLevelGraphDatapoints();
-                    });
+                      GraphsVM.intsance.onChangeYear(newValueSelected);
+                      });
                   },
                   isExpanded: true,
                   hint: Text("Select Year"),
-                  value: yearSelected ?? null,
+                  value: GraphsVM.intsance.yearSelected ?? null,
                 ),
               ),
             ],
           ),
-          LevelGraph(
-            seriesLinearData: _seriesLinearData,
-            lastDay: double.parse(_dataMap[monthNo].toString()),
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_levelSheet"))
+          Consumer<LinearGraphProvider>(
+            builder: (context, model, child)=>
+            LevelGraph(
+              seriesLinearData: model.seriesLinearData,
+              lastDay: double.parse(model.noOfDays.toString()),
+            ),
           ),
           SizedBox(
             height: 20.0,
           ),
-          TempGraph(
-              seriesTempData: _seriesTempData,
-              lastDay: double.parse(_dataMap[monthNo].toString())),
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_openManholeSheet"))
+          Consumer<OpenManholeGraphProvider>(
+            builder: (context, model, child)=>
+             ManholeGraph(
+                seriesManHoleData: model.seriesManHoleData,
+                lastDay: double.parse(model.noOfDays.toString())),
+          ),
           SizedBox(
             height: 20.0,
           ),
-          ManholeGraph(
-              seriesManHoleData: _seriesManHoleData,
-              lastDay: double.parse(_dataMap[monthNo].toString()))
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_temperatureSheet"))
+          Consumer<TempGraphProvider>(
+            builder: (context,model ,child)=>
+            TempGraph(
+                seriesTempData: model.seriesTempData,
+                lastDay: double.parse(model.noOfDays.toString())),
+          ),
+          
         ],
       ),
     );
   }
 }
 
-class LinearData {
-  int yearval;
-  int salesval;
-  LinearData(this.yearval, this.salesval);
-}
-
-class TempData {
-  int yearval;
-  double temp;
-  TempData(this.yearval, this.temp);
-}
-
-class ManHoleData {
-  int yearval;
-  int condn;
-  ManHoleData(this.yearval, this.condn);
-}

@@ -18,7 +18,7 @@ class HomePageVM {
   int selectedDrawerIndex = 0;
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey<ScaffoldState>();
   List<String> _seriesList;
-  String _sheetURL;
+  String _sheetURL, _scriptEditorURL;
   BuildContext context;
   Map _clientsMap;
   List<String> citieslist = [];
@@ -131,12 +131,16 @@ class HomePageVM {
     await _getDeviceSetting(_ccode, _scode);
     await _setQuery(_ccode, _scode);
   }
+  _getScriptEditorUrl() async{
+    _scriptEditorURL = (await FirebaseDatabase.instance.reference().child("urls/doPost").once()).value;
+  }
 
   void initialize(BuildContext context){
     this.context = context;
     _ccode = "C0";
     _scode = "S0";
     onFirstLoad();
+    _getScriptEditorUrl();
   }
 
   void dispose(){
@@ -150,6 +154,8 @@ class HomePageVM {
 
   String get getSheetURL => _sheetURL; 
   
+  String get getScriptEditorURL => _scriptEditorURL; 
+  
   set setClientCode(String clientCode){
     _ccode = clientCode;
   } 
@@ -160,5 +166,5 @@ class HomePageVM {
     _scode = seriesCode;
   } 
    
- 
+  
 }

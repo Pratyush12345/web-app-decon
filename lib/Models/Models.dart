@@ -83,17 +83,17 @@ class S0DeviceSettingModel {
   }
 }
 
-class FeedbackForm {
+class DataFromSheet {
   String date;
   String value;
 
-  FeedbackForm(
+  DataFromSheet(
     this.date,
     this.value,
   );
 
-  factory FeedbackForm.fromJson(dynamic json) {
-    return FeedbackForm("${json['key']}", "${json['value']}");
+  factory DataFromSheet.fromJson(dynamic json) {
+    return DataFromSheet("${json['key']}", "${json['value']}");
   }
 
   // Method to make GET parameters.
@@ -116,6 +116,7 @@ class DeviceData {
   int openManhole;
   int signalStrength;
   int lightIntensity;
+  String lastUpdated;
 
 
   DeviceData(
@@ -129,6 +130,7 @@ class DeviceData {
       @required this.status,
       @required this.openManhole,
       @required this.address,
+      @required this.lastUpdated,
       this.temperature,
       this.lightIntensity,
       this.signalStrength});
@@ -158,6 +160,7 @@ class DeviceData {
     status = snapshot.value["simStatus"] ?? 1;
     openManhole = snapshot.value["openManhole"];
     temperature = snapshot.value["temperature"];
+    lastUpdated = snapshot.value["lastUpdated"];
     address = snapshot.value["address"] ?? "Empty";
     signalStrength = snapshot.value["signalStrength"];
     lightIntensity = snapshot.value["lightIntensity"];
@@ -186,6 +189,7 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
     status = json["simStatus"] ?? 1;
     openManhole = json["openManhole"];
     temperature = json["temperature"];
+    lastUpdated = json["lastUpdated"];
     address = json["address"] ?? "Empty";
     signalStrength = json["signalStrength"];
     lightIntensity = json["lightIntensity"];
@@ -203,7 +207,8 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
       "address": address,
       "temperature": temperature,
       "signalStrength" : signalStrength,
-      "lightIntensity" : lightIntensity
+      "lightIntensity" : lightIntensity,
+      "lastUpdated" : lastUpdated
     };
   }
   toS0Json() {
@@ -217,7 +222,8 @@ DeviceData.fromJson(Map<dynamic, dynamic> json, String _seriesCode) {
       "openManhole": openManhole,
       "address": address,
       "signalStrength" : signalStrength,
-      "lightIntensity" : lightIntensity
+      "lightIntensity" : lightIntensity,
+      "lastUpdated" : lastUpdated
     };
   }
 }
@@ -397,8 +403,27 @@ class ClientListModel {
 
 class SeriesInfo {
   Object model;
+  final List<String> graphs;
   final Widget bottomLayout;
   final Widget deviceSetting;
-  SeriesInfo({@required this.model, @required this.bottomLayout, @required this.deviceSetting});
+  SeriesInfo({@required this.model,@required this.graphs, @required this.bottomLayout, @required this.deviceSetting});
 }
 
+
+class LinearData {
+  int yearval;
+  int levelval;
+  LinearData(this.yearval, this.levelval);
+}
+
+class TempData {
+  int yearval;
+  double temp;
+  TempData(this.yearval, this.temp);
+}
+
+class ManHoleData {
+  int yearval;
+  int condn;
+  ManHoleData(this.yearval, this.condn);
+}
