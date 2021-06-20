@@ -1,5 +1,6 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
+import 'package:Decon/Models/Models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/material.dart';
 class Replace_Manager extends StatefulWidget {
   final String clientVisible;
   final String uid;
-  Replace_Manager({this.clientVisible, this.uid});
+  final List<UserDetailModel> list;
+  Replace_Manager({this.clientVisible, this.uid, @required this.list});
   @override
   _Replace_Manager createState() => _Replace_Manager();
 }
@@ -105,8 +107,14 @@ class _Replace_Manager extends State<Replace_Manager> {
                       flex: 2,
                       child: TextFormField(
                         validator: (val){
+                          int index= widget.list.indexWhere((element) => element.phoneNo.contains(val));
+                      
                           if(val.isEmpty)
                           return "Phone Number Cannot be empty";
+                          else if(val.length!=10)
+                          return "Phone Number must be of 10 digits";
+                          else if(index!=-1)
+                          return "Phone No already registered"; 
                           else
                           return null;
                         },

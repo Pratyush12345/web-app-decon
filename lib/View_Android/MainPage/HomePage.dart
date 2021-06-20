@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/client_not_found.dart';
 import 'package:Decon/View_Android/MainPage/drawer.dart';
+import 'package:Decon/View_Android/series_S1/load_svg.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
@@ -214,12 +215,14 @@ class HomePageState extends State<HomePage> {
                 color: Colors.black,
               ),
               onPressed: () async {
-                DataSnapshot snapshot =  await FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("name").equalTo("Eng1").once();
-                Map<String, dynamic> _map = Map<String, dynamic>.from(snapshot.value);
-                _map.forEach((key, value) { 
-                  value["name"] = "pushId";
-                });
-                FirebaseDatabase.instance.reference().child("adminTeam").update(Map<String, dynamic>.from(snapshot.value));
+                
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=> LoadSVG()));
+                // DataSnapshot snapshot =  await FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("name").equalTo("Eng1").once();
+                // Map<String, dynamic> _map = Map<String, dynamic>.from(snapshot.value);
+                // _map.forEach((key, value) { 
+                //   value["name"] = "pushId";
+                // });
+                // FirebaseDatabase.instance.reference().child("adminTeam").update(Map<String, dynamic>.from(snapshot.value));
                 // DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("demoTeam/123").once();
                 // print("data=============");
                 // print(Map<String, dynamic>.from(snapshot.value));

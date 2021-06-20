@@ -20,9 +20,13 @@ class AllPeople extends StatefulWidget {
 
 
 class _AllPeople extends State<AllPeople> {
-  
+  List<UserDetailModel> _listOfAdminTeam = [];
+  List<UserDetailModel> _listOfManagerTeam = [];
+                                                          
   _initialize() async{
     AllPeopleVM.instance.init();
+    _listOfAdminTeam = [];
+    _listOfManagerTeam = [];
     await AllPeopleVM.instance.getManagerDetail(widget.clientDetailModel?.selectedManager);
     await AllPeopleVM.instance.getAdminDetail(widget.clientDetailModel?.selectedAdmin);
     setState(() { });
@@ -39,7 +43,7 @@ class _AllPeople extends State<AllPeople> {
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_Delegates();
+          return Add_Delegates(list: GlobalVar.strAccessLevel=="2" ? _listOfManagerTeam : _listOfAdminTeam,);
         });
   }
 
@@ -261,7 +265,6 @@ class _AllPeople extends State<AllPeople> {
                           stream: FirebaseDatabase.instance.reference().child("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              List<UserDetailModel> _listOfManagerTeam = [];
                                 (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
                                   _listOfManagerTeam.add(UserDetailModel.fromJson(key, value));
                                 });
@@ -386,7 +389,6 @@ class _AllPeople extends State<AllPeople> {
                           stream: FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              List<UserDetailModel> _listOfAdminTeam = [];
                                 (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
                                   _listOfAdminTeam.add(UserDetailModel.fromJson(key, value));
                                 });

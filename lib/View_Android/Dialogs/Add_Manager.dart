@@ -1,9 +1,12 @@
 import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
 
 
 class Add_man extends StatefulWidget {
+  final List<UserDetailModel> list;
+  Add_man({@required this.list});
   @override
   _Add_man createState() => _Add_man();
 }
@@ -98,8 +101,13 @@ class _Add_man extends State<Add_man> {
                       flex: 2,
                       child: TextFormField(
                         validator: (val){
+                          int index = widget.list.indexWhere((element) => element.phoneNo.contains(val));
                           if(val.isEmpty)
                           return "Phone Number Cannot be empty";
+                          else if(val.length!=10)
+                          return "Phone Number must be of 10 digits";
+                          else if(index!=-1)
+                          return "Phone No already registered"; 
                           else
                           return null;
                         },

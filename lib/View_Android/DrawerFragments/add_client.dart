@@ -21,9 +21,34 @@ class _AddClientState extends State<AddClient> {
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _sheetController = TextEditingController();
- 
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
   UserDetailModel _userDetailModel;
   UserDetailModel _previousUserDetailModel;
+   void validate() async{
+    if(_formKey.currentState.validate()){
+              ClientListModel clientListModel = ClientListModel(
+                    clientCode: widget.clientCode,
+                    clientName: _nameController.text.trim()
+                  );
+                  ClientDetailModel model = ClientDetailModel(
+                    cityName: _cityController.text.trim(),
+                    clientName: _nameController.text.trim(),
+                    departmentName: _departmentNameController.text.trim(),
+                    districtName: _districtController.text.trim(),
+                    selectedSeries: AddClientVM.instance.selectedSeries,
+                    stateName: _stateController.text.trim(),
+                    selectedManager: _userDetailModel.key,
+                    selectedAdmin: "",
+                    sheetURL: _sheetController.text.trim()
+                  );
+                  AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
+              
+           }
+    else{
+      print("Not Validated");
+    }
+  }
 
    _initializeData() async{
     AddClientVM.instance.init(); 
@@ -85,115 +110,140 @@ class _AddClientState extends State<AddClient> {
         padding: EdgeInsets.all(12.0),
         child: AddClientVM.instance.seriesList == null? AppConstant.circulerProgressIndicator():
           AddClientVM.instance.seriesList.isEmpty ? AppConstant.noDataFound():
-           Column(
+          Form(
+            key: _formKey,
+             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            TextField(
-              controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
-              decoration: InputDecoration(
-                hintText: "Enter Name"
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "Name Cannot be empty";
+                            else
+                            return null;
+                          },
+                controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
+                decoration: InputDecoration(
+                  hintText: "Enter Name"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
               ),
-              style: TextStyle(
-                fontSize: 12.0
+              SizedBox(height: 15.0,),
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "Department Name Cannot be empty";
+                            else
+                            return null;
+                          },
+                controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
+                decoration: InputDecoration(
+                  hintText: "Enter Department Name"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
               ),
-            ),
-            SizedBox(height: 15.0,),
-            TextField(
-              controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
-              decoration: InputDecoration(
-                hintText: "Enter Department Name"
+              SizedBox(height: 15.0,),
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "City name Cannot be empty";
+                            else
+                            return null;
+                          },
+                controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
+                decoration: InputDecoration(
+                  hintText: "Enter City"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
               ),
-              style: TextStyle(
-                fontSize: 12.0
-              ),
-            ),
-            SizedBox(height: 15.0,),
-            TextField(
-              controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
-              decoration: InputDecoration(
-                hintText: "Enter City"
-              ),
-              style: TextStyle(
-                fontSize: 12.0
-              ),
-            ),
-            SizedBox(height: 15.0,),
-            TextField(
-              controller: _districtController..text = AddClientVM.instance.clientDetailModel?.districtName,
-              decoration: InputDecoration(
-                hintText: "Enter District"
-              ),
-              style: TextStyle(
-                fontSize: 12.0
-              ),
-            ),
-            SizedBox(height: 15.0,),
-            TextField(
-              controller: _stateController..text = AddClientVM.instance.clientDetailModel?.stateName,
-              decoration: InputDecoration(
-                hintText: "Enter State"
-              ),
-              style: TextStyle(
-                fontSize: 12.0
-              ),
-            ),
-            TextField(
-              controller: _sheetController..text = AddClientVM.instance.clientDetailModel?.sheetURL,
-              decoration: InputDecoration(
-                hintText: "Enter Sheet URL"
-              ),
-              style: TextStyle(
-                fontSize: 12.0
-              ),
-            ),
-            
-            SizedBox(height: 15.0,),
-            _getSeriesWidget(),
-            SizedBox(height: 15.0,),
-            if(_userDetailModel?.key !=null)
-            Card(
-              child: ListTile(
-                leading: Text("${_userDetailModel?.clientsVisible??""}"),
-                title: Text("${_userDetailModel?.name}"),
-                subtitle: Text("${_userDetailModel?.phoneNo}")
-            )
-            ),
-            MaterialButton(
-              color: Colors.blue,
-              child: Text(_userDetailModel?.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
-              onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
-                then((value){ 
-                  if(value!=null)
-                  _userDetailModel = value;
-                  setState(() {});
-                  } );   
-            }),
-            SizedBox(height: 40.0,),  
-            MaterialButton(
-              color: Colors.blue,
-              child: Text(widget.isedit?"Update": "Done"),
-              onPressed: (){
-                ClientListModel clientListModel = ClientListModel(
-                  clientCode: widget.clientCode,
-                  clientName: _nameController.text.trim()
-                );
-                ClientDetailModel model = ClientDetailModel(
-                  cityName: _cityController.text.trim(),
-                  clientName: _nameController.text.trim(),
-                  departmentName: _departmentNameController.text.trim(),
-                  districtName: _districtController.text.trim(),
-                  selectedSeries: AddClientVM.instance.selectedSeries,
-                  stateName: _stateController.text.trim(),
-                  selectedManager: _userDetailModel.key,
-                  selectedAdmin: "",
-                  sheetURL: _sheetController.text.trim()
-                );
-                AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
+              SizedBox(height: 15.0,),
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "District name Cannot be empty";
+                            else
+                            return null;
+                          },
                 
-            }),      
+                controller: _districtController..text = AddClientVM.instance.clientDetailModel?.districtName,
+                decoration: InputDecoration(
+                  hintText: "Enter District"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
+              ),
+              SizedBox(height: 15.0,),
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "State Name Cannot be empty";
+                            else
+                            return null;
+                          },
+                controller: _stateController..text = AddClientVM.instance.clientDetailModel?.stateName,
+                decoration: InputDecoration(
+                  hintText: "Enter State"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
+              ),
+              TextFormField(
+                validator: (val){
+                            if(val.isEmpty)
+                            return "Sheet URL Cannot be empty";
+                            else
+                            return null;
+                          },
+                controller: _sheetController..text = AddClientVM.instance.clientDetailModel?.sheetURL,
+                decoration: InputDecoration(
+                  hintText: "Enter Sheet URL"
+                ),
+                style: TextStyle(
+                  fontSize: 12.0
+                ),
+              ),
+              
+              SizedBox(height: 15.0,),
+              _getSeriesWidget(),
+              SizedBox(height: 15.0,),
+              if(_userDetailModel?.key !=null)
+              Card(
+                child: ListTile(
+                  leading: Text("${_userDetailModel?.clientsVisible??""}"),
+                  title: Text("${_userDetailModel?.name}"),
+                  subtitle: Text("${_userDetailModel?.phoneNo}")
+              )
+              ),
+              MaterialButton(
+                color: Colors.blue,
+                child: Text(_userDetailModel?.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
+                onPressed: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
+                  then((value){ 
+                    if(value!=null)
+                    _userDetailModel = value;
+                    setState(() {});
+                    } );   
+              }),
+              SizedBox(height: 40.0,),  
+              MaterialButton(
+                color: Colors.blue,
+                child: Text(widget.isedit?"Update": "Done"),
+                onPressed: (){
+                 validate();    
+              }
+              ),      
           ],
         ),
+           ),
       ),
     );
   }

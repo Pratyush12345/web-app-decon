@@ -1,12 +1,16 @@
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
+import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Add_admin extends StatefulWidget {
-  
+  final List<UserDetailModel> list;
+  Add_admin({@required this.list});
   @override
   _Add_admin createState() => _Add_admin();
 }
@@ -70,11 +74,23 @@ class _Add_admin extends State<Add_admin> {
                       flex: 2,
                       child: TextFormField(
                         validator: (val){
+                        int index = widget.list.indexWhere((element) =>element.clientsVisible.contains(val) );
+                        
                         if(val.isEmpty)
                         return "Client Code Cannot be empty";
+                        else if(GlobalVar.strAccessLevel == "2" && !GlobalVar.userDetail.clientsVisible.contains(val))
+                        return "Client Code not assigned";
+                        else if(index!=-1)
+                        return "Admin already assigned for this Client";
+                        else if(val.endsWith("C") || !val.startsWith("C") || HomePageVM.instance.getCitiesMap[val]==null )
+                        return "Invalid Code";
                         else
                         return null;
                       },
+                        inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter(RegExp('[C0-9]'), allow: true ),
+                    ],
+              
                         controller: _clientController,
                         keyboardType: TextInputType.text,
                         style: TextStyle(fontSize: SizeConfig.b * 4.3),
@@ -179,8 +195,13 @@ class _Add_admin extends State<Add_admin> {
                     flex: 2,
                     child: TextFormField(
                       validator: (val){
+                        int index= widget.list.indexWhere((element) => element.phoneNo.contains(val));
                         if(val.isEmpty)
                         return "Phone Number Cannot be empty";
+                        else if(val.length!=10)
+                        return "Phone Number must be of 10 digits"; 
+                        else if(index!=-1)
+                        return "Phone No already registered"; 
                         else
                         return null;
                       },

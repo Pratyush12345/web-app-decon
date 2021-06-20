@@ -2,11 +2,11 @@ import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Add_Delegates extends StatefulWidget {
+  final List<UserDetailModel> list;
+  Add_Delegates({@required this.list});
   @override
   _Add_Delegates createState() => _Add_Delegates();
 }
@@ -141,8 +141,14 @@ class _Add_Delegates extends State<Add_Delegates> {
                       flex: 2,
                       child: TextFormField(
                         validator: (val){
+                          int index= widget.list.indexWhere((element) => element.phoneNo.contains(val));
+                        
                           if(val.isEmpty)
                           return "Phone Number Cannot be empty";
+                          else if(val.length!=10)
+                          return "Phone Number must be of 10 digits";
+                          else if(index!=-1)
+                          return "Phone No already registered"; 
                           else
                           return null;
                         },

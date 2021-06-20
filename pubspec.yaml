@@ -51,6 +51,7 @@ dependencies:
   flutter_local_notifications:
   syncfusion_flutter_charts:
   http:
+  toast:
   intl:  
   
 dev_dependencies:
@@ -79,6 +80,7 @@ flutter:
     - assets/detect.flr
     - assets/inform.flr
     - assets/process.flr
+    - assets/Infinity.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -19,7 +19,7 @@ class _ManagersListState extends State<ManagersList> {
     return showDialog(
         context: context,
         builder: (context) {
-          return Add_man();
+          return Add_man(list: _listUserDetailModel??[],);
         });
   }
 

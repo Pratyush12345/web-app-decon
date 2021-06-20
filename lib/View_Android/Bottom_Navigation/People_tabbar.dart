@@ -47,7 +47,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_man();
+          return Add_man(list: _listUserDetailModelManager??[],);
         });
   }
 
@@ -56,7 +56,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_admin();
+          return Add_admin(list: _listUserDetailModelAdmins??[],);
         });
   }
 
@@ -68,6 +68,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
           return Replace_Admin(
             clientVisible: clientVisible ,
             uid: uid,
+            list: _listUserDetailModelAdmins,
           );
         });
   }
@@ -80,6 +81,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
           return Replace_Manager(
             clientVisible: clientVisible ,
             uid: uid,
+            list: _listUserDetailModelManager,
           );
         });
   }
