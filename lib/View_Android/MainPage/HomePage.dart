@@ -5,6 +5,7 @@ import 'package:Decon/Models/Consts/client_not_found.dart';
 import 'package:Decon/View_Android/MainPage/drawer.dart';
 import 'package:Decon/View_Android/series_S1/load_svg.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
@@ -47,7 +48,6 @@ class HomePageState extends State<HomePage> {
         break;
       case 1:
         return AllDevices(
-          sheetURL: HomePageVM.instance.getSheetURL,
         );
       case 2:
         if (GlobalVar.strAccessLevel == "1")
@@ -79,6 +79,9 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return Scaffold(
       key: HomePageVM.instance.scafoldKey,
       appBar: AppBar(
@@ -253,44 +256,50 @@ class HomePageState extends State<HomePage> {
               )
       ),
 
-        bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.white,
-        selectedFontSize: 14.0,
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Color(0xff263238),
-
-        iconSize: 20.0,
-        //unselectedFontSize: 11.0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              size: SizeConfig.screenWidth * 23 / 360,
+        bottomNavigationBar: Container(
+        height: h * 60,
+        child: BottomNavigationBar(
+          backgroundColor: dc,
+          unselectedItemColor: Colors.white,
+          elevation: 10,
+          selectedFontSize: 0,
+          unselectedFontSize: 0,
+          selectedItemColor: blc,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(
+              
+              icon: SvgPicture.asset(
+                'images/Home.svg',
+                allowDrawingOutsideViewBox: true,
+                color: _currentIndex == 0 ? blc : Colors.white,
+              ),
+              label: 'Home',
             ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.memory,
-                size: SizeConfig.screenWidth * 23 / 360,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.memory, size: b * 26),
+              label: 'Devices',
+            ),
+            BottomNavigationBarItem(
+                     
+              icon: SvgPicture.asset(
+                'images/3User.svg',
+                allowDrawingOutsideViewBox: true,
+                color: _currentIndex == 2 ? blc : Colors.white,
               ),
-              label: 'Devices'),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
-                size: SizeConfig.screenWidth * 23 / 360,
-              ),
-              label: 'Team'),
-        ],
-        onTap: (index) {
-          setState(() {
-            HomePageVM.instance.isfromDrawer = false;
-            _currentIndex = index;
-          });
-        },
-      ),
+              label: 'People',
+            ),
+          ],
+          onTap: (index) {
+            setState(() {
+              HomePageVM.instance.isfromDrawer = false;
+              _currentIndex = index;
+            });
+          },
+        ),
+      )
+      
     );
   }
 }

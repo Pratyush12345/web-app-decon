@@ -9,6 +9,9 @@ import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
+
 
 
 class Graphs extends StatefulWidget {
@@ -33,6 +36,7 @@ class _GraphsState extends State<Graphs> {
     2: Color(0xffE1E357),
     3: Color(0xffD93D3D)
   };
+
   @override
   void initState() {
     super.initState();
@@ -43,85 +47,139 @@ class _GraphsState extends State<Graphs> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
 
     return Scaffold(
       appBar: AppBar(title: Text("Graph")),
       body: ListView(
         children: [
           Container(
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.3,
               width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    "${widget.deviceData.id.split("_")[2].replaceAll("D", "Device ")}",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text("Last Updated: ${GraphsVM.intsance.formattedDate(widget.deviceData.lastUpdated)}"),
-                      Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: SizeConfig.b * 1,
-                              vertical: SizeConfig.v * 0.6),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(SizeConfig.b * 2),
-                              color: Color(0xff0099FF)),
-                          child: Text(widget.deviceData.id,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: SizeConfig.b * 3.57))),
-                    ],
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(width: SizeConfig.v * 1),
-                        Row(children: [
-                          CircleAvatar(
-                              radius: SizeConfig.b * 1.781,
-                              backgroundColor:
-                                  _levelsColor[widget.deviceData.wlevel]),
-                          SizedBox(width: SizeConfig.b * 0.5),
-                          Text("${_levels[widget.deviceData.wlevel]}",
-                              style: TextStyle(fontSize: SizeConfig.b * 3.57))
-                        ]),
-                        SizedBox(width: SizeConfig.v * 1),
-                        Row(children: [
-                          Icon(Icons.arrow_upward, size: SizeConfig.b * 4),
-                          SizedBox(width: SizeConfig.b * 0.5),
-                          Text("${widget.deviceData.openManhole}m")
-                        ]),
-                        SizedBox(width: SizeConfig.v * 1),
-                        Row(children: [
-                          Icon(Icons.battery_charging_full,
-                              color: Colors.green, size: SizeConfig.b * 4),
-                          SizedBox(width: SizeConfig.b * 0.5),
-                          Text("${widget.deviceData.battery}%")
-                        ]),
-                        SizedBox(width: SizeConfig.v * 1),
-                        Row(children: [
-                          Icon(Icons.add, size: SizeConfig.b * 4),
-                          SizedBox(width: SizeConfig.b * 0.5),
-                          Text("${widget.deviceData.temperature}\u2103")
-                        ]),
-                        SizedBox(
-                          width: SizeConfig.v * 1,
-                        )
-                      ]),
-                  SizedBox(height: SizeConfig.v * 1.5),
                   Container(
-                      padding: EdgeInsets.fromLTRB(SizeConfig.b * 5.6, 0, 0, 0),
-                      child: Text(widget.deviceData.address,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 3.054,
-                              color: Color(0xff0099FF)))),
-                ],
+        margin: EdgeInsets.only(bottom: h * 19),
+        padding: EdgeInsets.only(
+            top: h * 12, bottom: h * 20, left: b * 12, right: b * 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.10),
+              blurRadius: 10,
+              spreadRadius: 0,
+              offset: Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(b * 10),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${widget.deviceData.id.split("_")[2].replaceAll("D", "Device ")}",
+                  style: txtS(dc, 18, FontWeight.w400),
+                ),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: h * 2, horizontal: b * 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(b * 2),
+                    color: dc,
+                  ),
+                  child: Text(
+                    'ID : ${widget.deviceData.id}',
+                    style: txtS(Colors.white, 12, FontWeight.w400),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: b * 6),
+                      height: h * 12,
+                      width: b * 12,
+                      decoration: BoxDecoration(
+                        color: _levelsColor[widget.deviceData.wlevel],
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Text(
+                      _levels[widget.deviceData.wlevel],
+                      style: txtS(_levelsColor[widget.deviceData.id], 12, FontWeight.w400),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            sh(18),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if(HomePageVM.instance.getSeriesCode == "S1")
+                Row(children: [
+                  SvgPicture.asset(
+                    'images/distance.svg',
+                    allowDrawingOutsideViewBox: true,
+                  ),
+                  SizedBox(width: b * 5),
+                  Text(
+                    "${widget.deviceData.distance??""}m",
+                    style: txtS(blc, 14, FontWeight.w400),
+                  ),
+                ]),
+                Row(children: [
+                  Icon(Icons.battery_charging_full, size: b * 16, color: blc),
+                  Text(
+                    "${widget.deviceData.battery??""}%",
+                    style: txtS(blc, 14, FontWeight.w400),
+                  ),
+                ]),
+                if(HomePageVM.instance.getSeriesCode == "S1")
+                Row(children: [
+                  Icon(Icons.thermostat_sharp, size: b * 16, color: blc),
+                  Text(
+                    "${widget.deviceData.temperature??""}\u2103",
+                    style: txtS(blc, 14, FontWeight.w400),
+                  ),
+                ]),
+                Row(children: [
+                  Icon(Icons.arrow_upward, size: b * 16, color: blc),
+                  Text(
+                    "${widget.deviceData.openManhole??""}",
+                    style: txtS(blc, 14, FontWeight.w400),
+                  ),
+                ]),
+                Row(children: [
+                  SvgPicture.asset(
+                    'images/signal.svg',
+                    allowDrawingOutsideViewBox: true,
+                  ),
+                  SizedBox(width: b * 5),
+                  Text(
+                    "${widget.deviceData.signalStrength??""}",
+                    style: txtS(blc, 14, FontWeight.w400),
+                  ),
+                ]),
+              ],
+            ),
+            sh(23),
+            Text(
+              "${widget.deviceData.address??""}",
+              style: txtS(dc, 12, FontWeight.w400),
+            ),
+          ],
+        ),
+      ),
+                      Text("Last Updated: ${GraphsVM.intsance.formattedDate(widget.deviceData.lastUpdated)}"),
+                    
+                  SizedBox(height: SizeConfig.v * 0.5),
+                  ],
               )),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

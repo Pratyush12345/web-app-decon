@@ -1,3 +1,4 @@
+import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/add_client_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
@@ -62,6 +63,7 @@ class _AddClientState extends State<AddClient> {
    }
    _getSeriesWidget(){
      return Column(
+       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
        children: AddClientVM.instance.seriesList.map((e) => 
        Row(children: [
          Text(e),
@@ -91,23 +93,45 @@ class _AddClientState extends State<AddClient> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Add Client"),
-      actions: [
-        if(widget.isedit)
-        MaterialButton(
-          onPressed: (){
-            AddClientVM.instance.onDeactivatePressed(widget.clientCode);
+      appBar: AppBar(leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
           },
-          child: Text( "Deactivate",
-          style: TextStyle(
-            color: Colors.white
-          ),),
-        )
-      ],
+          child: Icon(Icons.arrow_back_ios, color: blc, size: b * 16),
+        ),
+        elevation: 10,
+        titleSpacing: -3,
+        iconTheme: IconThemeData(color: blc),
+        title: Text(
+          "Add Client",
+          style: txtS(Colors.black, 16, FontWeight.w500),
+        ),
+        actions: [
+          InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {},
+            child: Container(
+              margin: EdgeInsets.only(right: b * 20),
+              height: h * 32,
+              width: b * 32,
+              decoration: BoxDecoration(
+                color: blc,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+        ],
+        backgroundColor: Colors.white,
+      
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(12.0),
+        padding: EdgeInsets.symmetric(horizontal: b * 16, vertical: b * 14),
         child: AddClientVM.instance.seriesList == null? AppConstant.circulerProgressIndicator():
           AddClientVM.instance.seriesList.isEmpty ? AppConstant.noDataFound():
           Form(
@@ -115,53 +139,93 @@ class _AddClientState extends State<AddClient> {
              child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-              TextFormField(
-                validator: (val){
+             TextFormField(
+               validator: (val){
                             if(val.isEmpty)
                             return "Name Cannot be empty";
                             else
                             return null;
                           },
-                controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
-                decoration: InputDecoration(
-                  hintText: "Enter Name"
-                ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
-              ),
+                
+               controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
+              style: TextStyle(fontSize: b * 16, color: dc),
+               decoration: InputDecoration(
+                 fillColor: Color(0xfff6f6f6),
+                 filled: true,
+                          
+                 isDense: true,
+                 contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 hintText: "Enter name",
+                 hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
+                 enabledBorder: InputBorder.none,
+               ),
+               maxLines: 1,
+             ),
               SizedBox(height: 15.0,),
               TextFormField(
-                validator: (val){
+               validator: (val){
                             if(val.isEmpty)
                             return "Department Name Cannot be empty";
                             else
                             return null;
                           },
-                controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
-                decoration: InputDecoration(
-                  hintText: "Enter Department Name"
-                ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
-              ),
+                
+                
+               controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
+              style: TextStyle(fontSize: b * 16, color: dc),
+               decoration: InputDecoration(
+                 fillColor: Color(0xfff6f6f6),
+                 filled: true,
+                          
+                 isDense: true,
+                 contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 hintText: "Enter Department Name",
+                 hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
+                 enabledBorder: InputBorder.none,
+               ),
+               maxLines: 1,
+             ),
               SizedBox(height: 15.0,),
               TextFormField(
-                validator: (val){
+               validator: (val){
                             if(val.isEmpty)
-                            return "City name Cannot be empty";
+                            return "City Name Cannot be empty";
                             else
                             return null;
                           },
-                controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
-                decoration: InputDecoration(
-                  hintText: "Enter City"
-                ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
-              ),
+                 
+               controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
+              style: TextStyle(fontSize: b * 16, color: dc),
+               decoration: InputDecoration(
+                 fillColor: Color(0xfff6f6f6),
+                 filled: true,
+                          
+                 isDense: true,
+                 contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 hintText: "Enter City Name",
+                 hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
+                 enabledBorder: InputBorder.none,
+               ),
+               maxLines: 1,
+             ),
               SizedBox(height: 15.0,),
               TextFormField(
                 validator: (val){
@@ -173,11 +237,21 @@ class _AddClientState extends State<AddClient> {
                 
                 controller: _districtController..text = AddClientVM.instance.clientDetailModel?.districtName,
                 decoration: InputDecoration(
-                  hintText: "Enter District"
+                  fillColor: Color(0xfff6f6f6),
+                  filled: true,
+                  contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 enabledBorder: InputBorder.none,
+                  hintText: "Enter District",
+                  hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
                 ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
+                
+               maxLines: 1,
               ),
               SizedBox(height: 15.0,),
               TextFormField(
@@ -189,12 +263,26 @@ class _AddClientState extends State<AddClient> {
                           },
                 controller: _stateController..text = AddClientVM.instance.clientDetailModel?.stateName,
                 decoration: InputDecoration(
-                  hintText: "Enter State"
+                  fillColor: Color(0xfff6f6f6),
+                 filled: true,
+                 contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 enabledBorder: InputBorder.none,
+                  
+                 
+                  hintText: "Enter State",
+                  hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
                 ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
+                
+               maxLines: 1,
               ),
+              SizedBox(height: 15.0,),
+              
               TextFormField(
                 validator: (val){
                             if(val.isEmpty)
@@ -204,11 +292,23 @@ class _AddClientState extends State<AddClient> {
                           },
                 controller: _sheetController..text = AddClientVM.instance.clientDetailModel?.sheetURL,
                 decoration: InputDecoration(
-                  hintText: "Enter Sheet URL"
+                  fillColor: Color(0xfff6f6f6),
+                 filled: true,
+                 contentPadding:
+                     EdgeInsets.symmetric(vertical: h * 8, horizontal: b * 8),
+                 border: InputBorder.none,
+                 focusedBorder: InputBorder.none,
+                 enabledBorder: InputBorder.none,
+                  
+                 
+                  hintText: "Enter Sheet URL",
+                  hintStyle: TextStyle(
+                   fontSize: b * 16,
+                   color: Color(0xff858585),
+                 ),
                 ),
-                style: TextStyle(
-                  fontSize: 12.0
-                ),
+                
+               maxLines: 1,
               ),
               
               SizedBox(height: 15.0,),
@@ -216,31 +316,92 @@ class _AddClientState extends State<AddClient> {
               SizedBox(height: 15.0,),
               if(_userDetailModel?.key !=null)
               Card(
-                child: ListTile(
-                  leading: Text("${_userDetailModel?.clientsVisible??""}"),
-                  title: Text("${_userDetailModel?.name}"),
-                  subtitle: Text("${_userDetailModel?.phoneNo}")
-              )
-              ),
+                      child: ListTile(
+                        leading: Container(
+                                      height: h * 25,
+                                      width: b * 25,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff6d6d6d),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                        title: Text("${_userDetailModel?.name}",
+                        style: txtS(blc, 16, FontWeight.w400)),
+                        subtitle: Text("${_userDetailModel?.phoneNo}",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: txtS(dc, 14, FontWeight.w400)),
+                        trailing: Container(
+                          width: 100.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text("${_userDetailModel?.clientsVisible?.replaceFirst(",", "")??""}"),
+                              
+                            ],
+                          ),
+                        ),
+                    )
+                    ),
+              SizedBox(height: 10.0,),
               MaterialButton(
-                color: Colors.blue,
-                child: Text(_userDetailModel?.key ==null? "Select Manager for Client" : "Update Manager for Client" ),
-                onPressed: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              color: blc,
+              padding: EdgeInsets.symmetric(vertical: h * 3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(b * 6),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
                   then((value){ 
                     if(value!=null)
                     _userDetailModel = value;
                     setState(() {});
-                    } );   
-              }),
-              SizedBox(height: 40.0,),  
+                    } );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: h * 10),
+                alignment: Alignment.center,
+                child: Text(
+                  _userDetailModel?.key ==null? "Select Manager for Client" : "Update Manager for Client" ,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: b * 16,
+                      fontWeight: FontWeight.w400),
+                ),
+              ),
+            ),
+            
+              SizedBox(height: 40.0,), 
               MaterialButton(
-                color: Colors.blue,
-                child: Text(widget.isedit?"Update": "Done"),
-                onPressed: (){
-                 validate();    
-              }
-              ),      
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              color: blc,
+              padding: EdgeInsets.symmetric(vertical: h * 3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(b * 6),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
+                  then((value){ 
+                    if(value!=null)
+                    _userDetailModel = value;
+                    setState(() {});
+                    } );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: h * 10),
+                alignment: Alignment.center,
+                child: Text(
+                  widget.isedit?"Update": "Done" ,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: b * 16,
+                      fontWeight: FontWeight.w400),
+                ),
+              ),
+            ),
+             
+                    
           ],
         ),
            ),

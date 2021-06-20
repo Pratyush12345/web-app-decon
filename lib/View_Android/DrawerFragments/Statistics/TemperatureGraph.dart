@@ -1,8 +1,6 @@
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/Authentication/Wait.dart';
-import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:syncfusion_flutter_charts/charts.dart';
 class TempGraph extends StatelessWidget {
   final List<ChartSeries<TempData, int>> seriesTempData;

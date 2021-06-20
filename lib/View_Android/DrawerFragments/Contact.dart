@@ -1,5 +1,7 @@
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Contact extends StatefulWidget {
   final BuildContext menuScreenContext;
@@ -11,6 +13,9 @@ class Contact extends StatefulWidget {
 
 
 class _Contact extends State<Contact> {
+  final TextEditingController email = TextEditingController();
+  final TextEditingController message = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -19,114 +24,107 @@ class _Contact extends State<Contact> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          children: [
-            SizedBox(height: SizeConfig.v * 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.location_on),
-                SizedBox(width: SizeConfig.b * 6),
-                Text("SVNIT Campus, Surat, Gujarat",
-                    style: TextStyle(fontSize: SizeConfig.b * 4.3))
-              ],
-            ),
-            SizedBox(height: SizeConfig.v * 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.mail),
-                SizedBox(width: SizeConfig.b * 6),
-                Text("vysiontechnology@gmail.com",
-                    style: TextStyle(fontSize: SizeConfig.b * 4.3))
-              ],
-            ),
-            SizedBox(height: SizeConfig.v * 6),
-            Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.screenWidth * 16 / 360),
-              child: Text(
-                'GET IN TOUCH',
-                style: TextStyle(
-                  fontSize: SizeConfig.screenWidth * 20 / 360,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff828282),
-                ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: b * 28),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('images/contact.png', height: h * 231),
+                ],
               ),
-            ),
-            SizedBox(height: SizeConfig.v * 4),
-            Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.screenWidth * 16 / 360),
-              child: TextField(
-                maxLines: 1,
-                style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Mail',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xffDADADA)),
-                  ),
-                  hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: SizeConfig.screenWidth * 10 / 360,
-                    vertical: SizeConfig.screenHeight * 5 / 640,
+              Row(children: [
+                SvgPicture.asset(
+                  'images/location.svg',
+                  allowDrawingOutsideViewBox: true,
+                ),
+                SizedBox(width: b * 11),
+                Text(
+                  "SVNIT Campus, Surat, Gujarat",
+                  style: txtS(dc, 14, FontWeight.w400),
+                ),
+              ]),
+              sh(10),
+              Row(children: [
+                SvgPicture.asset(
+                  'images/message.svg',
+                  allowDrawingOutsideViewBox: true,
+                ),
+                SizedBox(width: b * 11),
+                Text(
+                  "vysiontechnology@gmail.com",
+                  style: txtS(dc, 14, FontWeight.w400),
+                ),
+              ]),
+              sh(49),
+              Text(
+                "Get In Touch",
+                style: txtS(dc, 20, FontWeight.w500),
+              ),
+              sh(30),
+              Container(
+                alignment: Alignment.center,
+                child: TextField(
+                  maxLines: 1,
+                  controller: email,
+                  style: TextStyle(fontSize: b * 14),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Enter E-Mail',
+                    hintStyle: TextStyle(fontSize: b * 14),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: SizeConfig.v * 6),
-            Container(
-              alignment: Alignment.topCenter,
-              height: SizeConfig.screenHeight * 135 / 640,
-              margin: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.screenWidth * 16 / 360),
-              padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.screenWidth * 10 / 360),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xffDADADA),
+              sh(20),
+              Container(
+                padding: EdgeInsets.fromLTRB(b * 10, 0, 0, 0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Color(0xffbebebe), width: b * 1),
+                  borderRadius: BorderRadius.circular(b * 3),
+                ),
+                child: TextField(
+                  controller: message,
+                  maxLines: null,
+                  minLines: 7,
+                  style: TextStyle(fontSize: b * 14),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Type your message here....',
+                    hintStyle:
+                        TextStyle(fontSize: b * 14, color: Color(0xff858585)),
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
-              child: TextField(
-                maxLines: null,
-                style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Message',
-                  hintStyle: TextStyle(fontSize: SizeConfig.b * 4),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-            SizedBox(height: SizeConfig.v * 7),
-            SizedBox(
-              child: MaterialButton(
+              sh(27),
+              MaterialButton(
+                color: blc,
                 padding: EdgeInsets.zero,
-                onPressed: null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(b * 6),
+                ),
+                onPressed: () {},
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: SizeConfig.b * 15.3,
-                      vertical: SizeConfig.v * 1.8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(SizeConfig.b * 8.0),
-                    color: Color(0xff00A3FF),
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: h * 11),
+                  alignment: Alignment.center,
                   child: Text(
-                    'SEND',
+                    'Send',
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: SizeConfig.b * 4.2,
-                        fontWeight: FontWeight.w400),
+                      color: Colors.white,
+                      fontSize: b * 16,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ]),
+          ),
+        );
   }
 }

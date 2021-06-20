@@ -2,8 +2,11 @@ import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
+import 'package:Decon/View_Android/Bottom_Navigation/AllDevices.dart';
 import 'package:Decon/View_Android/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Android/DrawerFragments/AddDevice/AddDevice.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
@@ -47,213 +50,142 @@ Future showErrorDialog(BuildContext context) {
         });
   }
 
-    _onSelectedItem(int index, Widget widget) {
+    _onSelectedItem( Widget widget) {
       HomePageVM.instance.isfromDrawer = true;
-      HomePageVM.instance.selectedDrawerIndex = index;
       HomePageVM.instance.selectedDrawerWidget = widget;
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
       HomePageVM.instance.scafoldKey.currentState.openEndDrawer();
   }
-  List<Widget> _getDrawerWidget(){
-    final drawerItems = [
-      if(GlobalVar.strAccessLevel == "1")
-      Item(
-         title: Text("All Clients",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.pending,
-            color: gc,
-          ),
-         screen: AllClients()
-          ),
-      
-      Item(
-         title: Text("Home",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.home,
-            color: gc,
-          ),
-         screen: Home()
-          ),
-      Item(
-         title: Text("Device Settings",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.settings,
-            color: tc,
-          ),
-         screen: DeviceSetting()),
-         
-      Item(
-         title: Text("Statistics",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.assessment,
-            color: tc,
-          ),
-          screen: Stats()
-          ),
-      Item(
-         title: Text("Maintainence Report",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.build,
-            color: tc,
-          ),
-          screen: HealthReport()),
-      Item(
-         title: Text("Add Devices",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.add,
-            color: tc,
-          ),
-          screen: AddDevice() ),
-      Item(
-         title: Text("About Vysion",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.verified_user,
-            color: tc,
-          ),
-          screen: AboutVysion() ),
-      Item(
-         title: Text("Contact Us",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.settings_phone,
-            color: tc,
-          ),
-          screen: Contact() ),
-      Item(
-         title: Text("Log Out",
-              style: TextStyle(
-                  color: gc,
-                  fontWeight: FontWeight.w400,
-                  fontSize: SizeConfig.b * 4.08)),
-         icon: Icon(
-            Icons.logout,
-            color: tc,
-          )),
-    ];
-    List<Widget> drawerOptions = <Widget>[];
-    for (var i = 0; i < drawerItems.length; i++) {
-      if (i != drawerItems.length-1) {
-        drawerOptions.add(ListTile(
-          leading: drawerItems[i].icon,
-          title: drawerItems[i].title,
-          selected: i == HomePageVM.instance.selectedDrawerIndex,
+
+   Widget row(ico, String tit, dynamic nextPage, context) {
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
+    return Container(
+      margin: EdgeInsets.only(left: b * 11, right: b * 16),
+      child: Material(
+        color: Color(0xffFfffff),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(b * 33),
           onTap: () {
-            _onSelectedItem(i, drawerItems[i].screen);
+            
+            _onSelectedItem( nextPage);
           },
-        ));
-      } else {
-        drawerOptions.add(ListTile(
-          leading: drawerItems[i].icon,
-          title: drawerItems[i].title,
-          selected: i == HomePageVM.instance.selectedDrawerIndex,
-          onTap: () {
-            Navigator.of(context).pop();
-            showErrorDialog(context).then((onValue) {
-              if (onValue == "Yes") {
-                Auth.instance.signOut();
-              }
-            });
-          },
-        ));
-      }
-    }
-    return drawerOptions;
+          highlightColor: Color(0xffa9e0ff).withOpacity(0.5),
+          splashColor: Color(0xffa9e0ff).withOpacity(0.5),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 16),
+            child: Row(
+              children: [
+                Icon(ico, color: Colors.black),
+                SizedBox(width: b * 20),
+                Text(
+                  tit,
+                  style: txtS(Colors.black, 16, FontWeight.w400),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
+  
   @override
   Widget build(BuildContext context) {
 
      SizeConfig().init(context);
+     var h = SizeConfig.screenHeight / 812;
+     var b = SizeConfig.screenWidth / 375;
+
     return Drawer(
         child: Container(
-          color: Color(0xffF4F3F3),
-          child: ListView(
-            padding: EdgeInsets.zero,
+          color: Color(0xFFFfffff),
+          child: Column(
             children: <Widget>[
-              DrawerHeader(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, SizeConfig.v * 1.25),
-                padding: EdgeInsets.fromLTRB(
-                    SizeConfig.b * 1.2,
-                    SizeConfig.v * 1.25,
-                    SizeConfig.b * 0.8,
-                    SizeConfig.v * 1.25),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: SizeConfig.b * 3),
-                            CircleAvatar(
+            Container(
+            color: blc,
+            height: h * 0.5,
+          ),
+          Container(
+            padding: EdgeInsets.only(
+                left: b * 11, bottom: h * 35, top: h * 40, right: b * 12),
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Container(
+                height: h * 60,
+                width: b * 60,
+                child: CircleAvatar(
                               radius: SizeConfig.b * 11,
                               backgroundImage: AssetImage("assets/f.png"),
                             ),
-                            SizedBox(width: SizeConfig.b * 3),
-                            Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Text("${GlobalVar.userDetail.name ?? ""}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: SizeConfig.b * 5.09)),
-                                  SizedBox(height: SizeConfig.v * 1.5),
-                                  Text(
-                                      "${FirebaseAuth.instance.currentUser?.phoneNumber ?? ""}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: SizeConfig.b * 4.08)),
-                                ]))
-                          ]),
-                    ]),
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                      Color(0xff263238),
-                      Color(0xff005A87),
-                    ])),
+                  color: blc,
+                  shape: BoxShape.circle,
+                ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _getDrawerWidget(),
-              )
+              Spacer(),
+              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Text(
+                  "${GlobalVar.userDetail.name ?? ""}",
+                  style: txtS(blc, 18, FontWeight.w700),
+                ),
+                Text(
+                  "${FirebaseAuth.instance.currentUser?.phoneNumber ?? ""}",
+                  style: txtS(Colors.black, 12, FontWeight.w400),
+                ),
+              ]),
+            ]),
+          ),
+          Container(
+            color: blc,
+            height: h * 0.5,
+          ),
+          sh(18),
+          if(GlobalVar.strAccessLevel == "1")
+          row(Icons.view_list, 'Client List', AllClients(), context),
+          row(Icons.home, 'Home', Home(), context),
+          row(Icons.settings, 'Device Settings', DeviceSetting(), context),
+          row(Icons.assessment, 'Statistics', AllDevices(), context),
+          row(Icons.build, 'Maintainence Report', HealthReport(), context),
+          row(Icons.add, 'Add Device', AddDevice(), context),
+          row(Icons.verified, 'About Vysion', AboutVysion(), context),
+          row(Icons.settings_phone, 'Contact Us', Contact(), context),
+          Spacer(),
+          Container(
+            margin:
+                EdgeInsets.only(left: b * 11, right: b * 16, bottom: h * 10),
+            child: Material(
+              color: Color(0xffFfffff),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(b * 33),
+                onTap: () {
+              Navigator.of(context).pop();
+              showErrorDialog(context).then((onValue) {
+                if (onValue == "Yes") {
+                  Auth.instance.signOut();
+                }
+              });
+
+                },
+                highlightColor: Colors.red.withOpacity(0.4),
+                splashColor: Colors.red.withOpacity(0.4),
+                child: Container(
+              padding: EdgeInsets.symmetric(
+                  vertical: h * 14, horizontal: b * 16),
+              child: Row(
+                children: [
+                  Icon(Icons.logout, color: Colors.red),
+                  SizedBox(width: b * 20),
+                  Text(
+                    "Log Out",
+                    style: txtS(Colors.red, 16, FontWeight.w400),
+                  ),
+                ],
+              ),
+                ),
+              ),
+            ),
+          )
             ],
           ),
         ),

@@ -118,6 +118,9 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -227,81 +230,55 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                           return ListView.builder(
                                               physics: ScrollPhysics(),
                                               shrinkWrap: true,
-                                              padding: EdgeInsets.zero,
+                                              padding: EdgeInsets.only(top: h * 10, left: 16.0, right: 16.0),
                                               itemCount: _listUserDetailModelManager.length,
                                               itemBuilder: (BuildContext ctxt,
                                                   int index) {
                                                 return InkWell(
-                                                  onLongPress: () {
+                                                  onLongPress: () 
                                                     {
                                                     showReplaceManagerDialog(
                                                         context,
                                                         _listUserDetailModelManager[index].clientsVisible,
                                                         _listUserDetailModelManager[index].key,
                                                         );
-                                                  }
                                                   },
-                                                  child: Column(children: [
-                                                    Container(
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(bottom: h * 8),
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: h * 13, horizontal: b * 0),
                                                       decoration: BoxDecoration(
-                                                        color: Color(0xffECECEC),
-                                                        borderRadius: BorderRadius.circular(SizeConfig.b * 1.2),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.grey.withOpacity(0.5),
-                                                            spreadRadius: 2,
-                                                            blurRadius: 3,
-                                                            offset: Offset(0,2), // changes position of shadow
-                                                          ),
-                                                        ],
+                                                        color: Color(0xfff1f1f1),
+                                                        borderRadius: BorderRadius.circular(b * 10),
                                                       ),
-                                                      margin: EdgeInsets.fromLTRB(SizeConfig.b *5.1,1,SizeConfig.b *5.1,1),
-                                                      padding: EdgeInsets.fromLTRB(SizeConfig.b *5.1,SizeConfig.v * 1,SizeConfig.b *5.1,SizeConfig.v * 1),
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
                                                           Expanded(
-                                                            flex: 1,
+                                                            flex: 2,
                                                             child: Container(
-                                                              width:SizeConfig.b *48.5,
-                                                              child: Text(
-                                                                _listUserDetailModelManager[index].name,
-                                                                style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontSize: SizeConfig.b *4.071,
-                                                                    fontWeight: FontWeight.w400 ),
+                                                              height: h * 50,
+                                                              width: b * 50,
+                                                              decoration: BoxDecoration(
+                                                                color: Color(0xff6d6d6d),
+                                                                shape: BoxShape.circle,
                                                               ),
                                                             ),
                                                           ),
-                                                          Spacer(),
                                                           Expanded(
-                                                            flex: 2,
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            flex: 7,
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
                                                                 Text(
-                                                                  _listUserDetailModelManager[index].phoneNo,
-                                                                  style: TextStyle(
-                                                                      color: Colors.black,
-                                                                      fontSize:SizeConfig.b *3.5),
+                                                                  _listUserDetailModelManager[index].name,
+                                                                  style: txtS(blc, 16, FontWeight.w400),
                                                                 ),
-                                                                Container(
-                                                                  decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(SizeConfig.b *1.2),
-                                                                    color: Color(0x804ADB58),
-                                                                  ),
-                                                                  height: SizeConfig.v *2.86,
-                                                                  width: SizeConfig.b *5.1,
-                                                                  child:IconButton(
-                                                                    onPressed:null,
-                                                                    padding:
-                                                                        EdgeInsets.zero,
-                                                                    icon: Icon(
-                                                                        Icons.call,
-                                                                        color: Colors.white,
-                                                                        size: SizeConfig.b *4),
-                                                                  ),
+                                                                Text(
+                                                                  _listUserDetailModelManager[index].phoneNo,
+                                                                  maxLines: 1,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: txtS(dc, 14, FontWeight.w400),
                                                                 ),
                                                               ],
                                                             ),
@@ -309,12 +286,9 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                         ],
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                        height:
-                                                            SizeConfig.v * 1),
-                                                  ]),
-                                                );
-                                              });
+                                                  );
+
+                                               });
                                           else
                                             return AppConstant.noDataFound();     
 
@@ -443,17 +417,10 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                       children: [
                                                         Container(
                                                           decoration: BoxDecoration(
-                                                            color: Color(0xFFECECEC),
-                                                            borderRadius: BorderRadius.circular(SizeConfig.b *1),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors.grey.withOpacity(0.5),
-                                                                spreadRadius: 2,
-                                                                blurRadius: 3,
-                                                                offset: Offset(0,2), // changes position of shadow
-                                                              ),
-                                                            ],
-                                                          ),
+                                                        color: Color(0xfff1f1f1),
+                                                        borderRadius: BorderRadius.circular(b * 10),
+                                                      ),
+                                                          
                                                           margin: EdgeInsets.fromLTRB(SizeConfig.b *5.1,1,SizeConfig.b *5.1,1),
                                                           padding:EdgeInsets.fromLTRB(
                                                                   SizeConfig.b *5.1,
@@ -471,11 +438,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                                         width: SizeConfig.b *40.72,
                                                                         child:
                                                                             Text(_listUserDetailModelAdmins[index].name,
-                                                                          style:TextStyle(
-                                                                            color: Colors.black,
-                                                                            fontSize: SizeConfig.b * 4.5,
-                                                                            fontWeight: FontWeight.w700,
-                                                                          ),
+                                                                          style: txtS(blc, 16, FontWeight.w400),
                                                                         ),
                                                                       ),
                                                                       SizedBox(height:SizeConfig.v *1),
@@ -503,12 +466,10 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                                                 width: SizeConfig.b * 2),
                                                                             Text(
                                                                               _listUserDetailModelAdmins[index].phoneNo,
-                                                                              style:
-                                                                                  TextStyle(
-                                                                                color: Colors.black,
-                                                                                fontSize: SizeConfig.b * 3.1,
-                                                                                fontWeight: FontWeight.w500,
-                                                                              ),
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: txtS(dc, 14, FontWeight.w400)
+                                                                              
                                                                             ),
                                                                           ]),
                                                                     ]),

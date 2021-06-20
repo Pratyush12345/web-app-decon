@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/series_S0/BottomLayout_S0.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
@@ -47,20 +48,26 @@ class HomeState extends State<Home> {
     SizeConfig().init(context);
     
 
-    return Scaffold(
-      body: Consumer<ChangeDeviceData>(
-        builder: (context, changeList, child){
-          if (GlobalVar.isclientchanged && changeList.allDeviceData.length != 0) {
-           _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
-           }
-          return Stack(
-                 children: <Widget>[googlemap(context, changeList.allDeviceData), 
-                             searchBar(changeList.allDeviceData), 
-                             showBottomLayout()],
-        );
-        },
+    return 
+       Scaffold(
+         resizeToAvoidBottomInset: false,
+      
+         body: Consumer<ChangeDeviceData>(
+          builder: (context, changeList, child){
+            if (GlobalVar.isclientchanged && changeList.allDeviceData.length != 0) {
+             _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
+             }
+            return Stack(
+                   children: <Widget>[
+                               googlemap(context, changeList.allDeviceData),
+                               searchBar(changeList.allDeviceData), 
+                               showBottomLayout(),
+                               ],
+          );
+          },
       ),
-    );
+       );
+    
   }
 
   Widget searchBar(List<DeviceData> allDeviceData) {
@@ -114,7 +121,7 @@ class HomeState extends State<Home> {
 
   Widget googlemap(BuildContext context, List<DeviceData> allDeviceData) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.50,
+      height: MediaQuery.of(context).size.height * 0.60,
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
@@ -140,8 +147,6 @@ class HomeState extends State<Home> {
   }
 
   Marker addIndividualMarker(DeviceData _allDeviceData) {
-    //print("Device key is ${_allDeviceData.key}");
-    //print("Longitude::::${_allDeviceData.longitude}");
     int level = _allDeviceData.wlevel;
 
     if (level == 0) {
@@ -278,7 +283,6 @@ class HomeState extends State<Home> {
             Container(
             color: Colors.white,
             padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
-            height: MediaQuery.of(context).size.height * (0.29),
             child: GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout),
       ),
     );

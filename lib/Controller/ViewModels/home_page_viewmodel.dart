@@ -15,7 +15,6 @@ class HomePageVM {
   HomePageVM._();
   bool isfromDrawer = true;
   Widget selectedDrawerWidget = Home();
-  int selectedDrawerIndex = 0;
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey<ScaffoldState>();
   List<String> _seriesList;
   String _sheetURL, _scriptEditorURL;

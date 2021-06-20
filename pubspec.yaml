@@ -46,11 +46,17 @@ dependencies:
   animator:   
   progress_dialog:
   flare_flutter:
-  charts_flutter:
   firebase_messaging:
   flutter_local_notifications:
   syncfusion_flutter_charts:
+  material_design_icons_flutter:  
+  page_transition:
+  pinput:
+  flutter_animated_dialog: 
+  cached_network_image: 
+  shape_of_view: ^1.0.2    
   http:
+  flutter_svg:
   toast:
   intl:  
   
@@ -71,16 +77,18 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/f.png
-    - assets/DECON.jpg
-    - assets/DECON_1.png
-    - assets/gurucool.flr
-    - assets/analyse.flr
-    - assets/conserve.flr
-    - assets/detect.flr
-    - assets/inform.flr
-    - assets/process.flr
-    - assets/Infinity.svg
+  - images/
+  - assets/f.png
+  - assets/DECON.jpg
+  - assets/DECON_1.png
+  - assets/gurucool.flr
+  - assets/analyse.flr
+  - assets/conserve.flr
+  - assets/detect.flr
+  - assets/inform.flr
+  - assets/process.flr
+  - assets/Infinity.svg
+    
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

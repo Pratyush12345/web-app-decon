@@ -1,3 +1,4 @@
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -21,103 +22,69 @@ class _AboutVysion extends State<AboutVysion> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return Container(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: SizeConfig.v * 2.7),
+          sh(30),
           Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: SizeConfig.screenWidth * 20 / 360),
-            child: Text(
-              "About Company",
-              style: TextStyle(
-                fontSize: SizeConfig.b * 5.5,
-                fontWeight: FontWeight.w700,
-              ),
+            padding: EdgeInsets.symmetric(horizontal: b * 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "About Company",
+                  style: txtS(Colors.black, 20, FontWeight.w700),
+                ),
+                sh(8),
+                Text(
+                  "Vysion Technology is a Gujarat based technology startup working in trending Domains like IoT, AI and Cloud to Empower Smart cities and industry.\n\nVysion Technology is Incubated by Gujarat government under SSIP initiative. We are team of young, enthusiastic and skilled engineers working to achieve our Vision",
+                  style: txtS(Color(0xff5c6266), 14, FontWeight.w400),
+                ),
+                sh(40),
+                Text(
+                  "Vision",
+                  style: txtS(Colors.black, 20, FontWeight.w700),
+                ),
+                sh(8),
+                Text(
+                  "Our vision is to empower and develop a country by providing a series of IoT, AI and cloud based smart solutions in different sectors to eradict the bottleneck problems faced by the country.Our products aim to transform and develop smart cities and industry. ",
+                  style: txtS(Color(0xff5c6266), 14, FontWeight.w400),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: SizeConfig.screenHeight * 10 / 640),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: SizeConfig.screenWidth * 20 / 360),
-            child: Text(
-              "Vysion Technology is a Gujarat based technology startup working in trending Domains like IoT, AI and Cloud to Empower Smart cities and industry.\n\nVysion Technology is Incubated by Gujarat government under SSIP initiative. We are team of young, enthusiastic and skilled engineers working to achieve our Vision",
-              style: TextStyle(
-                color: Color(0xff5C6266),
-                fontSize: SizeConfig.b * 4.5,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          SizedBox(height: SizeConfig.v * 3),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: SizeConfig.screenWidth * 20 / 360),
-            child: Text(
-              "Vision",
-              style: TextStyle(
-                fontSize: SizeConfig.b * 5.5,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          SizedBox(height: SizeConfig.screenHeight * 10 / 640),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: SizeConfig.screenWidth * 20 / 360),
-            child: Text(
-              "Our vision is to empower and develop a country by providing a series of IoT, AI and cloud based smart solutions in different sectors to eradict the bottleneck problems faced by the country. Our products aim to transform and develop smart cities and industry.",
-              style: TextStyle(
-                color: Color(0xff5C6266),
-                fontSize: SizeConfig.b * 4.5,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          SizedBox(height: SizeConfig.screenHeight * 60 / 640),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    color: Color(0xff263238),
-                  ),
-                  SizedBox(height: SizeConfig.screenHeight * 10 / 640),
-                  Text(
-                    "SVNIT Campus, Surat, Gujarat",
-                    style: TextStyle(
-                      fontSize: SizeConfig.screenWidth * 10 / 360,
-                      fontWeight: FontWeight.w400,
+          Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset('images/decon.png'),
+                Expanded(
+                  child: Container(
+                    width: SizeConfig.screenWidth,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        stops: [
+                          0.1,
+                          0.56,
+                          0.95,
+                        ],
+                        colors: [
+                          Color(0xffc4c4c4).withOpacity(0.15),
+                          dc.withOpacity(0.57),
+                          dc.withOpacity(1),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
                   ),
-                ],
-              ),
-              Container(
-                height: SizeConfig.screenHeight * 50 / 640,
-                width: 0.5,
-                color: Color(0xff263238),
-              ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.email,
-                    color: Color(0xff263238),
-                  ),
-                  SizedBox(height: SizeConfig.screenHeight * 10 / 640),
-                  Text(
-                    "vysiontechnology@gmail.com",
-                    style: TextStyle(
-                      fontSize: SizeConfig.screenWidth * 10 / 360,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -73,9 +73,16 @@ class _AllPeople extends State<AllPeople> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
+
     return Scaffold(
       appBar: AppBar(
-              title: Text("Team"),
+              title: Text(
+                widget.clientDetailModel == null? AppConstant.circulerProgressIndicator():
+                widget.clientDetailModel.cityName == null? AppConstant.noDataFound(): 
+                
+                "${widget.clientDetailModel.clientName}"),
             ),
       floatingActionButton: GlobalVar.strAccessLevel == "2" || GlobalVar.strAccessLevel == "3"
           ? FloatingActionButton(
@@ -91,136 +98,124 @@ class _AllPeople extends State<AllPeople> {
               height: 0.0,
             ),
       body: Container(
-        child: Column(
+         
+        padding: EdgeInsets.symmetric(horizontal: b * 26),
+              child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: SizeConfig.v * 3),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              SizedBox(width: SizeConfig.b * 5),
-              Expanded(
-                flex: 3,
-                child:
-                   AllPeopleVM.instance.managerDetailModel == null? AppConstant.circulerProgressIndicator():
-                   AllPeopleVM.instance.managerDetailModel.key == null? AppConstant.noDataFound(): 
-                    Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: SizeConfig.b * 45.81,
-                        child: Text(
-                          "${AllPeopleVM.instance.managerDetailModel.name??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 5.1,
-                              fontWeight: FontWeight.w700),
-                        ),
+            sh(25),
+              Text(
+                "Manager",
+                style: txtS(dc, 14, FontWeight.w400),
+              ),
+              sh(8),
+              Container(
+                margin: EdgeInsets.only(bottom: h * 8),
+                padding: EdgeInsets.symmetric(
+                    vertical: h * 14.45, horizontal: b * 17),
+                decoration: BoxDecoration(
+                  color: Color(0xffffffff),
+                  borderRadius: BorderRadius.circular(b * 10),
+                  border: Border.all(
+                    color: Color(0xff065e87),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: h * 46,
+                      width: b * 46,
+                      decoration: BoxDecoration(
+                        color: Color(0xff6d6d6d),
+                        shape: BoxShape.circle,
                       ),
-                      SizedBox(height: SizeConfig.v * 1),
-                      Text(
-                          "${AllPeopleVM.instance.managerDetailModel.post??""}",
-                          style: TextStyle(fontSize: SizeConfig.b * 3.56)),
-                      SizedBox(height: SizeConfig.v * 1),
-                      Row(children: [
-                        Container(
-                            height: SizeConfig.v * 2.57,
-                            width: SizeConfig.b * 4.58,
-                            child: IconButton(
-                                onPressed: null,
-                                padding: EdgeInsets.zero,
-                                icon: Icon(Icons.call,
-                                    color: Colors.green,
-                                    size: SizeConfig.b * 4))),
-                        SizedBox(width: SizeConfig.b * 3),
+                    ),
+                    Spacer(),
+                    AllPeopleVM.instance.managerDetailModel == null? AppConstant.circulerProgressIndicator():
+                   AllPeopleVM.instance.managerDetailModel.key == null? AppConstant.noDataFound(): 
+                   
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
                         Text(
-                            "${AllPeopleVM.instance.managerDetailModel.phoneNo??""}",
-                            style: TextStyle(fontSize: SizeConfig.b * 3.56)),
-                      ])
-                    ]),
+                          "${AllPeopleVM.instance.managerDetailModel.name??""}",
+                          style:
+                              txtS(Color(0xff065e87), 15.51, FontWeight.w500),
+                        ),
+                        Text(
+                          "${AllPeopleVM.instance.managerDetailModel.phoneNo??""}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              txtS(Color(0xff858585), 11.63, FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Spacer(),
-              Expanded(
-                flex: 2,
-                child: widget.clientDetailModel == null? AppConstant.circulerProgressIndicator():
-                   widget.clientDetailModel.cityName == null? AppConstant.noDataFound(): 
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${widget.clientDetailModel.cityName ??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 4.7,
-                              fontWeight: FontWeight.w700)),
-                      SizedBox(height: SizeConfig.v * 0.5),
-                      Text("${widget.clientDetailModel.stateName ??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 4.7,
-                              fontWeight: FontWeight.w700)),
-                    ]),
+              
+            sh(16),
+              Text(
+                "Admin",
+                style: txtS(dc, 14, FontWeight.w400),
               ),
-              SizedBox(width: SizeConfig.b * 5),
-            ]),
+              sh(8),
+              Container(
+                margin: EdgeInsets.only(bottom: h * 8),
+                padding: EdgeInsets.symmetric(
+                    vertical: h * 14.45, horizontal: b * 17),
+                decoration: BoxDecoration(
+                  color: Color(0xffffffff),
+                  borderRadius: BorderRadius.circular(b * 10),
+                  border: Border.all(
+                    color: Color(0xff065e87),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: h * 46,
+                      width: b * 46,
+                      decoration: BoxDecoration(
+                        color: Color(0xff6d6d6d),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Spacer(),
+                    AllPeopleVM.instance.adminDetailModel == null? AppConstant.circulerProgressIndicator():
+                   AllPeopleVM.instance.adminDetailModel.key == null? AppConstant.noDataFound(): 
+                   
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${AllPeopleVM.instance.adminDetailModel.name??""}",
+                          style:
+                              txtS(Color(0xff065e87), 15.51, FontWeight.w500),
+                        ),
+                        Text(
+                          "${AllPeopleVM.instance.adminDetailModel.delegate??""}",
+                          style:
+                              txtS(Color(0xff065e87), 15.51, FontWeight.w500),
+                        ),
+                        Text(
+                          "${AllPeopleVM.instance.adminDetailModel.phoneNo??""}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              txtS(Color(0xff858585), 11.63, FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              
             SizedBox(width: SizeConfig.b * 5),
             
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              SizedBox(width: SizeConfig.b * 5),
-              Expanded(
-                flex: 3,
-                child:
-                   AllPeopleVM.instance.adminDetailModel == null? AppConstant.circulerProgressIndicator():
-                   AllPeopleVM.instance.adminDetailModel.key == null? AppConstant.noDataFound(): 
-                    Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: SizeConfig.b * 45.81,
-                        child: Text(
-                          "${AllPeopleVM.instance.adminDetailModel.name??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 5.1,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                      SizedBox(height: SizeConfig.v * 1),
-                      Text(
-                          "${AllPeopleVM.instance.adminDetailModel.delegate??""}",
-                          style: TextStyle(fontSize: SizeConfig.b * 3.56)),
-                      SizedBox(height: SizeConfig.v * 1),
-                      Row(children: [
-                        Container(
-                            height: SizeConfig.v * 2.57,
-                            width: SizeConfig.b * 4.58,
-                            child: IconButton(
-                                onPressed: null,
-                                padding: EdgeInsets.zero,
-                                icon: Icon(Icons.call,
-                                    color: Colors.green,
-                                    size: SizeConfig.b * 4))),
-                        SizedBox(width: SizeConfig.b * 3),
-                        Text(
-                            "${AllPeopleVM.instance.adminDetailModel.phoneNo??""}",
-                            style: TextStyle(fontSize: SizeConfig.b * 3.56)),
-                      ])
-                    ]),
-              ),
-              Spacer(),
-              Expanded(
-                flex: 2,
-                child: widget.clientDetailModel == null? AppConstant.circulerProgressIndicator():
-                   widget.clientDetailModel.cityName == null? AppConstant.noDataFound(): 
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${widget.clientDetailModel.cityName ??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 4.7,
-                              fontWeight: FontWeight.w700)),
-                      SizedBox(height: SizeConfig.v * 0.5),
-                      Text("${widget.clientDetailModel.stateName ??""}",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 4.7,
-                              fontWeight: FontWeight.w700)),
-                    ]),
-              ),
-              SizedBox(width: SizeConfig.b * 5),
-            ]),
             SizedBox(height: SizeConfig.v * 1),
             Expanded(
               child: Container(

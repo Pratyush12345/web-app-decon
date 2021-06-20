@@ -158,7 +158,7 @@ class GraphsVM {
     DateTime dateTime = DateTime.parse(date);
     print(dateTime.hour);
     print(dateTime.minute);
-    formattedDate = "${dateTime.day}/${dateTime.month}/${dateTime.year}\n${DateFormat('jms').format(dateTime)}";
+    formattedDate = "${dateTime.day}/${dateTime.month}/${dateTime.year}  ${DateFormat('jms').format(dateTime)}";
     return formattedDate;
   }
 
