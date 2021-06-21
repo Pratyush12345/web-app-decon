@@ -22,7 +22,8 @@ class AllPeople extends StatefulWidget {
 class _AllPeople extends State<AllPeople> {
   List<UserDetailModel> _listOfAdminTeam = [];
   List<UserDetailModel> _listOfManagerTeam = [];
-                                                          
+  final TextEditingController search = TextEditingController();
+                                                        
   _initialize() async{
     AllPeopleVM.instance.init();
     _listOfAdminTeam = [];
@@ -43,7 +44,8 @@ class _AllPeople extends State<AllPeople> {
         barrierDismissible: true,
         context: context,
         builder: (context) {
-          return Add_Delegates(list: GlobalVar.strAccessLevel=="2" ? _listOfManagerTeam : _listOfAdminTeam,);
+          return Add_Delegates(list: GlobalVar.strAccessLevel=="2" ? _listOfManagerTeam : _listOfAdminTeam,
+          adminDetail: AllPeopleVM.instance.adminDetailModel);
         });
   }
 
@@ -84,7 +86,7 @@ class _AllPeople extends State<AllPeople> {
                 
                 "${widget.clientDetailModel.clientName}"),
             ),
-      floatingActionButton: GlobalVar.strAccessLevel == "2" || GlobalVar.strAccessLevel == "3"
+      floatingActionButton:GlobalVar.strAccessLevel == "1" || GlobalVar.strAccessLevel == "2" || GlobalVar.strAccessLevel == "3"
           ? FloatingActionButton(
               backgroundColor: Color(0xff0099FF),
               onPressed: () {
@@ -97,12 +99,45 @@ class _AllPeople extends State<AllPeople> {
           : SizedBox(
               height: 0.0,
             ),
-      body: Container(
+      body: SingleChildScrollView(
          
-        padding: EdgeInsets.symmetric(horizontal: b * 26),
+        padding: EdgeInsets.symmetric(horizontal: b * 22),
               child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            sh(18),
+              Container(
+                alignment: Alignment.center,
+                width: b * 340,
+                decoration: BoxDecoration(
+                  border: Border.all(color: dc, width: 0.5),
+                  color: Color(0xffffffff),
+                  borderRadius: BorderRadius.circular(b * 60),
+                ),
+                child: TextField(
+                  controller: search,
+                  style: TextStyle(fontSize: b * 14, color: dc),
+                  decoration: InputDecoration(
+                    prefixIcon: InkWell(
+                      child: Icon(Icons.search, color: Colors.black),
+                      onTap: null,
+                    ),
+                    isDense: true,
+                    isCollapsed: true,
+                    prefixIconConstraints:
+                        BoxConstraints(minWidth: 40, maxHeight: 24),
+                    hintText: 'Search by Name',
+                    hintStyle: TextStyle(
+                      fontSize: b * 14,
+                      color: Color(0xff858585),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: h * 12, horizontal: b * 13),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              
             sh(25),
               Text(
                 "Manager",
@@ -215,268 +250,219 @@ class _AllPeople extends State<AllPeople> {
               ),
               
             SizedBox(width: SizeConfig.b * 5),
-            
+            Row(
+                children: [
+                  Text(
+                    "Manager Team",
+                    style: txtS(dc, 13.57, FontWeight.w400),
+                  ),
+                  Spacer(),
+                  Text(
+                    "Total:${_listOfAdminTeam?.length??0}",
+                    style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                  ),
+                ],
+              ),
             SizedBox(height: SizeConfig.v * 1),
-            Expanded(
-              child: Container(
-                color: Color(0xff263238),
-                padding: EdgeInsets.symmetric(
-                    horizontal: SizeConfig.b * 5.1,
-                    vertical: SizeConfig.v * 2.85),
-                child: Column(
-                  children: [
-                    Row(children: [
-                      Text("Manager Team",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 5.1,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white)),
-                      Spacer(),
-                      Container(
-                        alignment: Alignment.center,
-                        padding:
-                            EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                        width: SizeConfig.b * 50,
-                        decoration: BoxDecoration(
-                            color: Color(0xffDEE0E0),
-                            borderRadius:
-                                BorderRadius.circular(SizeConfig.b * 1)),
-                        child: TextField(
-                          style: TextStyle(fontSize: SizeConfig.b * 4),
-                          decoration: InputDecoration(
-                            isDense: true,
-                            hintText: 'Search by Name/Contact',
-                            hintStyle: TextStyle(fontSize: SizeConfig.b * 3.7),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ]),
-                    SizedBox(height: SizeConfig.v * 3),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: ScrollPhysics(),
-                        child: StreamBuilder<Event>(
-                          stream: FirebaseDatabase.instance.reference().child("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                                (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
-                                  _listOfManagerTeam.add(UserDetailModel.fromJson(key, value));
-                                });
-                              if(snapshot.data.snapshot.value!=null)
-                              return ListView.builder(
-                                  physics: ScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  itemCount: _listOfManagerTeam.length,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    return InkWell(
-                                      onLongPress: () {
-                                        if(GlobalVar.strAccessLevel == "2")
-                                        showDeleteDialog(context).then((value) async {
-                                        
-                                          if (value == "Yes") {
-                                              FirebaseDatabase.instance.reference().child("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
-                                          }
-                                        });
-                                      },
-                                      child: Column(children: [
-                                        Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0x35C4C4C4),
-                                              borderRadius: BorderRadius.circular(SizeConfig.b * 1.2),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: SizeConfig.b * 5.1,
-                                                vertical: SizeConfig.v * 0.8),
-                                            child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(children: [
-                                                    Container(
-                                                        width: SizeConfig.b * 45,
-                                                        child: Text(
-                                                            _listOfManagerTeam[index].name,
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: SizeConfig.b * 4.071,
-                                                                fontWeight: FontWeight.w400))),
-                                                    Spacer(),
-                                                    Text( _listOfManagerTeam[index].post.split("@")[0],
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:SizeConfig.b *3.054,
-                                                            fontWeight:FontWeight.w400)),
-                                                  ]),
-                                                  SizedBox(height: SizeConfig.v * 1),
-                                                  Row(children: [
-                                                    Container(
-                                                        height:SizeConfig.b * 4,
-                                                        width:SizeConfig.b * 4.58,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:BorderRadius.circular(SizeConfig.b *1.2),
-                                                            color: Color(0x804ADB58)),
-                                                        child: IconButton(
-                                                            onPressed: null,
-                                                            padding:EdgeInsets.zero,
-                                                            icon: Icon(
-                                                                Icons.call,
-                                                                color: Colors.white,
-                                                                size: SizeConfig.b *3.5))),
-                                                    SizedBox(
-                                                        width:SizeConfig.b * 3),
-                                                    Text(_listOfManagerTeam[index].phoneNo,
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:SizeConfig.b *3.56)),
-                                                  ]),
-                                                ])),
-                                        SizedBox(height: SizeConfig.v * 1),
-                                      ]),
-                                    );
-                                  });  else
-                                return AppConstant.whitenoDataFound();
-                            }
-                            else{
-                              if(snapshot.hasError)
-                              return Center(
-                                    child: Text('${snapshot.error}'),
-                                  );
-                              else
-                              return AppConstant.circulerProgressIndicator();   
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                    Row(children: [
-                      Text("Admin Team",
-                          style: TextStyle(
-                              fontSize: SizeConfig.b * 5.1,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white)),
-                      Spacer(),
-                      Container(
-                        alignment: Alignment.center,
-                        padding:
-                            EdgeInsets.fromLTRB(SizeConfig.b * 5.09, 0, 0, 0),
-                        width: SizeConfig.b * 50,
-                        decoration: BoxDecoration(
-                            color: Color(0xffDEE0E0),
-                            borderRadius:
-                                BorderRadius.circular(SizeConfig.b * 1)),
-                        child: TextField(
-                          style: TextStyle(fontSize: SizeConfig.b * 4),
-                          decoration: InputDecoration(
-                            isDense: true,
-                            hintText: 'Search by Name/Contact',
-                            hintStyle: TextStyle(fontSize: SizeConfig.b * 3.7),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ]),
-                    SizedBox(height: SizeConfig.v * 3),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: ScrollPhysics(),
-                        child: StreamBuilder<Event>(
-                          stream: FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                                (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
-                                  _listOfAdminTeam.add(UserDetailModel.fromJson(key, value));
-                                });
-                              if(snapshot.data.snapshot.value!=null)
-                              return ListView.builder(
-                                  physics: ScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  itemCount: _listOfAdminTeam.length,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    return InkWell(
-                                      onLongPress: () {
-                                        if(GlobalVar.strAccessLevel == "3")
-                                        showDeleteDialog(context).then((value) async {
-                                        
-                                          if (value == "Yes") {
-                                              FirebaseDatabase.instance.reference().child("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
-                                          }
-                                        });
-                                      },
-                                      child: Column(children: [
-                                        Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0x35C4C4C4),
-                                              borderRadius: BorderRadius.circular(SizeConfig.b * 1.2),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: SizeConfig.b * 5.1,
-                                                vertical: SizeConfig.v * 0.8),
-                                            child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(children: [
-                                                    Container(
-                                                        width: SizeConfig.b * 45,
-                                                        child: Text(
-                                                            _listOfAdminTeam[index].name,
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: SizeConfig.b * 4.071,
-                                                                fontWeight: FontWeight.w400))),
-                                                    Spacer(),
-                                                    Text( _listOfAdminTeam[index].post.split("@")[0],
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:SizeConfig.b *3.054,
-                                                            fontWeight:FontWeight.w400)),
-                                                  ]),
-                                                  SizedBox(height: SizeConfig.v * 1),
-                                                  Row(children: [
-                                                    Container(
-                                                        height:SizeConfig.b * 4,
-                                                        width:SizeConfig.b * 4.58,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:BorderRadius.circular(SizeConfig.b *1.2),
-                                                            color: Color(0x804ADB58)),
-                                                        child: IconButton(
-                                                            onPressed: null,
-                                                            padding:EdgeInsets.zero,
-                                                            icon: Icon(
-                                                                Icons.call,
-                                                                color: Colors.white,
-                                                                size: SizeConfig.b *3.5))),
-                                                    SizedBox(
-                                                        width:SizeConfig.b * 3),
-                                                    Text(_listOfAdminTeam[index].phoneNo,
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:SizeConfig.b *3.56)),
-                                                  ]),
-                                                ])),
-                                        SizedBox(height: SizeConfig.v * 1),
-                                      ]),
-                                    );
-                                  });  else
-                                return AppConstant.whitenoDataFound();
-                            }
-                            else{
-                              if(snapshot.hasError)
-                              return Center(
-                                    child: Text('${snapshot.error}'),
-                                  );
-                              else
-                              return AppConstant.circulerProgressIndicator();   
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-
+            Container(
+              height: h *200,
+              child: StreamBuilder<Event>(
+                    stream: FirebaseDatabase.instance.reference().child("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                          (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
+                            _listOfManagerTeam.add(UserDetailModel.fromJson(key, value));
+                          });  
+                        if(snapshot.data.snapshot.value!=null)
+                        return ListView.builder(
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            itemCount: _listOfManagerTeam.length,
+                            itemBuilder: (BuildContext ctxt, int index) {
+                              return InkWell(
+                                onLongPress: () {
+                                  if(GlobalVar.strAccessLevel == "2")
+                                  showDeleteDialog(context).then((value) async {
+                                  
+                                    if (value == "Yes") {
+                                        FirebaseDatabase.instance.reference().child("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
+                                    }
+                                  });
+                                },
                     
-                  ],
-                ),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: h * 8),
+                      padding: EdgeInsets.symmetric(
+                          vertical: h * 11, horizontal: b * 17),
+                      decoration: BoxDecoration(
+                        color: Color(0xfff1f1f1),
+                        borderRadius: BorderRadius.circular(b * 10),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: h * 36,
+                            width: b * 36,
+                            decoration: BoxDecoration(
+                              color: Color(0xff6d6d6d),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: b * 10),
+                          Expanded(
+                            flex: 7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${_listOfManagerTeam[index].name}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(dc, 15.51, FontWeight.w400),
+                                ),
+                                Text(
+                                   _listOfManagerTeam[index].post.split("@")[0],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(Color(0xff858585), 11.63,
+                                      FontWeight.w400),
+                                ),
+                                Text(
+                                  _listOfManagerTeam[index].phoneNo,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(Color(0xff858585), 11.63,
+                                      FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ); 
+                             
+                            });  else
+                          return AppConstant.noDataFound();
+                      }
+                      else{
+                        if(snapshot.hasError)
+                        return Center(
+                              child: Text('${snapshot.error}'),
+                            );
+                        else
+                        return AppConstant.circulerProgressIndicator();   
+                      }
+                    },
+                  ),
+            ),
+            SizedBox(height: 10.0,),
+            Row(
+                children: [
+                  Text(
+                    "Admin Team",
+                    style: txtS(dc, 13.57, FontWeight.w400),
+                  ),
+                  Spacer(),
+                  Text(
+                    "Total:${_listOfAdminTeam?.length??0}",
+                    style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                  ),
+                ],
+              ),
+            Container(
+              height: h *200,
+              child:StreamBuilder<Event>(
+                stream: FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                      (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
+                        _listOfAdminTeam.add(UserDetailModel.fromJson(key, value));
+                      });
+                    if(snapshot.data.snapshot.value!=null)
+                    return ListView.builder(
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: _listOfAdminTeam.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          return InkWell(
+                             onLongPress: () {
+                              if(GlobalVar.strAccessLevel == "3")
+                              showDeleteDialog(context).then((value) async {
+                              
+                                if (value == "Yes") {
+                                    FirebaseDatabase.instance.reference().child("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
+                                }
+                              });
+                            },
+                    
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: h * 8),
+                      padding: EdgeInsets.symmetric(
+                          vertical: h * 11, horizontal: b * 17),
+                      decoration: BoxDecoration(
+                        color: Color(0xfff1f1f1),
+                        borderRadius: BorderRadius.circular(b * 10),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: h * 36,
+                            width: b * 36,
+                            decoration: BoxDecoration(
+                              color: Color(0xff6d6d6d),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: b * 10),
+                          Expanded(
+                            flex: 7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _listOfAdminTeam[index].name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(dc, 15.51, FontWeight.w400),
+                                ),
+                                Text(
+                                  _listOfAdminTeam[index].post.split("@")[0],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(Color(0xff858585), 11.63,
+                                      FontWeight.w400),
+                                ),
+                                Text(
+                                  _listOfAdminTeam[index].phoneNo,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: txtS(Color(0xff858585), 11.63,
+                                      FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                        });  else
+                      return AppConstant.noDataFound();
+                  }
+                  else{
+                    if(snapshot.hasError)
+                    return Center(
+                          child: Text('${snapshot.error}'),
+                        );
+                    else
+                    return AppConstant.circulerProgressIndicator();   
+                  }
+                },
               ),
             )
           ],

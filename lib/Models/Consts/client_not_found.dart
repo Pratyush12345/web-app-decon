@@ -1,6 +1,6 @@
 import 'package:Decon/View_Android/Authentication/EnterOtp.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:Decon/View_Android/DrawerFragments/all_clients.dart';
+import 'package:Decon/View_Android/clients/all_clients.dart';
 import 'package:flutter/material.dart';
 
 

@@ -14,8 +14,9 @@ import 'package:Decon/View_Android/DrawerFragments/Device_Setting.dart';
 import 'package:Decon/View_Android/DrawerFragments/HealthReport.dart';
 import 'package:Decon/View_Android/DrawerFragments/Home.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Statistics.dart';
-import 'package:Decon/View_Android/DrawerFragments/all_clients.dart';
 import 'package:Decon/View_Android/MainPage/HomePage.dart';
+import 'package:Decon/View_Android/clients/all_clients.dart';
+import 'package:Decon/View_Android/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -107,34 +108,39 @@ Future showErrorDialog(BuildContext context) {
             color: blc,
             height: h * 0.5,
           ),
-          Container(
-            padding: EdgeInsets.only(
-                left: b * 11, bottom: h * 35, top: h * 40, right: b * 12),
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Container(
-                height: h * 60,
-                width: b * 60,
-                child: CircleAvatar(
-                              radius: SizeConfig.b * 11,
-                              backgroundImage: AssetImage("assets/f.png"),
-                            ),
-                decoration: BoxDecoration(
-                  color: blc,
-                  shape: BoxShape.circle,
+          InkWell(
+            onTap: (){
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: true, userDetailModel: GlobalVar.userDetail, )));
+            },
+            child: Container(
+              padding: EdgeInsets.only(
+                  left: b * 11, bottom: h * 35, top: h * 40, right: b * 12),
+              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Container(
+                  height: h * 60,
+                  width: b * 60,
+                  child: CircleAvatar(
+                                radius: SizeConfig.b * 11,
+                                backgroundImage: AssetImage("assets/f.png"),
+                              ),
+                  decoration: BoxDecoration(
+                    color: blc,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              Spacer(),
-              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Text(
-                  "${GlobalVar.userDetail.name ?? ""}",
-                  style: txtS(blc, 18, FontWeight.w700),
-                ),
-                Text(
-                  "${FirebaseAuth.instance.currentUser?.phoneNumber ?? ""}",
-                  style: txtS(Colors.black, 12, FontWeight.w400),
-                ),
+                Spacer(),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  Text(
+                    "${GlobalVar.userDetail.name ?? ""}",
+                    style: txtS(blc, 18, FontWeight.w700),
+                  ),
+                  Text(
+                    "${FirebaseAuth.instance.currentUser?.phoneNumber ?? ""}",
+                    style: txtS(Colors.black, 12, FontWeight.w400),
+                  ),
+                ]),
               ]),
-            ]),
+            ),
           ),
           Container(
             color: blc,

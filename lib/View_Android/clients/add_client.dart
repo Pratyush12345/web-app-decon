@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 class AddClient extends StatefulWidget {
   final String clientCode;
   final bool isedit;
-  AddClient({@required this.clientCode, @required this.isedit});
+  final UserDetailModel userDetailModel;
+  AddClient({this.userDetailModel, @required this.clientCode, this.isedit });
   @override
   _AddClientState createState() => _AddClientState();
 }
@@ -51,16 +52,6 @@ class _AddClientState extends State<AddClient> {
     }
   }
 
-   _initializeData() async{
-    AddClientVM.instance.init(); 
-    if(widget.isedit){
-    await AddClientVM.instance.getClientDetail(widget.clientCode);
-    _userDetailModel = await AddClientVM.instance.getManagerDetail();
-    _previousUserDetailModel = _userDetailModel;
-    }
-    await AddClientVM.instance.getSeriesList();
-    setState(() {});
-   }
    _getSeriesWidget(){
      return Column(
        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -84,10 +75,14 @@ class _AddClientState extends State<AddClient> {
        ).toList()
      );
    }
+   _initializeDate(){
+    _userDetailModel = widget.userDetailModel;
+    _previousUserDetailModel = _userDetailModel;
+   }
   @override
     void initState() {
+      _initializeDate();
       _userDetailModel = UserDetailModel();
-      _initializeData();  
       super.initState();
     }
 

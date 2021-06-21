@@ -1,6 +1,7 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/View_Android/DrawerFragments/add_client.dart';
+import 'package:Decon/View_Android/clients/add_client.dart';
+import 'package:Decon/View_Android/clients/edit_clients.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -109,7 +110,7 @@ class _AllClientsState extends State<AllClients> {
                     itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: "${_clientsMap.keys.toList()[index]}", isedit: true,)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ClientDetails(clientCode: "${_clientsMap.keys.toList()[index]}",)));
                         
                       },
                       child: Container(
