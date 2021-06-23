@@ -3,6 +3,7 @@ import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/Wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
+import 'package:Decon/Controller/ViewModels/Services/wrapper4.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       
       child: MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (context)=> ChangeOnActive(),),
            ChangeNotifierProvider(create: (context)=> PeopleProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeDrawerItems(),),
            ChangeNotifierProvider(create: (context)=> ChangeWhenGetClientsList(),),
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
             ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: Wrapper(),
+          home: Wrapper4(),
         ),
       ),
     );

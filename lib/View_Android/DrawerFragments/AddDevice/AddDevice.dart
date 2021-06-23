@@ -6,6 +6,7 @@ import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:provider/provider.dart';
 
 class AddDevice extends StatefulWidget {
@@ -19,8 +20,12 @@ class _AddDeviceState extends State<AddDevice> {
   
   Future showAddDeviceDialog(
       {BuildContext context, bool isUpdating, deviceId}) {
-    return showDialog(
+    return showAnimatedDialog(
         barrierDismissible: true,
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
+        
         context: context,
         builder: (context) {
           return ClickOnAddDevice(
@@ -68,7 +73,6 @@ class _AddDeviceState extends State<AddDevice> {
                         int.parse(b.id.split("_")[2].substring(1, 2))));
                 if (snapshot.data.snapshot.value != null)
                   return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: _listOfDevices.length,
                       itemBuilder: (context, index) {

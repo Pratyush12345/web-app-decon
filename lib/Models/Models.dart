@@ -1,5 +1,6 @@
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/View_Android/clients/edit_clients.dart';
 import 'package:Decon/View_Android/series_S1/DeviceSetting_S1.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';

@@ -41,7 +41,13 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
 
   void validate() async{
     if(_formKey.currentState.validate()){
+      print(_latitudeText.text);
+      if(_latitudeText.text!=null && _longitudeText.text!=null && _latitudeText.text!="" && _longitudeText.text!="")
      _updatedatabase();     
+      else
+      {
+        AppConstant.showFailToast(context, "Latitude and Longitude can not be null");
+      }
     }
     else{
       print("Not Validated");

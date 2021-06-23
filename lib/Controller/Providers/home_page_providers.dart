@@ -18,11 +18,11 @@ class ChangeDeviceData extends ChangeNotifier{
 
   void changeDeviceData(String methodName, { DeviceData newDeviceData } ){
     
-    if(methodName == "onDeviceAdded"){
+    if(methodName == "onDeviceAdded" && allDeviceData!=null){
       allDeviceData.add(newDeviceData);
       _sortList();
     }
-    else if(methodName == "onDeviceChanged" ){
+    else if(methodName == "onDeviceChanged" && allDeviceData!=null ){
       int index = allDeviceData.indexWhere((element) => element.id == newDeviceData.id); 
       if(index!=-1){
         allDeviceData[index] = newDeviceData;
@@ -71,7 +71,7 @@ class ChangeSeries extends ChangeNotifier {
 
 class ChangeWhenGetClientsList extends ChangeNotifier{
    
-   Map clientsMap = {};
+   Map clientsMap;
    void changeWhenGetClientsList(Map _clientsMap){
            
       clientsMap = _clientsMap;
@@ -83,6 +83,13 @@ class ChangeWhenGetClientsList extends ChangeNotifier{
 
 class ChangeDrawerItems extends ChangeNotifier {
   void changeDrawerItem(){
+    notifyListeners();
+  }
+}
+
+
+class ChangeOnActive extends ChangeNotifier{
+  void changeOnActive(){
     notifyListeners();
   }
 }

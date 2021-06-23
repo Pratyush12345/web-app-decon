@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/ViewModels/people_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
@@ -9,9 +11,12 @@ import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/View_Android/Dialogs/Replace_Manager.dart';
+import 'package:Decon/View_Android/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 
@@ -29,7 +34,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
   List<UserDetailModel> _listUserDetailModelAdmins = [];
   Map<String ,ClientDetailModel> _listClientDetailModel = {};
   List<UserDetailModel> _listUserDetailModelManager;
-
+  
   @override
   void initState() {
     super.initState();
@@ -43,25 +48,31 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
   } 
 
   Future showManagerDialog(BuildContext context) {
-    return showDialog(
+    return showAnimatedDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
           return Add_man(list: _listUserDetailModelManager??[],);
-        });
+        },   
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),);
   }
 
   Future showAdminDialog(BuildContext context) {
-    return showDialog(
+    return showAnimatedDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
           return Add_admin(list: _listUserDetailModelAdmins??[],);
-        });
+        },
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),);
   }
 
   Future showReplaceAdminDialog(BuildContext context, String clientVisible, String uid) {
-    return showDialog(
+    return showAnimatedDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
@@ -70,11 +81,14 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
             uid: uid,
             list: _listUserDetailModelAdmins,
           );
-        });
+        },
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),);
   }
   
   Future showReplaceManagerDialog(BuildContext context, String clientVisible, String uid) {
-    return showDialog(
+    return showAnimatedDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
@@ -83,7 +97,10 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
             uid: uid,
             list: _listUserDetailModelManager,
           );
-        });
+        },     
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),);
   }
   _getClientDetail(String clientCode, String uid) async{
    ClientDetailModel clientDetailModel = await PeopleVM.instance.getClientDetail(clientCode);
@@ -161,8 +178,9 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                     onPressed: () {
                       showManagerDialog(context);
                     },
-                    child: Icon(
-                      Icons.add,
+                    child: SvgPicture.asset(
+                      'images/AddUser.svg',
+                      allowDrawingOutsideViewBox: true,
                     ),
                   ),
                   body: Container(
@@ -170,47 +188,41 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                       child: Column(
                         children: [
                           SizedBox(height: SizeConfig.v * 2),
-                          Row(children: [
-                            SizedBox(width: SizeConfig.b * 5),
-                            Row(children: [
-                              Icon(Icons.account_circle, color: Colors.black54),
-                              SizedBox(width: SizeConfig.b * 2),
-                              Text(
-                                'Managers',
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: SizeConfig.b * 5.09,
-                                    fontWeight: FontWeight.w400),
-                              )
-                            ]),
-                            Spacer(),
-                            Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.fromLTRB(
-                                  SizeConfig.b * 5.09, 0, 0, 0),
-                              width: SizeConfig.b * 53,
-                              decoration: BoxDecoration(
-                                  color: Color(0xffDEE0E0),
-                                  borderRadius: BorderRadius.circular(
-                                      SizeConfig.b * 1.1)),
-                              child: TextField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    
-                                  });
-                                },
-                                style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: 'Search by Name/Contact',
-                                  hintStyle:
-                                      TextStyle(fontSize: SizeConfig.b * 4),
-                                  border: InputBorder.none,
+                          Container(
+                            alignment: Alignment.center,
+                            width: b * 340,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: dc, width: 0.5),
+                              color: Color(0xffffffff),
+                              borderRadius: BorderRadius.circular(b * 60),
+                            ),
+                            child: TextField(
+                              onChanged: (val){
+                                _listUserDetailModelManager = PeopleVM.instance.onSearchManager(val);
+                                setState(() {});
+                              },
+                              style: TextStyle(fontSize: b * 14, color: dc),
+                              decoration: InputDecoration(
+                                prefixIcon: InkWell(
+                                  child: Icon(Icons.search, color: Colors.black),
+                                  onTap: null,
                                 ),
+                                isDense: true,
+                                isCollapsed: true,
+                                prefixIconConstraints:
+                                    BoxConstraints(minWidth: 40, maxHeight: 24),
+                                hintText: 'Search by Name/PhoneNo',
+                                hintStyle: TextStyle(
+                                  fontSize: b * 14,
+                                  color: Color(0xff858585),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: h * 12, horizontal: b * 13),
+                                border: InputBorder.none,
                               ),
                             ),
-                            SizedBox(width: SizeConfig.b * 5),
-                          ]),
+                          ),
+             
                           SizedBox(height: SizeConfig.v * 3),
                           Expanded(
                               child: SingleChildScrollView(
@@ -220,12 +232,14 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           Map datamap = snapshot.data.snapshot.value;
+                                          if(!PeopleVM.instance.isManagerSearched){
                                           _listUserDetailModelManager = [];
-                                          datamap?.forEach((key, value) {
+                                          datamap?.forEach((key, value) {  
                                             _listUserDetailModelManager.add(UserDetailModel.fromJson(key.toString(), value));
                                           });
-                                        
-                                        if(snapshot.data.snapshot.value!=null)
+                                          PeopleVM.instance.setManagerList = _listUserDetailModelManager;
+                                          }
+                                          if(snapshot.data.snapshot.value!=null)
               
                                           return ListView.builder(
                                               physics: ScrollPhysics(),
@@ -235,6 +249,9 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                               itemBuilder: (BuildContext ctxt,
                                                   int index) {
                                                 return InkWell(
+                                                  onTap: (){
+                                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listUserDetailModelManager[index], )));
+                                                  },
                                                   onLongPress: () 
                                                     {
                                                     showReplaceManagerDialog(
@@ -310,8 +327,9 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                     onPressed: () {
                       showAdminDialog(context);
                     },
-                    child: Icon(
-                      Icons.add,
+                    child: SvgPicture.asset(
+                      'images/AddUser.svg',
+                      allowDrawingOutsideViewBox: true,
                     ),
                   ),
                   body: Container(
@@ -319,52 +337,41 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                       child: Column(
                         children: [
                           SizedBox(height: SizeConfig.v * 2),
-                          Row(
-                            children: [
-                              SizedBox(width: SizeConfig.b * 5),
-                              Row(
-                                children: [
-                                  Icon(Icons.account_circle,
-                                      color: Colors.black54),
-                                  SizedBox(width: SizeConfig.b * 2),
-                                  Text('Admin',
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: SizeConfig.b * 5.09,
-                                          fontWeight: FontWeight.w400))
-                                ],
-                              ),
-                              Spacer(),
-                              Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.fromLTRB(
-                                    SizeConfig.b * 5.09, 0, 0, 0),
-                                width: SizeConfig.b * 53,
-                                decoration: BoxDecoration(
-                                  color: Color(0xffDEE0E0),
-                                  borderRadius:
-                                      BorderRadius.circular(SizeConfig.b * 1),
+                          Container(
+                            alignment: Alignment.center,
+                            width: b * 340,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: dc, width: 0.5),
+                              color: Color(0xffffffff),
+                              borderRadius: BorderRadius.circular(b * 60),
+                            ),
+                            child: TextField(
+                              onChanged: (val){
+                                _listUserDetailModelAdmins = PeopleVM.instance.onSearchAdmin(val);
+                                setState(() {});
+                              },
+                              style: TextStyle(fontSize: b * 14, color: dc),
+                              decoration: InputDecoration(
+                                prefixIcon: InkWell(
+                                  child: Icon(Icons.search, color: Colors.black),
+                                  onTap: null,
                                 ),
-                                child: TextField(
-                                  onChanged: (value) {
-                                    setState(() {
-                                      
-                                    });
-                                  },
-                                  style:
-                                      TextStyle(fontSize: SizeConfig.b * 4.3),
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    hintText: 'Search by Name/Contact',
-                                    hintStyle:
-                                        TextStyle(fontSize: SizeConfig.b * 4),
-                                    border: InputBorder.none,
-                                  ),
+                                isDense: true,
+                                isCollapsed: true,
+                                prefixIconConstraints:
+                                    BoxConstraints(minWidth: 40, maxHeight: 24),
+                                hintText: 'Search by Name/Phone No',
+                                hintStyle: TextStyle(
+                                  fontSize: b * 14,
+                                  color: Color(0xff858585),
                                 ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: h * 12, horizontal: b * 13),
+                                border: InputBorder.none,
                               ),
-                              SizedBox(width: SizeConfig.b * 5),
-                            ],
+                            ),
                           ),
+             
                           SizedBox(height: SizeConfig.v * 3),
                           Expanded(
                               child: SingleChildScrollView(
@@ -374,13 +381,15 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           Map datamap = snapshot.data.snapshot.value;
+                                          if(!PeopleVM.instance.isAdminSearched){
                                           _listUserDetailModelAdmins = [];
                                           datamap?.forEach((key, value) {
                                             UserDetailModel userDetailModel = UserDetailModel.fromJson(key.toString(), value); 
                                             _listUserDetailModelAdmins.add(userDetailModel);
-                                            
+                                          PeopleVM.instance.setAdminList = _listUserDetailModelAdmins;  
                                           _getClientDetail(userDetailModel.clientsVisible, userDetailModel.key);
                                           });
+                                          }
 
                                         if(snapshot.data.snapshot.value!=null)
                                           
@@ -394,6 +403,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                                 return Consumer<PeopleProvider>(
                                                                 builder: (context, model, child)=>(
                                                   InkWell(
+                                                  
                                                     onLongPress: () {
                                                       showReplaceAdminDialog(
                                                           context,

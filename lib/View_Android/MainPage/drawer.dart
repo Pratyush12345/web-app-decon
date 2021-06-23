@@ -7,6 +7,7 @@ import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/Bottom_Navigation/AllDevices.dart';
+import 'package:Decon/View_Android/Dialogs/areYouSure.dart';
 import 'package:Decon/View_Android/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Android/DrawerFragments/AddDevice/AddDevice.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
@@ -19,6 +20,7 @@ import 'package:Decon/View_Android/clients/all_clients.dart';
 import 'package:Decon/View_Android/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -28,28 +30,6 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-Future showErrorDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(title: Text('Are You Sure?'), actions: <Widget>[
-            MaterialButton(
-              onPressed: () {
-                Navigator.of(context).pop("Yes");
-              },
-              elevation: 5.0,
-              child: Text('YES'),
-            ),
-            MaterialButton(
-              onPressed: () {
-                Navigator.of(context).pop("No");
-              },
-              elevation: 5.0,
-              child: Text('NO'),
-            )
-          ]);
-        });
-  }
 
     _onSelectedItem( Widget widget) {
       HomePageVM.instance.isfromDrawer = true;
@@ -57,6 +37,25 @@ Future showErrorDialog(BuildContext context) {
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
       HomePageVM.instance.scafoldKey.currentState.openEndDrawer();
   }
+   showAreYouSureDialog(context){
+     showAnimatedDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return AreYouSure(msg: "Are You Sure, Want to Log out.",)  ;
+                                },
+                                animationType: DialogTransitionType.scaleRotate,
+                                curve: Curves.fastOutSlowIn,
+                                duration: Duration(milliseconds: 400),
+                              ).then((value){
+                                if(value == "YES"){
+                                Auth.instance.signOut();
+               
+                                
+                              }
+                              }
+                              );
+   }
 
    Widget row(ico, String tit, dynamic nextPage, context) {
     var h = SizeConfig.screenHeight / 812;
@@ -166,12 +165,8 @@ Future showErrorDialog(BuildContext context) {
                 borderRadius: BorderRadius.circular(b * 33),
                 onTap: () {
               Navigator.of(context).pop();
-              showErrorDialog(context).then((onValue) {
-                if (onValue == "Yes") {
-                  Auth.instance.signOut();
-                }
-              });
-
+              
+               showAreYouSureDialog(context);
                 },
                 highlightColor: Colors.red.withOpacity(0.4),
                 splashColor: Colors.red.withOpacity(0.4),

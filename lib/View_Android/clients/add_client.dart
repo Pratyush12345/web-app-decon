@@ -29,10 +29,17 @@ class _AddClientState extends State<AddClient> {
   UserDetailModel _previousUserDetailModel;
    void validate() async{
     if(_formKey.currentState.validate()){
-              ClientListModel clientListModel = ClientListModel(
-                    clientCode: widget.clientCode,
-                    clientName: _nameController.text.trim()
-                  );
+                  if(AddClientVM.instance.selectedSeries == null || AddClientVM.instance.selectedSeries == ""){
+                    AppConstant.showFailToast(context, "Please Select Series");
+                  }
+                  else if(_userDetailModel?.key == null || _userDetailModel.key == "" ){
+                    AppConstant.showFailToast(context, "Please Select Manager");
+                  }
+                  else{
+                  ClientListModel clientListModel = ClientListModel(
+                        clientCode: widget.clientCode,
+                        clientName: _nameController.text.trim()
+                      );
                   ClientDetailModel model = ClientDetailModel(
                     cityName: _cityController.text.trim(),
                     clientName: _nameController.text.trim(),
@@ -41,11 +48,11 @@ class _AddClientState extends State<AddClient> {
                     selectedSeries: AddClientVM.instance.selectedSeries,
                     stateName: _stateController.text.trim(),
                     selectedManager: _userDetailModel.key,
-                    selectedAdmin: "",
+                    selectedAdmin: AddClientVM.instance.clientDetailModel?.selectedAdmin??"",
                     sheetURL: _sheetController.text.trim()
                   );
                   AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
-              
+                  }
            }
     else{
       print("Not Validated");
@@ -75,14 +82,26 @@ class _AddClientState extends State<AddClient> {
        ).toList()
      );
    }
-   _initializeDate(){
-    _userDetailModel = widget.userDetailModel;
+   _initializeDate() async{
+     if(!widget.isedit){
+       AddClientVM.instance.init();
+     }
+     _userDetailModel = widget.userDetailModel;
+     
     _previousUserDetailModel = _userDetailModel;
+    _nameController.text = AddClientVM.instance.clientDetailModel?.clientName;
+    _departmentNameController.text = AddClientVM.instance.clientDetailModel?.departmentName;
+    _cityController.text = AddClientVM.instance.clientDetailModel?.cityName;
+    _districtController.text = AddClientVM.instance.clientDetailModel?.districtName;
+    _stateController.text = AddClientVM.instance.clientDetailModel?.stateName;
+    _sheetController.text = AddClientVM.instance.clientDetailModel?.sheetURL;
+    await AddClientVM.instance.getSeriesList();
+    setState(() {});
+    
    }
   @override
     void initState() {
       _initializeDate();
-      _userDetailModel = UserDetailModel();
       super.initState();
     }
 
@@ -129,6 +148,7 @@ class _AddClientState extends State<AddClient> {
         padding: EdgeInsets.symmetric(horizontal: b * 16, vertical: b * 14),
         child: AddClientVM.instance.seriesList == null? AppConstant.circulerProgressIndicator():
           AddClientVM.instance.seriesList.isEmpty ? AppConstant.noDataFound():
+          
           Form(
             key: _formKey,
              child: Column(
@@ -142,7 +162,7 @@ class _AddClientState extends State<AddClient> {
                             return null;
                           },
                 
-               controller: _nameController..text = AddClientVM.instance.clientDetailModel?.clientName,
+               controller: _nameController,
               style: TextStyle(fontSize: b * 16, color: dc),
                decoration: InputDecoration(
                  fillColor: Color(0xfff6f6f6),
@@ -172,7 +192,7 @@ class _AddClientState extends State<AddClient> {
                           },
                 
                 
-               controller: _departmentNameController..text = AddClientVM.instance.clientDetailModel?.departmentName,
+               controller: _departmentNameController,
               style: TextStyle(fontSize: b * 16, color: dc),
                decoration: InputDecoration(
                  fillColor: Color(0xfff6f6f6),
@@ -201,7 +221,7 @@ class _AddClientState extends State<AddClient> {
                             return null;
                           },
                  
-               controller: _cityController..text = AddClientVM.instance.clientDetailModel?.cityName,
+               controller: _cityController,
               style: TextStyle(fontSize: b * 16, color: dc),
                decoration: InputDecoration(
                  fillColor: Color(0xfff6f6f6),
@@ -230,7 +250,7 @@ class _AddClientState extends State<AddClient> {
                             return null;
                           },
                 
-                controller: _districtController..text = AddClientVM.instance.clientDetailModel?.districtName,
+                controller: _districtController,
                 decoration: InputDecoration(
                   fillColor: Color(0xfff6f6f6),
                   filled: true,
@@ -256,7 +276,7 @@ class _AddClientState extends State<AddClient> {
                             else
                             return null;
                           },
-                controller: _stateController..text = AddClientVM.instance.clientDetailModel?.stateName,
+                controller: _stateController,
                 decoration: InputDecoration(
                   fillColor: Color(0xfff6f6f6),
                  filled: true,
@@ -285,7 +305,7 @@ class _AddClientState extends State<AddClient> {
                             else
                             return null;
                           },
-                controller: _sheetController..text = AddClientVM.instance.clientDetailModel?.sheetURL,
+                controller: _sheetController,
                 decoration: InputDecoration(
                   fillColor: Color(0xfff6f6f6),
                  filled: true,
@@ -306,7 +326,17 @@ class _AddClientState extends State<AddClient> {
                maxLines: 1,
               ),
               
-              SizedBox(height: 15.0,),
+              sh(10),
+              Text(
+                  "Select Series",
+                  style: TextStyle(
+                    fontSize: b * 16,
+                    color: dc,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  ),
+               sh(6),
+              
               _getSeriesWidget(),
               SizedBox(height: 15.0,),
               if(_userDetailModel?.key !=null)
@@ -347,7 +377,7 @@ class _AddClientState extends State<AddClient> {
                 borderRadius: BorderRadius.circular(b * 6),
               ),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key, clientName: _nameController.text.trim() ,))).
                   then((value){ 
                     if(value!=null)
                     _userDetailModel = value;
@@ -376,12 +406,7 @@ class _AddClientState extends State<AddClient> {
                 borderRadius: BorderRadius.circular(b * 6),
               ),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ManagersList(managerUid: _userDetailModel?.key,))).
-                  then((value){ 
-                    if(value!=null)
-                    _userDetailModel = value;
-                    setState(() {});
-                    } );
+                validate();
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: h * 10),

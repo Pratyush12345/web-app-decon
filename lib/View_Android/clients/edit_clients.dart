@@ -2,14 +2,18 @@ import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/add_client_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
+import 'package:Decon/View_Android/Dialogs/areYouSure.dart';
 import 'package:Decon/View_Android/clients/add_client.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shape_of_view/shape_of_view.dart';
 
 class ClientDetails extends StatefulWidget {
   final String clientCode;
+ 
   ClientDetails({@required this.clientCode});
   @override
   _ClientDetailsState createState() => _ClientDetailsState();
@@ -18,12 +22,19 @@ class ClientDetails extends StatefulWidget {
 class _ClientDetailsState extends State<ClientDetails> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   UserDetailModel _userDetailModel;
+  bool _isActive = true;
   
   _initializeData() async{
     AddClientVM.instance.init(); 
     await AddClientVM.instance.getClientDetail(widget.clientCode);
     _userDetailModel = await AddClientVM.instance.getManagerDetail();
     await AddClientVM.instance.getSeriesList();
+    DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("clients/${widget.clientCode}/isActive").once();
+    if(snapshot.value == 1)
+    _isActive = true;
+    else 
+    _isActive = false;
+    
     setState(() {});
    }
    
@@ -116,20 +127,25 @@ class _ClientDetailsState extends State<ClientDetails> {
                               ),
                             ],
                           ),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
-                            fit: BoxFit.cover,
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
+                          child: CircleAvatar(
+                                radius: SizeConfig.b * 11,
+                                backgroundImage: AssetImage("assets/f.png"),
                               ),
-                            ),
-                          ),
+                      
+                          // child: CachedNetworkImage(
+                          //   imageUrl:
+                          //       'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
+                          //   fit: BoxFit.cover,
+                          //   imageBuilder: (context, imageProvider) => Container(
+                          //     decoration: BoxDecoration(
+                          //       shape: BoxShape.circle,
+                          //       image: DecorationImage(
+                          //         image: imageProvider,
+                          //         fit: BoxFit.cover,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ),
                         SizedBox(width: b * 20),
                         Text(
@@ -282,7 +298,12 @@ class _ClientDetailsState extends State<ClientDetails> {
                     children: [
                       InkWell(
                         onTap: () {
-                           Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: widget.clientCode ,isedit: true, userDetailModel: _userDetailModel,)));
+                           Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddClient(clientCode: widget.clientCode ,isedit: true, userDetailModel: _userDetailModel,)))
+                           .then((value){
+                             if(value == "Updated"){
+                               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>ClientDetails(clientCode: widget.clientCode,)));
+                             }
+                           });
                         },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
@@ -302,7 +323,35 @@ class _ClientDetailsState extends State<ClientDetails> {
                       ),
                       SizedBox(width: b * 12),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                        
+                              showAnimatedDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return AreYouSure(msg: "This will ${_isActive? "deactivate": "activate"} client",)  ;
+                                },
+                                animationType: DialogTransitionType.scaleRotate,
+                                curve: Curves.fastOutSlowIn,
+                                duration: Duration(milliseconds: 400),
+                              ).then((value){
+                                if(value == "YES"){
+                                  _isActive = !_isActive;
+                                 if(!_isActive)
+                                 AddClientVM.instance.onDeactivatePressed(widget.clientCode);
+                                 else{
+                                  print(widget.clientCode);
+                                AddClientVM.instance.onActivatePressed(widget.clientCode);
+                                  
+                                }
+                                }
+                                
+                                setState(() {});
+                              }
+                              );
+                            
+
+                        },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         child: Container(
@@ -315,7 +364,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                                 color: Color(0xffff000f), width: b * 1),
                           ),
                           child: Text(
-                            "Deactivate Client",
+                            _isActive ?"Deactivate Client" : "Activate Client",
                             style: txtS(Color(0xffff000f), 12, FontWeight.w400),
                           ),
                         ),

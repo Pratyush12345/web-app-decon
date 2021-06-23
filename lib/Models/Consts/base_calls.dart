@@ -31,7 +31,7 @@ abstract class BaseCall{
   Future<dynamic> databaseUpdateCall(String databaseUrl, Map<String, dynamic> value) async{
    try{
    await _dbRef.child(databaseUrl).update(value);
-   return "Successfully Created";
+   return "Done Successfully";
    }
    catch(e){
      print(e.toString());
@@ -43,7 +43,7 @@ abstract class BaseCall{
   Future<dynamic> databasePushUpdateCall(DatabaseReference ref , Map<String, dynamic> value) async{
    try{
    await ref.update(value);
-   return "Successfully Created";
+   return "Done Successfully";
    }
    catch(e){
      print(e.toString());

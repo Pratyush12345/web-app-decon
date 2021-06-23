@@ -54,10 +54,12 @@ class HomeState extends State<Home> {
       
          body: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
-            if (GlobalVar.isclientchanged && changeList.allDeviceData.length != 0) {
+            if (GlobalVar.isclientchanged &&changeList.allDeviceData!=null &&changeList.allDeviceData.length != 0) {
              _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
              }
-            return Stack(
+            return changeList.allDeviceData == null ?AppConstant.circulerProgressIndicator(): 
+            changeList.allDeviceData.isEmpty?AppConstant.noDataFound():
+            Stack(
                    children: <Widget>[
                                googlemap(context, changeList.allDeviceData),
                                searchBar(changeList.allDeviceData), 
@@ -135,9 +137,9 @@ class HomeState extends State<Home> {
   }
 
   Set<Marker> addMarker(List<DeviceData> _allDeviceData) {
-    print("Length is ######: ${_allDeviceData.length}");
+    print("Length is ######: ${_allDeviceData?.length}");
     Set<Marker> _setOfMarker = new Set();
-    if (_allDeviceData.length != 0) {
+    if (_allDeviceData!=null  && _allDeviceData.length != 0) {
       for (var i = 0; i < _allDeviceData.length; i++) {
         _setOfMarker.add(addIndividualMarker(_allDeviceData[i]));
       }

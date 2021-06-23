@@ -4,6 +4,7 @@ import 'package:Decon/View_Android/Dialogs/LocationDialog.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:provider/provider.dart';
 
  
@@ -18,7 +19,8 @@ class Updatelocation extends StatefulWidget {
 
 
 class _Updatelocation extends State<Updatelocation> {
-  List<DeviceData> _filteredDeviceData = [];
+  List<DeviceData> _listDeviceData = [];
+  bool isDeviceSearched = false;
   final TextEditingController search = TextEditingController();
 
   @override
@@ -27,8 +29,11 @@ class _Updatelocation extends State<Updatelocation> {
   }
 
   Future showLocationDialog(BuildContext context, DeviceData device) {
-    return showDialog(
+    return showAnimatedDialog(
         context: context,
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
         builder: (context) {
           return LocationDialog(
             deviceId: device.id,
@@ -65,11 +70,9 @@ class _Updatelocation extends State<Updatelocation> {
         padding: EdgeInsets.symmetric(horizontal: b * 22),
         child: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
-            _filteredDeviceData = [];
-            changeList.allDeviceData.forEach((element) {
-            _filteredDeviceData.add(element);
-            });
-    
+            if(!isDeviceSearched)
+            _listDeviceData = List.from(changeList.allDeviceData);
+            
             return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -83,7 +86,16 @@ class _Updatelocation extends State<Updatelocation> {
                   borderRadius: BorderRadius.circular(b * 60),
                 ),
                 child: TextField(
-                  controller: search,
+                  onChanged: (val){
+                    if(val.isNotEmpty){
+                     _listDeviceData = changeList.allDeviceData.where((element) => element.id.split("_")[2].contains(val) || element.address.toLowerCase().contains(val) ).toList();
+                     isDeviceSearched = true;
+                    }else{
+                      isDeviceSearched = false;
+                     _listDeviceData = changeList.allDeviceData;
+                    }
+                    setState(() {});
+                  },
                   style: TextStyle(fontSize: b * 14, color: dc),
                   decoration: InputDecoration(
                     prefixIcon: InkWell(
@@ -113,12 +125,12 @@ class _Updatelocation extends State<Updatelocation> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
-                  itemCount: _filteredDeviceData.length,
+                  itemCount: _listDeviceData.length,
                   itemBuilder: (BuildContext ctxt, int index) {
                     return InkWell(
                       onTap: () {
                         
-                      showLocationDialog(context,_filteredDeviceData[index]);
+                      showLocationDialog(context,_listDeviceData[index]);
                                         
                       },
                       child: Container(
@@ -145,7 +157,7 @@ class _Updatelocation extends State<Updatelocation> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "${_filteredDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
+                                      "${_listDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
                                       style: TextStyle(
                                         fontSize: b * 18,
                                         fontWeight: FontWeight.w500,
@@ -162,7 +174,7 @@ class _Updatelocation extends State<Updatelocation> {
                                         color: Color(0xFFffffff),
                                       ),
                                       child: Text(
-                                        'ID : ${_filteredDeviceData[index].id}',
+                                        'ID : ${_listDeviceData[index].id}',
                                         style: txtS(dc, 12, FontWeight.w400),
                                       ),
                                     ),
@@ -171,7 +183,7 @@ class _Updatelocation extends State<Updatelocation> {
                               Container(
                                 width: b * 240,
                                 child: Text(
-                                  _filteredDeviceData[index].address,
+                                  _listDeviceData[index].address,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
                                   style: TextStyle(

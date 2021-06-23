@@ -106,7 +106,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
                           String res = await showDialog(
                             context: context,
                             builder: (context) => AreYouSure(
-                              text: 'Are you sure, You want to delete ?',
+                              msg: 'Are you sure, You want to delete ?',
                             ),
                           );
                           if (res == 'Yes') {

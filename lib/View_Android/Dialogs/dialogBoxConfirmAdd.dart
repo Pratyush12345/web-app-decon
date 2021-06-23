@@ -1,10 +1,12 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
-class AreYouSure extends StatelessWidget {
-  final String msg;
-  AreYouSure({@required this.msg});
+class DialogBoxConfirmAdd extends StatelessWidget {
+  final String managerName;
+  final String clientName;
+  DialogBoxConfirmAdd({@required this.clientName, @required this.managerName});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -21,7 +23,7 @@ class AreYouSure extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(b * 14, h * 16, b * 14, h * 16),
           child: Column(children: [
             Text(
-              "$msg",
+              "Are you sure you want to add “$managerName” to “$clientName” as manager?",
               textAlign: TextAlign.center,
               style: txtS(dc, b * 16, FontWeight.w400),
             ),

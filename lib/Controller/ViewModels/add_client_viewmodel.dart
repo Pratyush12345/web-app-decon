@@ -1,7 +1,11 @@
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/database_calls.dart';
 import 'package:Decon/Models/Models.dart';
+import 'package:Decon/View_Android/Dialogs/please_wait_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class AddClientVM {
   static AddClientVM instance = AddClientVM._();
@@ -11,6 +15,8 @@ class AddClientVM {
   List<String> seriesList;
   String selectedSeries;
   ClientDetailModel clientDetailModel;
+  List<ClientListModel> _dupClientList;
+  bool isClientSearched = false;
   
   init(){
     selectedSeries = "";
@@ -49,14 +55,27 @@ class AddClientVM {
     }
   }
   
-  
+  Future showPleaseWaitDialog(BuildContext context) {
+    return showAnimatedDialog(
+        barrierDismissible: true,
+        context: context,  
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
+        builder: (context) {
+          return PleaseWait();
+        });
+  }
   onPressedDone(BuildContext context,UserDetailModel previousManagerModel, String previousClientsVisible, bool isedit, ClientDetailModel clientDetailModel, ClientListModel clientListModel  ) async{
+     showPleaseWaitDialog(context);
      String res1 = await _databaseCallServices.setClientList(clientListModel);
      String res2 =  await _databaseCallServices.setClientDetail(clientListModel.clientCode, clientDetailModel );
      String res3 = await _databaseCallServices.activateClient(clientListModel.clientCode);
+     if(!previousClientsVisible.contains(clientListModel.clientCode)){
      String clientsVisible =  previousClientsVisible + "," + clientListModel.clientCode;
      String res4 = await _databaseCallServices.setManagerClientVisible(clientDetailModel.selectedManager, clientsVisible);
-     
+     print(res4);
+     }
      if(isedit && previousManagerModel!=null && clientDetailModel.selectedManager != previousManagerModel?.key  ){
       previousManagerModel.clientsVisible = previousManagerModel?.clientsVisible?.replaceAll(",${clientListModel.clientCode}", "");
       String res5 = await _databaseCallServices.setManagerClientVisible(previousManagerModel?.key, previousManagerModel.clientsVisible );   
@@ -66,10 +85,18 @@ class AddClientVM {
      print(res1);
      print(res2);
      print(res3);
-     print(res4);
      HomePageVM.instance.onFirstLoad();
      
      Navigator.of(context).pop();
+
+     if(res3 == "Done Successfully"){
+     AppConstant.showSuccessToast(context, res3);
+     Navigator.of(context).pop("Updated");
+     }
+     else
+     AppConstant.showFailToast(context, "Error Occured");
+
+     
   }
 
   _setDeviceSetting(String clientCode, List<String> _selectedSeries) async{
@@ -87,5 +114,34 @@ class AddClientVM {
       print(e);
     }
   }
+  onActivatePressed(String clientCode) async{
+    try{
+      await _databaseCallServices.activateClient(clientCode);
+    }
+    catch(e){
+      print(e);
+    }
+  }
+
+  List<ClientListModel> onSearchClient(String val ){
+     List<ClientListModel> list = [];
+     if(val.isNotEmpty){
+       List<ClientListModel> _searchedList = [];
+       _searchedList = _dupClientList.where((element) => element.clientCode.toLowerCase().contains(val)|| element.clientName.toLowerCase().contains(val)).toList();
+       list.addAll(_searchedList);
+       isClientSearched = true;
+       return list;
+       }
+      else{
+        isClientSearched = false;
+        list  = List.from(_dupClientList);
+        return list;
+      }
+  }
+  
+ set setClientList(List<ClientListModel> _list){
+    _dupClientList = _list;
+  } 
+  
 
 }

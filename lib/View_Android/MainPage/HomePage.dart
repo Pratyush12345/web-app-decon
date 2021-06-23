@@ -83,6 +83,7 @@ class HomePageState extends State<HomePage> {
     var b = SizeConfig.screenWidth / 375;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       key: HomePageVM.instance.scafoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -96,71 +97,63 @@ class HomePageState extends State<HomePage> {
             }),
         title: GlobalVar.strAccessLevel != null
             ?  Row(
+            
               children: [
                 Expanded(
                   flex: 1,
                   child: Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.0, 0, 0, 0),
-                        height: SizeConfig.v * 5,
-                        width: SizeConfig.b * 40,
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 222, 224, 224),
-                            borderRadius: BorderRadius.circular(SizeConfig.b * 2.7)),
+                        width: 80.0,
                         child: 
                           Consumer<ChangeWhenGetClientsList>(
                        builder: (context, object,child ){
+                         if(object.clientsMap!=null)
+                        _itemSelected = object.clientsMap[object.clientsMap?.keys?.toList()[0]];
                         return
                           Consumer<ChangeClient>(
                             builder: (context, changeList, child)=>
                             object.clientsMap == null? AppConstant.circulerProgressIndicator():
                             object.clientsMap.isEmpty? AppConstant.addClient():
-                  
-                              DropdownButton<String>(
-                            icon: Icon(Icons.arrow_drop_down_rounded),
-                            elevation: 8,
-                            dropdownColor: Color(0xff263238),
-                            isDense: false,
-                            underline: SizedBox(
-                              height: 0.0,
-                            ),
-                            items: object.clientsMap.values.map((dropDownStringitem) {
-                              return DropdownMenuItem<String>(
-                                value: dropDownStringitem,
-                                child: Container(
-                                  padding: EdgeInsets.fromLTRB(12.0, 8.0, 4.0, 4.0),
-                                  width: SizeConfig.b * 30,
-                                  height: SizeConfig.v * 4,
-                                  decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 222, 224, 224)
-                                          .withOpacity(0.3),
-                                      borderRadius:
-                                          BorderRadius.circular(SizeConfig.b * 2.7)),
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                        
+                               child: DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            hintText: 'Demo Client',
+                            labelText: 'Select Client',
+                          ),
+                          value: _itemSelected ?? null ,
+                          items: object.clientsMap.values.map((dropDownStringitem) {
+                                return  
+                                DropdownMenuItem<String>(
+                                  value: dropDownStringitem,
                                   child: Text(
                                     dropDownStringitem,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87),
                                   ),
-                                ),
-                              );
+                                );
                             }).toList(),
-                            onChanged: (newValueSelected) {
-                              _itemSelected = newValueSelected;
-                               object.clientsMap.forEach((key, value) { 
-                                if (value == newValueSelected) HomePageVM.instance.setClientCode = key;
-                              });
-                              GlobalVar.isclientchanged = true;
-                              HomePageVM.instance.onChangeClient();
+                            
+                                onChanged: (newValueSelected) {
+                                _itemSelected = newValueSelected;
+                                 object.clientsMap.forEach((key, value) { 
+                                  if (value == newValueSelected) HomePageVM.instance.setClientCode = key;
+                                });
+                                GlobalVar.isclientchanged = true;
+                                HomePageVM.instance.onChangeClient();
                             },
-                            isExpanded: true,
-                            hint: Text(
-                              "Demo Client",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, color: Colors.black87),
-                            ),
-                            value: _itemSelected ?? null,
+                        
+                          validator: (val) {
+                            print('value is $val');
+                            if (val == null) return 'Please choose an option.';
+                            return null;
+                          },
                         ),
+                             )
+                        
                           );},
                       ),
                   ),
@@ -171,11 +164,11 @@ class HomePageState extends State<HomePage> {
                     child: Consumer<ChangeSeries>(
             builder: (context, model, child)=>
              Container(
-               width: 80.0,
+               width: 70.0,
                child: Padding(
                         padding: EdgeInsets.all(4.0),
                         child: DropdownButtonFormField<String>(
-                          isExpanded: false,
+                          isExpanded: true,
                           onChanged: (value){
                              HomePageVM.instance.setSeriesCode = "$value";
                              HomePageVM.instance.onChangeSeries();
@@ -183,7 +176,7 @@ class HomePageState extends State<HomePage> {
                              },
 
                           decoration: InputDecoration(
-                            hintText: 'Select',
+                            hintText: 'S0',
                             labelText: 'Select Series',
                           ),
                           value: model.selectedSeries ,
@@ -199,7 +192,8 @@ class HomePageState extends State<HomePage> {
                             if (val == null) return 'Please choose an option.';
                             return null;
                           },
-                        )),
+                        )
+                        ),
              ),
           ),
                   ),
@@ -212,32 +206,32 @@ class HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.w500, color: Colors.black87),
               ),
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.add_box,
-                color: Colors.black,
-              ),
-              onPressed: () async {
+          // IconButton(
+          //     icon: Icon(
+          //       Icons.add_box,
+          //       color: Colors.black,
+          //     ),
+          //     onPressed: () async {
                 
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=> LoadSVG()));
-                // DataSnapshot snapshot =  await FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("name").equalTo("Eng1").once();
-                // Map<String, dynamic> _map = Map<String, dynamic>.from(snapshot.value);
-                // _map.forEach((key, value) { 
-                //   value["name"] = "pushId";
-                // });
-                // FirebaseDatabase.instance.reference().child("adminTeam").update(Map<String, dynamic>.from(snapshot.value));
-                // DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("demoTeam/123").once();
-                // print("data=============");
-                // print(Map<String, dynamic>.from(snapshot.value));
-                // await FirebaseDatabase.instance.reference().child("demoTeam/111").update(Map<String, dynamic>.from(snapshot.value));
-                // if (context != null)
-                //   //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
-                //   Navigator.of(context).push(MaterialPageRoute(
-                //       builder: (context) => NoticeBoard(
-                //             cityMap: HomePageVM.instance.getCitiesMap,
-                //           )));
-              }
-              )
+          //       Navigator.of(context).push(MaterialPageRoute(builder: (context)=> LoadSVG()));
+          //       // DataSnapshot snapshot =  await FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("name").equalTo("Eng1").once();
+          //       // Map<String, dynamic> _map = Map<String, dynamic>.from(snapshot.value);
+          //       // _map.forEach((key, value) { 
+          //       //   value["name"] = "pushId";
+          //       // });
+          //       // FirebaseDatabase.instance.reference().child("adminTeam").update(Map<String, dynamic>.from(snapshot.value));
+          //       // DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("demoTeam/123").once();
+          //       // print("data=============");
+          //       // print(Map<String, dynamic>.from(snapshot.value));
+          //       // await FirebaseDatabase.instance.reference().child("demoTeam/111").update(Map<String, dynamic>.from(snapshot.value));
+          //       // if (context != null)
+          //       //   //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SplashCarousel())
+          //       //   Navigator.of(context).push(MaterialPageRoute(
+          //       //       builder: (context) => NoticeBoard(
+          //       //             cityMap: HomePageVM.instance.getCitiesMap,
+          //       //           )));
+          //     }
+          //     )
         ],
       ),
       drawer: DrawerWidget(),
@@ -245,15 +239,19 @@ class HomePageState extends State<HomePage> {
         builder: (context, model, child)=> 
             model.clientsMap == null? AppConstant.circulerProgressIndicator():
             model.clientsMap.isEmpty? ClientsNotFound():
-            Consumer<ChangeDrawerItems>(
-                builder: (context, _, child)=>
-                Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: HomePageVM.instance.isfromDrawer
-                    ? HomePageVM.instance.selectedDrawerWidget
-                    : _getBottomNavItem(_currentIndex)),
-              )
+            Consumer<ChangeOnActive>(
+              builder: (context, _, child)=>
+              !GlobalVar.isActive? AppConstant.deactivatedClient():
+                Consumer<ChangeDrawerItems>(
+                  builder: (context, _, child)=>
+                  Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: HomePageVM.instance.isfromDrawer
+                      ? HomePageVM.instance.selectedDrawerWidget
+                      : _getBottomNavItem(_currentIndex)),
+                ),
+            )
       ),
 
         bottomNavigationBar: Container(

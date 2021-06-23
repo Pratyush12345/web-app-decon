@@ -7,6 +7,7 @@ import 'package:Decon/View_Android/series_S1/DeviceSetting_S1.dart';
 
 
 class GlobalVar {
+  static bool isActive = true;
   static bool isclientchanged  = true;
   static String strAccessLevel;
   static UserDetailModel userDetail;

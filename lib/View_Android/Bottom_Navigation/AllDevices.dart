@@ -1,11 +1,13 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
+import 'package:Decon/View_Android/Dialogs/Filter_dialogbox.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -19,19 +21,8 @@ class AllDevices extends StatefulWidget {
 
 
 class _AllDevicesState extends State<AllDevices> {
-  List<DeviceData> _filteredDeviceData = [];
-
-  final _searchText = TextEditingController();
-  final list = [
-    "None",
-    "Ground Level",
-    "Normal Level",
-    "Informative Level",
-    "Critical Level",
-    "Open Manholes",
-    "High Temperature",
-    "Insufficient Battery"
-  ];
+  List<DeviceData> _listDeviceData = [];
+  bool isdeviceSearched= false;
   String __itemSelected;
   final Map<int, String> levels = {
     0: "Ground level",
@@ -50,6 +41,62 @@ class _AllDevicesState extends State<AllDevices> {
   void initState() {
     super.initState();
   }
+  _filterDevices(List<DeviceData> allDeviceData) {
+                    isdeviceSearched = true;
+                    setState(() {
+                      _listDeviceData.clear();
+                      for (var i = 0; i < allDeviceData.length; i++) {
+                        if (__itemSelected == "None") {
+                          isdeviceSearched = false;
+                          _listDeviceData.add(allDeviceData[i]);
+                        } else if (__itemSelected == "Ground Level") {
+                          if (allDeviceData[i].wlevel == 0) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "Normal Level") {
+                          if (allDeviceData[i].wlevel == 1) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "Informative Level") {
+                          if (allDeviceData[i].wlevel == 2) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "Critical Level") {
+                          if (allDeviceData[i].wlevel == 3) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "Open Manholes") {
+                          if (allDeviceData[i].wlevel == 0) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "High Temperature") {
+                          if (allDeviceData[i].wlevel == 0) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        } else if (__itemSelected == "Insufficient Battery") {
+                          if (allDeviceData[i].battery <= 80) {
+                            _listDeviceData.add(allDeviceData[i]);
+                          }
+                        }
+                      }
+                    });
+                  }
+   Future showFilterDialog(BuildContext context, List<DeviceData> _allList) {
+    return showAnimatedDialog(
+        barrierDismissible: true,
+        context: context,    
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
+        builder: (context) {
+          return FilterDialogDevice(selected: __itemSelected);
+        }).then((value) { 
+          if(value!=null){
+          __itemSelected = value;
+          _filterDevices( _allList);
+          }
+          });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,172 +105,106 @@ class _AllDevicesState extends State<AllDevices> {
     var b = SizeConfig.screenWidth / 375;
 
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: b * 20),          
       child: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
-            _filteredDeviceData =[];
-            changeList.allDeviceData.forEach((element) {
-            _filteredDeviceData.add(element);
-            });
+            if(!isdeviceSearched)
+            _listDeviceData = List.from(changeList.allDeviceData);
     
-        return Column(
+        return _listDeviceData == null?AppConstant.noDataFound():
+        _listDeviceData.isEmpty?AppConstant.noDataFound():
+        Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: SizeConfig.v * 3),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.fromLTRB(SizeConfig.b * 1.5,
-                    SizeConfig.v * 0.8, SizeConfig.b * 1.3, 0),
-                height: SizeConfig.v * 5.5,
-                width: SizeConfig.b * 63.61,
-                decoration: BoxDecoration(
-                    color: Color(0xffDEE0E0),
-                    borderRadius: BorderRadius.circular(SizeConfig.b * 7.2)),
-                child: TextField(
-                  onChanged: (value) {
-                    _filteredDeviceData.clear();
-                    changeList.allDeviceData.forEach((element) {
-                      _filteredDeviceData.add(element);
-                    });
-                    setState(() {
-                      _filteredDeviceData.removeWhere((element) {
-                        if (!element.address
-                            .toLowerCase()
-                            .contains(value.trim().toLowerCase())) {
-                          if (!element.id
-                              .toLowerCase()
-                              .contains(value.trim().toLowerCase()))
-                            return true;
-                          else
-                            return false;
-                        }
-                        return false;
-                      });
-                    });
-                  },
-                  controller: _searchText,
-                  style: TextStyle(fontSize: SizeConfig.b * 4.3),
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 25.0,
-                    ),
-                    isDense: true,
-                    hintText: 'Search by Device/ ID/ location',
-                    hintStyle: TextStyle(fontSize: SizeConfig.b * 3.2),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              SizedBox(width: SizeConfig.b * 2),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.fromLTRB(SizeConfig.b * 3.82, 0, 0, 0),
-                height: SizeConfig.v * 5.5,
-                width: SizeConfig.b * 28,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 222, 224, 224),
-                    borderRadius: BorderRadius.circular(SizeConfig.b * 7.7)),
-                child: DropdownButton<String>(
-                  icon: Icon(Icons.arrow_drop_down_rounded),
-                  dropdownColor: Color(0xff263238),
-                  underline: SizedBox(
-                    height: 0.0,
-                  ),
-                  elevation: 8,
-                  items: list.map((dropDownStringitem) {
-                    return DropdownMenuItem<String>(
-                      value: dropDownStringitem,
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(4.0, 4.0, 0.0, 2.0),
-                        width: SizeConfig.b * 100,
-                        height: SizeConfig.v * 5,
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 222, 224, 224)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(8.0)),
-                        child: Text(
-                          dropDownStringitem,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: SizeConfig.b * 3.2),
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: b * 340,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: dc, width: 0.5),
+                        color: Color(0xffffffff),
+                        borderRadius: BorderRadius.circular(b * 60),
+                      ),
+                      child: TextField(
+                         onChanged: (val){
+                            if(val.isNotEmpty){
+                            _listDeviceData = changeList.allDeviceData.where((element) => element.id.split("_")[2].contains(val) || element.address.toLowerCase().contains(val) ).toList();
+                            isdeviceSearched = true;
+                            }else{
+                              isdeviceSearched = false;
+                            _listDeviceData = changeList.allDeviceData;
+                            }
+                            setState(() {});
+                          },
+                  
+                        style: TextStyle(fontSize: b * 14, color: dc),
+                        decoration: InputDecoration(
+                          prefixIcon: InkWell(
+                            child: Icon(Icons.search, color: Colors.black),
+                            onTap: null,
+                          ),
+                          isDense: true,
+                          isCollapsed: true,
+                          prefixIconConstraints:
+                              BoxConstraints(minWidth: 40, maxHeight: 24),
+                          hintText: 'Search by Name',
+                          hintStyle: TextStyle(
+                            fontSize: b * 14,
+                            color: Color(0xff858585),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: h * 12, horizontal: b * 13),
+                          border: InputBorder.none,
                         ),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (newValueSelected) {
-                    setState(() {
-                      __itemSelected = newValueSelected;
-                      _filteredDeviceData.clear();
-                      for (var i = 0; i < changeList.allDeviceData.length; i++) {
-                        if (__itemSelected == "None") {
-                          _filteredDeviceData.add(changeList.allDeviceData[i]);
-                        } else if (__itemSelected == "Ground Level") {
-                          if (changeList.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "Normal Level") {
-                          if (changeList.allDeviceData[i].wlevel == 1) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "Informative Level") {
-                          if (changeList.allDeviceData[i].wlevel == 2) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "Critical Level") {
-                          if (changeList.allDeviceData[i].wlevel == 3) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "Open Manholes") {
-                          if (changeList.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "High Temperature") {
-                          if (changeList.allDeviceData[i].wlevel == 0) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        } else if (__itemSelected == "Insufficient Battery") {
-                          if (changeList.allDeviceData[i].battery <= 80) {
-                            _filteredDeviceData.add(changeList.allDeviceData[i]);
-                          }
-                        }
-                      }
-                    });
-                  },
-                  isExpanded: true,
-                  hint: Text(
-                    "Filter",
-                    style: TextStyle(fontSize: SizeConfig.b * 3.2),
+                    ),
                   ),
-                  value: __itemSelected ?? null,
-                ),
+                  Expanded(
+                    flex: 1,
+                    child: InkWell(
+                      onTap: (){
+                        showFilterDialog(context,changeList.allDeviceData);
+                      },
+                      child: Container(
+                        height: h * 45,
+                        padding: EdgeInsets.symmetric(horizontal: b * 18),
+                        width: b * 45,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: blc, width: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                          'images/filter.svg',
+                          allowDrawingOutsideViewBox: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+              
+          
           SizedBox(height: SizeConfig.v * 1),
           Divider(color: Color(0xffCACACA), thickness: 1),
           Expanded(
-              child: SingleChildScrollView(
-                  physics: ScrollPhysics(),
-                  child: ListView.builder(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: b * 20, vertical: h * 10),
-                
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: _filteredDeviceData.length,
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return 
-                        InkWell(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _listDeviceData.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return 
+                    InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => Graphs(
-                                      scriptEditorURL: HomePageVM.instance.getScriptEditorURL,
-                                      deviceData: _filteredDeviceData[index],
-                                      sheetURL: HomePageVM.instance.getSheetURL,
-                                    )));
+                            builder: (context) => Graphs(
+                                  scriptEditorURL: HomePageVM.instance.getScriptEditorURL,
+                                  deviceData: _listDeviceData[index],
+                                  sheetURL: HomePageVM.instance.getSheetURL,
+                                )));
       },
       child: Container(
         margin: EdgeInsets.only(bottom: h * 19),
@@ -247,37 +228,37 @@ class _AllDevicesState extends State<AllDevices> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "${_filteredDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
-                  style: txtS(dc, 18, FontWeight.w400),
+              "${_listDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
+              style: txtS(dc, 18, FontWeight.w400),
                 ),
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: h * 2, horizontal: b * 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(b * 2),
-                    color: dc,
-                  ),
-                  child: Text(
-                    'ID : ${_filteredDeviceData[index].id}',
-                    style: txtS(Colors.white, 12, FontWeight.w400),
-                  ),
+              padding:
+                  EdgeInsets.symmetric(vertical: h * 2, horizontal: b * 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(b * 2),
+                color: dc,
+              ),
+              child: Text(
+                'ID : ${_listDeviceData[index].id}',
+                style: txtS(Colors.white, 12, FontWeight.w400),
+              ),
                 ),
                 Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: b * 6),
-                      height: h * 12,
-                      width: b * 12,
-                      decoration: BoxDecoration(
-                        color: _levelsColor[_filteredDeviceData[index].wlevel],
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Text(
-                      levels[_filteredDeviceData[index].wlevel],
-                      style: txtS(_levelsColor[_filteredDeviceData[index].id], 12, FontWeight.w400),
-                    ),
-                  ],
+              children: [
+                Container(
+                  margin: EdgeInsets.only(right: b * 6),
+                  height: h * 12,
+                  width: b * 12,
+                  decoration: BoxDecoration(
+                    color: _levelsColor[_listDeviceData[index].wlevel],
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Text(
+                  levels[_listDeviceData[index].wlevel],
+                  style: txtS(_levelsColor[_listDeviceData[index].id], 12, FontWeight.w400),
+                ),
+              ],
                 ),
               ],
             ),
@@ -287,61 +268,61 @@ class _AllDevicesState extends State<AllDevices> {
               children: [
                 if(HomePageVM.instance.getSeriesCode == "S1")
                 Row(children: [
-                  SvgPicture.asset(
-                    'images/distance.svg',
-                    allowDrawingOutsideViewBox: true,
-                  ),
-                  SizedBox(width: b * 5),
-                  Text(
-                    "${_filteredDeviceData[index].distance??""}m",
-                    style: txtS(blc, 14, FontWeight.w400),
-                  ),
+              SvgPicture.asset(
+                'images/distance.svg',
+                allowDrawingOutsideViewBox: true,
+              ),
+              SizedBox(width: b * 5),
+              Text(
+                "${_listDeviceData[index].distance??""}m",
+                style: txtS(blc, 14, FontWeight.w400),
+              ),
                 ]),
                 Row(children: [
-                  Icon(Icons.battery_charging_full, size: b * 16, color: blc),
-                  Text(
-                    "${_filteredDeviceData[index].battery??""}%",
-                    style: txtS(blc, 14, FontWeight.w400),
-                  ),
+              Icon(Icons.battery_charging_full, size: b * 16, color: blc),
+              Text(
+                "${_listDeviceData[index].battery??""}%",
+                style: txtS(blc, 14, FontWeight.w400),
+              ),
                 ]),
                 if(HomePageVM.instance.getSeriesCode == "S1")
                 Row(children: [
-                  Icon(Icons.thermostat_sharp, size: b * 16, color: blc),
-                  Text(
-                    "${_filteredDeviceData[index].temperature??""}\u2103",
-                    style: txtS(blc, 14, FontWeight.w400),
-                  ),
+              Icon(Icons.thermostat_sharp, size: b * 16, color: blc),
+              Text(
+                "${_listDeviceData[index].temperature??""}\u2103",
+                style: txtS(blc, 14, FontWeight.w400),
+              ),
                 ]),
                 Row(children: [
-                  Icon(Icons.arrow_upward, size: b * 16, color: blc),
-                  Text(
-                    "${_filteredDeviceData[index].openManhole??""}",
-                    style: txtS(blc, 14, FontWeight.w400),
-                  ),
+              Icon(Icons.arrow_upward, size: b * 16, color: blc),
+              Text(
+                "${_listDeviceData[index].openManhole??""}",
+                style: txtS(blc, 14, FontWeight.w400),
+              ),
                 ]),
                 Row(children: [
-                  SvgPicture.asset(
-                    'images/signal.svg',
-                    allowDrawingOutsideViewBox: true,
-                  ),
-                  SizedBox(width: b * 5),
-                  Text(
-                    "${_filteredDeviceData[index].signalStrength??""}",
-                    style: txtS(blc, 14, FontWeight.w400),
-                  ),
+              SvgPicture.asset(
+                'images/signal.svg',
+                allowDrawingOutsideViewBox: true,
+              ),
+              SizedBox(width: b * 5),
+              Text(
+                "${_listDeviceData[index].signalStrength??""}",
+                style: txtS(blc, 14, FontWeight.w400),
+              ),
                 ]),
               ],
             ),
             sh(23),
             Text(
-              "${_filteredDeviceData[index].address??""}",
+              "${_listDeviceData[index].address??""}",
               style: txtS(dc, 12, FontWeight.w400),
             ),
           ],
         ),
       ),
     );                        
-                      }))),
+                  })),
         ],
       );
   },

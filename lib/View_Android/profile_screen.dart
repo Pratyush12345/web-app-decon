@@ -37,7 +37,7 @@ class _ProfileState extends State<Profile> {
         titleSpacing: -3,
         iconTheme: IconThemeData(color: blc),
         title: Text(
-          !this.widget.myProfile ? "Memeber Name" : "My Profile",
+          !this.widget.myProfile ? "User Profile" : "My Profile",
           style: txtS(Colors.black, 16, FontWeight.w500),
         ),
         actions: [
@@ -100,20 +100,24 @@ class _ProfileState extends State<Profile> {
                           ),
                         ],
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
-                        fit: BoxFit.cover,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+                      child: CircleAvatar(
+                                radius: SizeConfig.b * 11,
+                                backgroundImage: AssetImage("assets/f.png"),
+                              ),
+                      // child: CachedNetworkImage(
+                      //   imageUrl:
+                      //       'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
+                      //   fit: BoxFit.cover,
+                      //   imageBuilder: (context, imageProvider) => Container(
+                      //     decoration: BoxDecoration(
+                      //       shape: BoxShape.circle,
+                      //       image: DecorationImage(
+                      //         image: imageProvider,
+                      //         fit: BoxFit.cover,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ),
                   ),
                 ],
@@ -152,7 +156,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Spacer(),
                       Text(
-                        GlobalVar.strAccessLevel == "3" ? "${widget.userDetailModel.delegate??""}" :"${widget.userDetailModel.post??""}",
+                        widget.userDetailModel.post == "Admin" ? "${widget.userDetailModel.delegate??""}" :"${widget.userDetailModel.post??""}",
                         style: txtS(Color(0xff858585), 14, FontWeight.w400),
                       ),
                     ],
@@ -188,7 +192,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Spacer(),
                       Text(
-                        GlobalVar.strAccessLevel == "1" ? "All Clients" :"${widget.userDetailModel.clientsVisible??""}",
+                        widget.userDetailModel.post == "SuperAdmin" ? "All Clients" :"${widget.userDetailModel.clientsVisible.replaceFirst(",", "")??""}",
                         style: txtS(Color(0xff858585), 14, FontWeight.w400),
                     
                       ),

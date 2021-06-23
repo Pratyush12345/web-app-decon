@@ -94,10 +94,7 @@ class HomePageVM {
     _clientsMap.removeWhere((key, value) => !GlobalVar.userDetail.clientsVisible.contains(key));
     }
     Provider.of<ChangeWhenGetClientsList>(context, listen: false).changeWhenGetClientsList(_clientsMap);
-    _clientsMap.forEach((key, value) { 
-      if(value.toString().contains("Demo"))
-      _ccode = key;
-    });
+    _ccode = _clientsMap.keys.toList()[0];
     }
 
   _setQuery(String clientCode, String seriesCode) async {
@@ -112,8 +109,18 @@ class HomePageVM {
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
   }
  
+  _getClientisActive(String clientCode) async{
+    DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child("clients/$clientCode/isActive").once();
+    if(snapshot.value == 1)
+    GlobalVar.isActive = true;
+    else 
+    GlobalVar.isActive = false;
+    Provider.of<ChangeOnActive>(context, listen: false).changeOnActive();
+   }
+
   onFirstLoad() async{
     await _getClientsList();
+    await _getClientisActive(_ccode);
     await _getClientDetail(_ccode);
     await _getDeviceSetting(_ccode, _scode);
     await _setQuery(_ccode, _scode);
@@ -121,6 +128,7 @@ class HomePageVM {
 
   onChangeClient() async{
     Provider.of<ChangeClient>(context, listen: false).reinitialize();
+    await _getClientisActive(_ccode);
     await _getClientDetail(_ccode);
     await _getDeviceSetting(_ccode, _scode);
     await _setQuery(_ccode, _scode);

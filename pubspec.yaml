@@ -35,7 +35,7 @@ dependencies:
   google_sign_in:
   shared_preferences:
   provider:
-  firebase_storage: ^7.0.0
+  firebase_storage: ^4.0.0
   image_picker:    
   google_maps_flutter:
   geocoder:
@@ -56,6 +56,8 @@ dependencies:
   cached_network_image: 
   shape_of_view: ^1.0.2    
   http:
+  rive:
+  internet_connection_checker: 
   flutter_svg:
   toast:
   intl:  

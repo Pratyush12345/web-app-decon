@@ -1,13 +1,18 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Controller/ViewModels/manager_list_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Manager.dart';
+import 'package:Decon/View_Android/Dialogs/dialogBoxConfirmAdd.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ManagersList extends StatefulWidget {
   String managerUid;
-  ManagersList({@required this.managerUid});
+  final String clientName;
+  ManagersList({@required this.managerUid, @required this.clientName});
   @override
   _ManagersListState createState() => _ManagersListState();
 }
@@ -18,12 +23,33 @@ class _ManagersListState extends State<ManagersList> {
 
   int _selectedIndex = -1;
   Future showManagerDialog(BuildContext context) {
-    return showDialog(
+    return showAnimatedDialog(
+        barrierDismissible:  true,
         context: context,
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
+        
         builder: (context) {
           return Add_man(list: _listUserDetailModel??[],);
         });
   }
+
+  void dialogBoxConfirmAdd(BuildContext context) {
+  showAnimatedDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return DialogBoxConfirmAdd(managerName: _listUserDetailModel[_selectedIndex].name, clientName: widget.clientName ,);
+    },
+    animationType: DialogTransitionType.scaleRotate,
+    curve: Curves.fastOutSlowIn,
+    duration: Duration(milliseconds: 400),
+  ).then((value){
+    if(value == "YES")
+    Navigator.of(context).pop(_listUserDetailModel[_selectedIndex]);
+  });
+}
 
   @override
     void initState() {
@@ -72,7 +98,7 @@ class _ManagersListState extends State<ManagersList> {
              ),
              ),
              onPressed: (){
-              Navigator.of(context).pop(_listUserDetailModel[_selectedIndex]);
+              dialogBoxConfirmAdd(context);
            }),
            SizedBox(height: 3.0,),
            
@@ -82,7 +108,10 @@ class _ManagersListState extends State<ManagersList> {
      ),
      floatingActionButton: FloatingActionButton(
        backgroundColor: blc,
-       child: Icon(Icons.add),
+        child: SvgPicture.asset(
+          'images/AddUser.svg',
+          allowDrawingOutsideViewBox: true,
+        ),
        onPressed: (){
            showManagerDialog(context);
        },
@@ -102,7 +131,11 @@ class _ManagersListState extends State<ManagersList> {
                 borderRadius: BorderRadius.circular(b * 60),
               ),
               child: TextField(
-                controller: search,
+                onChanged: (val){
+                  _listUserDetailModel = ManagerListVM.instance.onSearchManager(val);
+                  setState(() {});
+                             
+                },
                 style: TextStyle(fontSize: b * 14, color: dc),
                 decoration: InputDecoration(
                   prefixIcon: InkWell(
@@ -132,6 +165,7 @@ class _ManagersListState extends State<ManagersList> {
                builder: (context, snapshot){
                  if(snapshot.hasData){
                       Map datamap = snapshot.data.snapshot.value;
+                      if(!ManagerListVM.instance.isManagerSearched){
                       _listUserDetailModel = [];
                       datamap?.forEach((key, value) {
                         _listUserDetailModel.add(UserDetailModel.fromJson(key.toString(), value));
@@ -139,6 +173,8 @@ class _ManagersListState extends State<ManagersList> {
                       if(widget.managerUid!=null){
                         _selectedIndex = _listUserDetailModel.indexWhere((element) => element.key == widget.managerUid);
                         widget.managerUid = null;
+                      }
+                      ManagerListVM.instance.setManagerList = _listUserDetailModel;
                       }
                     if(snapshot.data.snapshot.value!=null)
                       return ListView.builder(

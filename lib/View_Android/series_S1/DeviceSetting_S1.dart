@@ -47,6 +47,7 @@ class _DeviceSettings extends State<DeviceSettingsS1> {
         borderRadius: BorderRadius.circular(SizeConfig.screenWidth * 4 / 375),
       ),
       child: TextField(
+        keyboardType: TextInputType.number,
         controller: controller,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: SizeConfig.screenWidth * 16 / 375),
