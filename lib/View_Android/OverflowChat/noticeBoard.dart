@@ -7,13 +7,13 @@ import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/View_Android/OverflowChat/ShowMedia.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:Decon/Controller/MessagingService/random_string.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/OverflowChat/BeforeImageLoading.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:geocoder/geocoder.dart';
+//import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
   List<Messages> _allMessages = [];
   bool _scrolleffect = true;
   String _selfId, type = "Text";
-  final dbRef = FirebaseDatabase.instance;
+  final dbRef = database();
   Query _query;
   Map<String, bool> _isDeleting = {};
   File imageFile;
@@ -233,17 +233,17 @@ class _NoticeBoardState extends State<NoticeBoard> {
   }
 
   _getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition();
-    final coordinates = new Coordinates(position.latitude, position.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
-    location = first.addressLine;
-    cityName = first.adminArea;
-    cityCode = "";
-    widget.cityMap.forEach((key, value) {
-      if (value == "Jodhpur") cityCode = key;
-    });
+    // Position position = await Geolocator.getCurrentPosition();
+    // final coordinates = new Coordinates(position.latitude, position.longitude);
+    // var addresses =
+    //     await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    // var first = addresses.first;
+    // location = first.addressLine;
+    // cityName = first.adminArea;
+    // cityCode = "";
+    // widget.cityMap.forEach((key, value) {
+    //   if (value == "Jodhpur") cityCode = key;
+    // });
   }
 
   _createNotice(String url, String caption, String randomKey,
@@ -252,7 +252,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
 
     String time = DateTime.now().toString();
 
-    await dbRef.reference().child('/OverflowQueries/$randomKey').update({
+    await dbRef.ref('/OverflowQueries/$randomKey').update({
       'url': url,
       'time': time,
       'selfId': _selfId,
@@ -267,7 +267,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
   }
 
   _deleteNotice(String key) async {
-    await dbRef.reference().child('/OverflowQueries/$key').remove();
+    await dbRef.ref('/OverflowQueries/$key').remove();
     if (key.length == 7)
       await FirebaseStorage.instance
           .ref()
@@ -423,7 +423,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-  onEventRemoved(Event event) {
+  onEventRemoved(QueryEvent event) {
     _scrolleffect = true;
     var index;
     _allMessages.forEach((element) {
@@ -458,9 +458,9 @@ class _NoticeBoardState extends State<NoticeBoard> {
     super.initState();
     //Auth.instance.post = "Manager";
     _selfId = FirebaseAuth.instance.currentUser.uid;
-    _query = dbRef.reference().child('OverflowQueries');
+    _query = dbRef.ref('OverflowQueries');
 
-    _query.onChildAdded.listen((Event event) {
+    _query.onChildAdded.listen((QueryEvent event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
       if (_messages.type != null && _messages.key != "null") {

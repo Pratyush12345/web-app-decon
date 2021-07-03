@@ -1,4 +1,5 @@
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/series_S0/device_setting_viewmodel_S0.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
@@ -8,16 +9,17 @@ import 'package:provider/provider.dart';
 
 
 
-class DeviceSettingsS0 extends StatefulWidget {
+class DeviceSettingsS0Andr extends StatefulWidget {
 
   @override
   _DeviceSettings createState() => _DeviceSettings();
 }
 
-class _DeviceSettings extends State<DeviceSettingsS0> {
+class _DeviceSettings extends State<DeviceSettingsS0Andr> {
   
   @override
   void initState() {
+    DeviceSettingS0VM.instance.init(context);
     super.initState();
   }
    Text textRepeat() {
@@ -135,7 +137,9 @@ class _DeviceSettings extends State<DeviceSettingsS0> {
                 borderRadius: BorderRadius.circular(b * 6),
               ),
               onPressed: () {
-                 DeviceSettingS0VM.instance.onAddPressed();
+                 if(GlobalVar.strAccessLevel != null)
+          
+                 DeviceSettingS0VM.instance.onAddPressed(context);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: h * 10),

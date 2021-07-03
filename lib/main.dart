@@ -1,19 +1,29 @@
+import 'package:Decon/Controller/Providers/Client_provider.dart';
 import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/Controller/ViewModels/Services/Wrapper.dart';
+import 'package:Decon/Controller/ViewModels/Services/orientation_wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
-import 'package:Decon/Controller/ViewModels/Services/wrapper4.dart';
-import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_provider.dart';
+import 'package:Decon/Controller/ViewModels/Services/test.dart';
+import 'package:Decon/View_Web/DrawerFragments/Statistics/graphs_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  //Auth.instance.loadMarker();
   runApp(MyApp());
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  print('Handling a background message ${message.messageId}');
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +37,12 @@ class MyApp extends StatelessWidget {
       
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context)=> ChangeOnActive(),),
+           ChangeNotifierProvider(create: (context)=> ChangeGoogleMap(),),
+           
+           ChangeNotifierProvider(create: (context)=> AfterAdminChangeProvider(),),
+           ChangeNotifierProvider(create: (context)=> AfterManagerChangeProvider(),),
+           ChangeNotifierProvider(create: (context)=> ChangeManager(),),
+           ChangeNotifierProvider(create: (context)=> ChangeOnActive(),),
            ChangeNotifierProvider(create: (context)=> PeopleProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeDrawerItems(),),
            ChangeNotifierProvider(create: (context)=> ChangeWhenGetClientsList(),),
@@ -61,7 +76,7 @@ class MyApp extends StatelessWidget {
             ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: Wrapper4(),
+          home: OrientationWrapper()
         ),
       ),
     );

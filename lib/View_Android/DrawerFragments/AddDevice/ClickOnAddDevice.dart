@@ -3,7 +3,7 @@ import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:flutter/services.dart';
@@ -61,9 +61,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
     String deviceCode = _deviceIdText.text;
     String address = await AddressCalculator(_latitude, _longitude).getLocation();
     if (widget.isUpdating) {
-      await FirebaseDatabase.instance
-          .reference()
-          .child("clients/$clientCode/series/$seriescode/devices/$deviceCode")
+      await database().ref("clients/$clientCode/series/$seriescode/devices/$deviceCode")
           .update({
         "latitude": _latitude,
         "longitude": _longitude,
@@ -102,9 +100,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   lastUpdated: "${DateTime.now()}")
               .toS1Json();
       }
-      await FirebaseDatabase.instance
-          .reference()
-          .child("clients/$clientCode/series/$seriescode/devices/$deviceCode")
+      await database().ref("clients/$clientCode/series/$seriescode/devices/$deviceCode")
           .update(_deviceData);
     }
     Navigator.of(context).pop();

@@ -4,7 +4,7 @@ import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Manager.dart';
 import 'package:Decon/View_Android/Dialogs/dialogBoxConfirmAdd.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -160,11 +160,11 @@ class _ManagersListState extends State<ManagersList> {
             sh(20),
             
            Expanded(
-             child: StreamBuilder<Event>(
-               stream: FirebaseDatabase.instance.reference().child("managers").onValue,
+             child: StreamBuilder<QueryEvent>(
+               stream: database().ref("managers").onValue,
                builder: (context, snapshot){
                  if(snapshot.hasData){
-                      Map datamap = snapshot.data.snapshot.value;
+                      Map datamap = snapshot.data.snapshot.val();
                       if(!ManagerListVM.instance.isManagerSearched){
                       _listUserDetailModel = [];
                       datamap?.forEach((key, value) {
@@ -176,7 +176,7 @@ class _ManagersListState extends State<ManagersList> {
                       }
                       ManagerListVM.instance.setManagerList = _listUserDetailModel;
                       }
-                    if(snapshot.data.snapshot.value!=null)
+                    if(snapshot.data.snapshot.val()!=null)
                       return ListView.builder(
                     itemCount: _listUserDetailModel.length,
                     itemBuilder: (context, index){

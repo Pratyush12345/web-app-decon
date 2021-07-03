@@ -5,7 +5,6 @@ import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -24,8 +23,7 @@ class _Add_admin extends State<Add_admin> {
   final _adminpostController = TextEditingController();
   final _clientController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final dbRef = FirebaseDatabase.instance;
-
+  
   void validate() async{
     if(_formKey.currentState.validate()){
           DialogVM.instance.onAddAdminPressed(context, _nameController.text.trim(),
@@ -64,6 +62,17 @@ class _Add_admin extends State<Add_admin> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                            "Add Admin",
+                            style: TextStyle(
+                              fontSize: b * 16,
+                              color: dc,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            ),
+                      ),
               sh(6),
               Text(
                   "Client Code",
@@ -84,7 +93,7 @@ class _Add_admin extends State<Add_admin> {
                         return "Client Code not assigned";
                         else if(index!=-1)
                         return "Admin already assigned for this Client";
-                        else if(val.endsWith("C") || !val.startsWith("C") || HomePageVM.instance.getCitiesMap[val]==null )
+                        else if(val.endsWith("C") || !val.startsWith("C") || HomePageVM.instance.getClientsMap[val]==null )
                         return "Invalid Code";
                         else
                         return null;

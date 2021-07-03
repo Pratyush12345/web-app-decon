@@ -11,9 +11,10 @@ import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/View_Android/Dialogs/Replace_Manager.dart';
+import 'package:Decon/View_Android/Dialogs/update_dialog.dart';
 import 'package:Decon/View_Android/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,10 +35,12 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
   List<UserDetailModel> _listUserDetailModelAdmins = [];
   Map<String ,ClientDetailModel> _listClientDetailModel = {};
   List<UserDetailModel> _listUserDetailModelManager;
-  
+  TextEditingController _managerSearch = TextEditingController();
+  TextEditingController _adminSearch = TextEditingController();
   @override
   void initState() {
     super.initState();
+    PeopleVM.instance.init();
     _tabController = new TabController(length: 2, vsync: this, initialIndex: 1);
   }
 
@@ -47,6 +50,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
     super.dispose();
   } 
 
+  
   Future showManagerDialog(BuildContext context) {
     return showAnimatedDialog(
         barrierDismissible: true,
@@ -197,6 +201,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                               borderRadius: BorderRadius.circular(b * 60),
                             ),
                             child: TextField(
+                              controller: _managerSearch,
                               onChanged: (val){
                                 _listUserDetailModelManager = PeopleVM.instance.onSearchManager(val);
                                 setState(() {});
@@ -227,11 +232,11 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                           Expanded(
                               child: SingleChildScrollView(
                                   physics: ScrollPhysics(),
-                                  child: StreamBuilder<Event>(
-                                      stream: FirebaseDatabase.instance.reference().child("managers").onValue,
+                                  child: StreamBuilder<QueryEvent>(
+                                      stream: database().ref("managers").onValue,
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                          Map datamap = snapshot.data.snapshot.value;
+                                          Map datamap = snapshot.data.snapshot.val();
                                           if(!PeopleVM.instance.isManagerSearched){
                                           _listUserDetailModelManager = [];
                                           datamap?.forEach((key, value) {  
@@ -239,7 +244,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                           });
                                           PeopleVM.instance.setManagerList = _listUserDetailModelManager;
                                           }
-                                          if(snapshot.data.snapshot.value!=null)
+                                          if(snapshot.data.snapshot.val()!=null)
               
                                           return ListView.builder(
                                               physics: ScrollPhysics(),
@@ -346,6 +351,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                               borderRadius: BorderRadius.circular(b * 60),
                             ),
                             child: TextField(
+                              controller: _adminSearch,
                               onChanged: (val){
                                 _listUserDetailModelAdmins = PeopleVM.instance.onSearchAdmin(val);
                                 setState(() {});
@@ -376,11 +382,11 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                           Expanded(
                               child: SingleChildScrollView(
                                   physics: ScrollPhysics(),
-                                  child: StreamBuilder<Event>(
-                                      stream: FirebaseDatabase.instance.reference().child("admins").onValue,
+                                  child: StreamBuilder<QueryEvent>(
+                                      stream: database().ref("admins").onValue,
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                          Map datamap = snapshot.data.snapshot.value;
+                                          Map datamap = snapshot.data.snapshot.val();
                                           if(!PeopleVM.instance.isAdminSearched){
                                           _listUserDetailModelAdmins = [];
                                           datamap?.forEach((key, value) {
@@ -391,7 +397,7 @@ class _PeopleTabBar extends State<PeopleTabBar> with SingleTickerProviderStateMi
                                           });
                                           }
 
-                                        if(snapshot.data.snapshot.value!=null)
+                                        if(snapshot.data.snapshot.val() !=null)
                                           
                                           return ListView.builder(
                                               physics: ScrollPhysics(),

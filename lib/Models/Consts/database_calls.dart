@@ -1,20 +1,20 @@
 import 'package:Decon/Models/Consts/base_calls.dart';
 import 'package:Decon/Models/Consts/database_path.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 
 class DatabaseCallServices extends BaseCall{
   
   Future<UserDetailModel> getSuperAdminCredentails(String uid) async {
    String url = "${DatabasePath.getSuperAdminCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
 
   Future<UserDetailModel> getManagerCredentails(String uid) async {
    String url = "${DatabasePath.getManagerCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
   Future setManagerClientVisible(String uid, String clientsVisible) async {
    String url = "${DatabasePath.getManagerCredentials}/$uid";
@@ -25,44 +25,44 @@ class DatabaseCallServices extends BaseCall{
   Future<UserDetailModel> getAdminCredentails(String uid) async {
    String url = "${DatabasePath.getAdminCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
 
   Future<UserDetailModel> getManagerTeamCredentails(String uid) async {
    String url = "${DatabasePath.getManagerTeamCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
 
   Future<UserDetailModel> getAdminTeamCredentails(String uid) async {
    String url = "${DatabasePath.getAdminCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
 
   Future<UserDetailModel> getRandomUserCredentails(String uid) async {
    String url = "${DatabasePath.getRandomUser}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return UserDetailModel.fromJson(snapshot.key, snapshot.value);
+   return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
 
   Future<String> getManagerClientsVisible(String headUid) async {
    String url = "${DatabasePath.getManagerCredentials}/$headUid/clientsVisible";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return snapshot.value.toString();
+   return snapshot.val().toString();
   }
 
   Future<String> getAdminClientsVisible(String headUid) async {
    String url = "${DatabasePath.getAdminCredentials}/$headUid/clientsVisible";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return snapshot.value.toString();
+   return snapshot.val().toString();
   }
 
   Future<List<UserDetailModel>> getManagerTeamCredentailsList(String managerUid) async {
    String url = "${DatabasePath.getManagerTeamCredentials}/$managerUid";
    DataSnapshot snapshot = await databaseOnceCall(url);
    List<UserDetailModel> _list = [];
-   (snapshot.value as Map)?.forEach((key, value) { 
+   (snapshot.val() as Map)?.forEach((key, value) { 
      _list.add(UserDetailModel.fromJson(key, value));
    });
     return _list;
@@ -72,7 +72,7 @@ class DatabaseCallServices extends BaseCall{
    String url = "${DatabasePath.getAdminTeamCredentials}/$adminUid";
    DataSnapshot snapshot = await databaseOnceCall(url);
    List<UserDetailModel> _list = [];
-   (snapshot.value as Map)?.forEach((key, value) { 
+   (snapshot.val() as Map)?.forEach((key, value) { 
      _list.add(UserDetailModel.fromJson(key, value));
    });
     return _list;
@@ -81,13 +81,13 @@ class DatabaseCallServices extends BaseCall{
   Future<ClientDetailModel> getClientDetail(String clientCode) async {
    String url = "${DatabasePath.getClientDetail}/$clientCode/Detail";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return ClientDetailModel.fromJson(snapshot.value);
+   return ClientDetailModel.fromJson(snapshot.val());
   }
 
   Future<String> getSeriesList() async {
    String url = "${DatabasePath.getSeriesList}";
    DataSnapshot snapshot = await databaseOnceCall(url);
-   return snapshot.value;
+   return snapshot.val();
   }
 
   Future<String> setClientDetail(String clientCode, ClientDetailModel model) async {
@@ -105,7 +105,7 @@ class DatabaseCallServices extends BaseCall{
 
   DatabaseReference getDatabaseReference(String path){
    String url = "$path";
-   return FirebaseDatabase.instance.reference().child(url).push();
+   return database().ref(url).push();
   }
 
   Future pushUserDetail(DatabaseReference ref ,Map<String, dynamic> json) async {
@@ -129,8 +129,8 @@ class DatabaseCallServices extends BaseCall{
   Future<Map<String, dynamic>> getManagerTeamMap(String managerUid) async{
    String url = "${DatabasePath.getManagerTeamCredentials}";
    DataSnapshot snapshot = await databaseOrderByChildCall(url, "headUid", managerUid);
-  if(snapshot.value!=null) 
-  return Map<String, dynamic>.from(snapshot.value);
+  if(snapshot.val()!=null) 
+  return Map<String, dynamic>.from(snapshot.val());
   else
   return null;
   }
@@ -138,8 +138,8 @@ class DatabaseCallServices extends BaseCall{
   Future<Map<String, dynamic>> getAdminTeamMap(String adminUid ) async{
    String url = "${DatabasePath.getAdminTeamCredentials}";
    DataSnapshot snapshot = await databaseOrderByChildCall(url, "headUid", adminUid);
-  if(snapshot.value!=null) 
-  return Map<String, dynamic>.from(snapshot.value);
+  if(snapshot.val()!=null) 
+  return Map<String, dynamic>.from(snapshot.val());
   else
   return null;
   }

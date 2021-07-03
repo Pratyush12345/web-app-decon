@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 
 abstract class BaseCall{
-  DatabaseReference _dbRef = FirebaseDatabase.instance.reference();
+  Database _dbRef = database();
   CollectionReference _fsRef =  FirebaseFirestore.instance.collection('CurrentLogins');
+
   @protected
   Future<dynamic> databaseOnceCall(String databaseUrl) async{
    try{
-   DataSnapshot snapshot = await _dbRef.child(databaseUrl).once();
+   DataSnapshot snapshot = (await _dbRef.ref(databaseUrl).once('value')).snapshot;
    return snapshot;
    }
    catch(e){
@@ -19,7 +20,7 @@ abstract class BaseCall{
   @protected
   Future<dynamic> databaseOrderByChildCall(String databaseUrl, String orderBy, String equalTo) async{
    try{
-   DataSnapshot snapshot = await _dbRef.child(databaseUrl).orderByChild(orderBy).equalTo(equalTo).once();
+   DataSnapshot snapshot = (await _dbRef.ref(databaseUrl).orderByChild(orderBy).equalTo(equalTo).once('value')).snapshot;
    return snapshot;
    }
    catch(e){
@@ -30,7 +31,7 @@ abstract class BaseCall{
   @protected
   Future<dynamic> databaseUpdateCall(String databaseUrl, Map<String, dynamic> value) async{
    try{
-   await _dbRef.child(databaseUrl).update(value);
+   await _dbRef.ref(databaseUrl).update(value);
    return "Done Successfully";
    }
    catch(e){
@@ -54,7 +55,7 @@ abstract class BaseCall{
   @protected
   Future<dynamic> databaseRemoveCall(String databaseUrl) async{
    try{
-   await _dbRef.child(databaseUrl).remove();
+   await _dbRef.ref(databaseUrl).remove();
    return "Successfully Created";
    }
    catch(e){

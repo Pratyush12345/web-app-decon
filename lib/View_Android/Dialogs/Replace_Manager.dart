@@ -3,7 +3,6 @@ import 'package:Decon/Controller/ViewModels/dialog_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
@@ -61,6 +60,18 @@ class _Replace_Manager extends State<Replace_Manager> {
           crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              sh(4),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                            "Replace Manager",
+                            style: TextStyle(
+                              fontSize: b * 16,
+                              color: dc,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            ),
+                      ),
               sh(6),
                   Text(
                   "Name",

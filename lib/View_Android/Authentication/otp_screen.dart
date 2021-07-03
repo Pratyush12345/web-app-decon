@@ -1,7 +1,7 @@
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/View_Android/Authentication/login_viewmodel.dart';
+import 'package:Decon/View_Web/Authentication/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -46,7 +46,7 @@ class _OtpState extends State<Otp> {
         alignment: Alignment.topCenter,
         children: [
           Image.asset(
-            'images/login_image.png',
+            'images/logo.png',
             width: SizeConfig.screenWidth,
           ),
           Padding(

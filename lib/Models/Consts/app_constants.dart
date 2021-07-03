@@ -4,19 +4,19 @@ import 'package:rive/rive.dart';
 import 'package:toast/toast.dart';
 
 class AppConstant {
-  //  static Widget circulerProgressIndicator(){
-  //   return Center(
-  //     child: CircularProgressIndicator(),
-  //   );
-  // }
+   static Widget progressIndicator(){
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
 
   static Widget circulerProgressIndicator(){
     return Center(
       child: Container(
-        height: 100.0,
-        width: 100.0,
-        child: RiveAnimation.asset('images/loading3.riv',
-                    animation: "Animation 1",
+        height: 200.0,
+        width: 200.0,
+        child: RiveAnimation.asset('images/loading7.riv',
+                    animation: "loading",
                     ),
       ),
     );
@@ -39,7 +39,7 @@ class AppConstant {
           children: [
             sh(10),
                 Image.asset(
-                      'images/nodata1.png',
+                      'images/nodata.png',
                     height: 80.0),
                 sh(10),
                 Text(
@@ -125,6 +125,7 @@ class AppConstant {
 
 
 const Color tc = Color(0xff979797);
+const Color wc = Colors.white;
 const Color dc = Color(0xff263238);
 const Color blc = Color(0xff0099ff);
 
@@ -132,10 +133,15 @@ TextStyle txtS(Color col, double siz, FontWeight wg) {
   return TextStyle(
     color: col,
     fontWeight: wg,
-    fontSize: SizeConfig.screenWidth / 375 * siz,
+    fontSize: SizeConfig.screenHeight / 900 * siz,
   );
 }
 
 SizedBox sh(double h) {
-  return SizedBox(height: h * SizeConfig.screenHeight / 812);
+  return SizedBox(height: h * SizeConfig.screenHeight / 900);
 }
+
+SizedBox sb(double b) {
+  return SizedBox(width: b * SizeConfig.screenWidth / 1440);
+}
+

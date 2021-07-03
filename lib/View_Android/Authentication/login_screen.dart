@@ -1,7 +1,8 @@
+import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/View_Android/Authentication/login_viewmodel.dart';
+
 import 'package:Decon/View_Android/Authentication/otp_screen.dart';
-import 'package:Decon/View_Android/DeconManager/AddCity.dart';
+import 'package:Decon/View_Web/Authentication/login_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Image.asset('images/login_image.png', width: SizeConfig.screenWidth),
+          Image.asset('images/logo.png', width: SizeConfig.screenWidth),
           Column(
             children: [
               Spacer(),

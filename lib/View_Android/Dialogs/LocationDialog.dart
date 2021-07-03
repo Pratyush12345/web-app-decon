@@ -1,7 +1,8 @@
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -42,7 +43,7 @@ class _LocationDialog extends State<LocationDialog> {
           double _lat = double.parse((_latitudeController.text));
           double _lon = double.parse(_longitudeController.text);
           print("${_addressController.text}");
-          await FirebaseDatabase.instance.reference().child("clients/${widget.deviceId.split("_")[0]}/series/${widget.deviceId.split("_")[1]}/devices/${widget.deviceId.split("_")[2]}")
+          await database().ref("clients/${widget.deviceId.split("_")[0]}/series/${widget.deviceId.split("_")[1]}/devices/${widget.deviceId.split("_")[2]}")
           .update({
                   "latitude": _lat,
                   "longitude": _lon,
@@ -303,6 +304,8 @@ class _LocationDialog extends State<LocationDialog> {
                       ),
                       padding: EdgeInsets.zero,
                       onPressed: () async {
+                              if(GlobalVar.strAccessLevel != null)
+          
                               validate();
                             },
                       child: Container(

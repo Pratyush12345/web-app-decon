@@ -1,12 +1,11 @@
-import 'package:Decon/Controller/MessagingService/FirebaseMessaging.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Consts/database_calls.dart';
-import 'package:Decon/Models/Models.dart';
+import 'package:firebase/firebase.dart' as fDatabase;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/locale.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +22,11 @@ class Auth  {
   User currentuser;
   SharedPreferences pref;
   BuildContext changeContext;
+  BitmapDescriptor ground_icon;
+  BitmapDescriptor normal_icon;
+  BitmapDescriptor informative_icon;
+  BitmapDescriptor critical_icon;
+  
 
   _sharedprefinit() async {
     pref = await SharedPreferences.getInstance();
@@ -32,51 +36,49 @@ class Auth  {
     return _firebaseAuth.authStateChanges().map((user) => user);
   }
 
-   _updateToken() {
-    FirebaseMessagingService().sendNotification(); // initializing messaging handlers
-    FirebaseMessagingService().flutterlocalnotificationplugin.cancelAll();
-
-    FirebaseMessaging().getToken().then((token) {
-      if (GlobalVar.strAccessLevel == "1") {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/superAdmins/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }
-      else if (GlobalVar.strAccessLevel == "2") {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/managers/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }  
-      else if (GlobalVar.strAccessLevel == "3") {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/admins/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }
-      else if (GlobalVar.strAccessLevel == "4") {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/managerTeam/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }
-      else if (GlobalVar.strAccessLevel == "5") {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/adminTeam/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }
-      else {
-        FirebaseDatabase.instance
-            .reference()
-            .child("/randomUser/${FirebaseAuth.instance.currentUser.uid}")
-            .update({"tokenid": token});
-      }
-      
-      });
+  loadMarker() async {
+    print("loading markerrrrrrrrrrrrrr");
+   ground_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48),), 'assets/purple-dot.png');
+   normal_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/green-dot.png');
+   informative_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/yellow-dot.png');
+   critical_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/red-dot.png');    
+   
   }
 
+  _updateToken() async{
+      String token = await  FirebaseMessaging.instance.getToken();
+      print("token id");
+      print(token);
+      try{
+           if (GlobalVar.strAccessLevel == "1") {
+        fDatabase.database().ref("/superAdmins/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }
+      else if (GlobalVar.strAccessLevel == "2") {
+        fDatabase.database().ref("/managers/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }  
+      else if (GlobalVar.strAccessLevel == "3") {
+        fDatabase.database().ref("/admins/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }
+      else if (GlobalVar.strAccessLevel == "4") {
+        fDatabase.database().ref("/managerTeam/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }
+      else if (GlobalVar.strAccessLevel == "5") {
+        fDatabase.database().ref("/adminTeam/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }
+      else {
+        fDatabase.database().ref("/randomUser/${FirebaseAuth.instance.currentUser.uid}")
+            .update({"webtokenid": token});
+      }
+      }catch(e){
+        print(e);
+        print("erorr");
+      }
+ }
    _getUserCredentails() async{
     if(GlobalVar.strAccessLevel == "1"){
        GlobalVar.userDetail =  await _databaseCallServices.getSuperAdminCredentails(FirebaseAuth.instance.currentUser.uid);
@@ -102,10 +104,16 @@ class Auth  {
   }
 
   Future<String> _getClaims(currentuser) async {
+    try{
     IdTokenResult idTokenResult = await currentuser.getIdTokenResult(true);
     print("accessLevel==============="+idTokenResult.claims['accessLevel']);
     GlobalVar.strAccessLevel = idTokenResult.claims['accessLevel'];    
     return "done";
+    }catch(e){
+      print(e);
+     GlobalVar.strAccessLevel = null;
+     return "done"; 
+    }
   }
 
   Future<String> firstTimeLogin(User currentUser) async {
@@ -121,6 +129,7 @@ class Auth  {
     String value = await _getClaims(currentuser);
     await _getUserCredentails();
     _updateToken();
+    
     return value; 
   }
 

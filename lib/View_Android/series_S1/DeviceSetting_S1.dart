@@ -1,5 +1,6 @@
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/series_S1/device_setting_viewmodel_S1.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
@@ -8,22 +9,22 @@ import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/View_Android/DrawerFragments/Updatelocation.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 
-class DeviceSettingsS1 extends StatefulWidget {
+class DeviceSettingsS1Andr extends StatefulWidget {
 
   @override
   _DeviceSettings createState() => _DeviceSettings();
 }
 
-class _DeviceSettings extends State<DeviceSettingsS1> {
+class _DeviceSettings extends State<DeviceSettingsS1Andr> {
   
   @override
   void initState() {
+    DeviceSettingS1VM.instance.init(context);
     super.initState();
   }
 
@@ -238,7 +239,9 @@ class _DeviceSettings extends State<DeviceSettingsS1> {
                 borderRadius: BorderRadius.circular(b * 6),
               ),
               onPressed: () {
-                 DeviceSettingS1VM.instance.onAddPressed();
+                 if(GlobalVar.strAccessLevel != null)
+          
+                 DeviceSettingS1VM.instance.onAddPressed(context);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: h * 10),

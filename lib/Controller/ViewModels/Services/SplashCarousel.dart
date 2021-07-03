@@ -1,4 +1,3 @@
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 class SplashCarousel extends StatefulWidget {
   @override
@@ -22,10 +21,7 @@ class _SplashCarouselState extends State<SplashCarousel> {
         physics: ScrollPhysics(),
         itemCount: _listf.length,
         itemBuilder: (context, index){
-          return FlareActor(
-            'assets/detect.flr',
-            animation: 'detect' ,
-          );
+          return Text("");
           
         },
       ),

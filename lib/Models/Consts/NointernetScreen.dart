@@ -20,7 +20,7 @@ class NoInternetScreen extends StatelessWidget{
               children: [
                 sh(80),
                 Image.asset(
-                   'images/noInternet.png',
+                   'images/noConnect.png',
                     height: h * 230),
                 sh(75),
                 Text( 'No Internet Connection!',

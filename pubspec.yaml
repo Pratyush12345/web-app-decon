@@ -28,25 +28,27 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
-  firebase_auth:
+  firebase_auth: ^0.20.1
+  firebase:
   firebase_core:
   file_picker: ^1.13.3
   flutter_image_compress:
   google_sign_in:
   shared_preferences:
+  shared_preferences_web:  
   provider:
-  firebase_storage: ^4.0.0
+  firebase_storage:
   image_picker:    
   google_maps_flutter:
-  geocoder:
-  geolocator:
-  firebase_database:
+  google_maps_flutter_web:
+  reverse_nominatim: ^0.0.1
+  # geocoder:
+  geolocator: ^6.2.0
   url_launcher:
-  cloud_firestore:  
+  cloud_firestore: ^0.16.0  
   animator:   
   progress_dialog:
-  flare_flutter:
-  firebase_messaging:
+  firebase_messaging: ^8.0.0-dev.14
   flutter_local_notifications:
   syncfusion_flutter_charts:
   material_design_icons_flutter:  
@@ -54,13 +56,18 @@ dependencies:
   pinput:
   flutter_animated_dialog: 
   cached_network_image: 
-  shape_of_view: ^1.0.2    
   http:
   rive:
-  internet_connection_checker: 
-  flutter_svg:
   toast:
-  intl:  
+  intl:
+  flutter_signin_button:
+  flutter_web_scrollbar: 
+  flutter_svg:
+  page_view_indicators:
+  wave:
+  google_fonts:
+  shape_of_view: ^1.0.2
+  internet_connection_checker:   
   
 dev_dependencies:
   flutter_test:
@@ -80,16 +87,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
   - images/
-  - assets/f.png
-  - assets/DECON.jpg
-  - assets/DECON_1.png
-  - assets/gurucool.flr
-  - assets/analyse.flr
-  - assets/conserve.flr
-  - assets/detect.flr
-  - assets/inform.flr
-  - assets/process.flr
-  - assets/Infinity.svg
+  - assets/
+  - assets/red-dot.png
+  - assets/purple-dot.png
+  - assets/green-dot.png
+  - assets/yellow-dot.png
     
   #   - images/a_dot_ham.jpeg
 

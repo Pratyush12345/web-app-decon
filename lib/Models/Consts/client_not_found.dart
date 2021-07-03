@@ -1,6 +1,6 @@
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:Decon/View_Android/clients/all_clients.dart';
+import 'package:Decon/View_Web/clients/all_clients.dart';
 import 'package:flutter/material.dart';
 
 

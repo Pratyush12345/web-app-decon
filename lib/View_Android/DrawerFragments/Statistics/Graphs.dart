@@ -1,6 +1,6 @@
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
-import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_provider.dart';
+import 'package:Decon/View_Web/DrawerFragments/Statistics/graphs_provider.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/graphs_viewmodel.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/levelGraph.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/TemperatureGraph.dart';
@@ -28,13 +28,19 @@ class _GraphsState extends State<Graphs> {
     0: "Ground level",
     1: "Normal Level",
     2: "Infromative Level",
-    3: "Critical Level"
+    3: "Critical Level",
+    191: "Error in Sensor 1",
+    192: "Error in Sensor 2",
+    193: "Error in Sensor 3"
   };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),
     2: Color(0xffE1E357),
-    3: Color(0xffD93D3D)
+    3: Color(0xffD93D3D),
+    191: Colors.black,
+    192: Colors.black,
+    193: Colors.black
   };
 
   @override
@@ -51,8 +57,23 @@ class _GraphsState extends State<Graphs> {
     var b = SizeConfig.screenWidth / 375;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Graph")),
+      appBar: AppBar(elevation: 10,
+        titleSpacing: -3,
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back_ios, color: blc, size: b * 16),
+        ),
+        iconTheme: IconThemeData(color: blc),
+        title: Text(
+          "${widget.deviceData.id.split("_")[2].replaceAll("D", "Device ")}",
+          style: txtS(Colors.black, 16, FontWeight.w500),
+        ),
+        backgroundColor: Colors.white,
+      ),
       body: ListView(
+        padding: EdgeInsets.fromLTRB(14.0,0.0 , 14.0, 0.0),
         children: [
           Container(
               height: MediaQuery.of(context).size.height * 0.3,

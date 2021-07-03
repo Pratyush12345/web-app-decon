@@ -1,3 +1,4 @@
+import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/add_client_viewmodel.dart';
 import 'package:Decon/Controller/ViewModels/all_people_viewmodel.dart';
@@ -6,11 +7,12 @@ import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/Dialogs/Add_Delegates.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/profile_screen.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class AllPeople extends StatefulWidget {
   final String clientCode; 
@@ -29,6 +31,8 @@ class _AllPeople extends State<AllPeople> {
   List<UserDetailModel> _listOfManagerTeam = [];
                                                         
   _initialize() async{
+    
+    PeopleVM.instance.init();
     AllPeopleVM.instance.init();
     _listOfAdminTeam = [];
     _listOfManagerTeam = [];
@@ -91,13 +95,24 @@ class _AllPeople extends State<AllPeople> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-              title: Text(
+      appBar: AppBar(elevation: 10,
+        titleSpacing: -3,
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back_ios, color: blc, size: b * 16),
+        ),
+        iconTheme: IconThemeData(color: blc),
+        title: Text(
                 widget.clientDetailModel == null? AppConstant.circulerProgressIndicator():
                 widget.clientDetailModel.cityName == null? AppConstant.noDataFound(): 
                 
-                "${widget.clientDetailModel.clientName}"),
-            ),
+                "${widget.clientDetailModel.clientName}",
+                
+          style: txtS(Colors.black, 16, FontWeight.w500),), 
+        backgroundColor: Colors.white,
+      ), 
       floatingActionButton: GlobalVar.strAccessLevel == "2" || GlobalVar.strAccessLevel == "3"
           ? FloatingActionButton(
               backgroundColor: Color(0xff0099FF),
@@ -284,29 +299,35 @@ class _AllPeople extends State<AllPeople> {
                     style: txtS(dc, 13.57, FontWeight.w400),
                   ),
                   Spacer(),
-                  Text(
-                    "Total:${_listOfAdminTeam?.length??0}",
-                    style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                  Consumer<AfterManagerChangeProvider>(
+                    builder: (context, model, child)=>
+                    Text(
+                      "Total:${model.listManager?.length}",
+                      style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                    ),
                   ),
                 ],
               ),
             SizedBox(height: SizeConfig.v * 1),
             Container(
               height: h *200,
-              child: StreamBuilder<Event>(
-                    stream: FirebaseDatabase.instance.reference().child("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
+              child: StreamBuilder<QueryEvent>(
+                    stream: database().ref("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                           if(!PeopleVM.instance.isManagerTeamSearched){
                             _listOfManagerTeam = [];
-                          (snapshot.data.snapshot.value as Map)?.forEach((key, value) { 
+                          (snapshot.data.snapshot.val() as Map)?.forEach((key, value) { 
                             UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
-                            _usermodel.clientsVisible = AllPeopleVM.instance.managerDetailModel.clientsVisible;
+                            _usermodel?.clientsVisible = AllPeopleVM.instance.managerDetailModel?.clientsVisible;
                             _listOfManagerTeam.add(_usermodel);
                           });
-                          PeopleVM.instance.setManagerTeamList = _listOfManagerTeam;  
+                          PeopleVM.instance.setManagerTeamList = _listOfManagerTeam;
+                          WidgetsBinding.instance.addPostFrameCallback((_){
+                            Provider.of<AfterManagerChangeProvider>(context, listen:  false).afterManagerChangeProvider(_listOfManagerTeam);  
+                            });
                           }
-                        if(snapshot.data.snapshot.value!=null)
+                        if(snapshot.data.snapshot.val()!=null)
                         return ListView.builder(
                             physics: ScrollPhysics(),
                             shrinkWrap: true,
@@ -318,11 +339,11 @@ class _AllPeople extends State<AllPeople> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfManagerTeam[index], )));
                                 },
                                 onLongPress: () {
-                                  if(GlobalVar.strAccessLevel == "2")
+                                  if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
                                   showDeleteDialog(context).then((value) async {
                                   
                                     if (value == "Yes") {
-                                        FirebaseDatabase.instance.reference().child("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
+                                           database().ref("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
                                     }
                                   });
                                 },
@@ -402,29 +423,37 @@ class _AllPeople extends State<AllPeople> {
                     style: txtS(dc, 13.57, FontWeight.w400),
                   ),
                   Spacer(),
-                  Text(
-                    "Total:${_listOfAdminTeam?.length??0}",
-                    style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                  Consumer<AfterAdminChangeProvider>(
+                    builder: (context, _model, child)=>
+                    Text(
+                      "Total:${_model.listAdmin?.length??0}",
+                      style: txtS(Color(0xff858585), 12, FontWeight.w400),
+                    ),
                   ),
                 ],
               ),
             Container(
               height: h *200,
-              child:StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance.reference().child("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
+              child:StreamBuilder<QueryEvent>(
+                stream: database().ref("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                       if(!PeopleVM.instance.isAdminTeamSearched){
                         _listOfAdminTeam = [];
-                      (snapshot.data.snapshot.value as Map)?.forEach((key, value) {
+                      (snapshot.data.snapshot.val() as Map)?.forEach((key, value) {
                         UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
                        _usermodel.clientsVisible = AllPeopleVM.instance.adminDetailModel.clientsVisible;
                              
                         _listOfAdminTeam.add(_usermodel);
                       });
                       PeopleVM.instance.setAdminTeamList = _listOfAdminTeam;
+                      WidgetsBinding.instance.addPostFrameCallback((_){
+                      Provider.of<AfterAdminChangeProvider>(context, listen:  false).afterAdminChangeProvider(_listOfAdminTeam);  
+                      });
+                          
+                          
                       }
-                    if(snapshot.data.snapshot.value!=null)
+                    if(snapshot.data.snapshot.val() !=null)
                     return ListView.builder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
@@ -436,11 +465,11 @@ class _AllPeople extends State<AllPeople> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfAdminTeam[index], )));
                                 },
                              onLongPress: () {
-                              if(GlobalVar.strAccessLevel == "3")
+                              if(GlobalVar.strAccessLevel == "3" ||GlobalVar.strAccessLevel == "1" )
                               showDeleteDialog(context).then((value) async {
                               
                                 if (value == "Yes") {
-                                    FirebaseDatabase.instance.reference().child("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
+                                   database().ref("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
                                 }
                               });
                             },

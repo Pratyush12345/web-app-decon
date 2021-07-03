@@ -1,14 +1,14 @@
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:flutter/cupertino.dart';
 
 class ChangeDeviceData extends ChangeNotifier{
   
   List<DeviceData> allDeviceData = [];
-  
   void _sortList(){
     allDeviceData.sort((a, b) =>
-          int.parse(a.id.split("_")[2].substring(1, 2))
-              .compareTo(int.parse(b.id.split("_")[2].substring(1, 2))));
+          int.parse(a.id.split("_")[2].substring(1, a.id.split("_")[2].length))
+              .compareTo(int.parse(b.id.split("_")[2].substring(1, b.id.split("_")[2].length))));
   }
 
   void reinitialize(){
@@ -17,7 +17,6 @@ class ChangeDeviceData extends ChangeNotifier{
   }
 
   void changeDeviceData(String methodName, { DeviceData newDeviceData } ){
-    
     if(methodName == "onDeviceAdded" && allDeviceData!=null){
       allDeviceData.add(newDeviceData);
       _sortList();
@@ -30,6 +29,9 @@ class ChangeDeviceData extends ChangeNotifier{
         allDeviceData.add(newDeviceData);
         _sortList();
       }
+      GlobalVar.isDeviceChanged = true;
+    
+      
     }
     notifyListeners();
   }
@@ -71,10 +73,10 @@ class ChangeSeries extends ChangeNotifier {
 
 class ChangeWhenGetClientsList extends ChangeNotifier{
    
-   Map clientsMap;
-   void changeWhenGetClientsList(Map _clientsMap){
+   List<ClientListModel> clientsList;
+   void changeWhenGetClientsList(List<ClientListModel> _clientsList){
            
-      clientsMap = _clientsMap;
+      clientsList = _clientsList;
 
      notifyListeners();
    }
@@ -90,6 +92,15 @@ class ChangeDrawerItems extends ChangeNotifier {
 
 class ChangeOnActive extends ChangeNotifier{
   void changeOnActive(){
+    notifyListeners();
+  }
+}
+
+
+class ChangeGoogleMap extends ChangeNotifier{
+  bool isInitialized = false;
+  void changeGoogleMap(bool _isInitialized){
+    isInitialized = _isInitialized;
     notifyListeners();
   }
 }

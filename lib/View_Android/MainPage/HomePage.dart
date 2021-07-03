@@ -4,7 +4,7 @@ import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/client_not_found.dart';
 import 'package:Decon/View_Android/MainPage/drawer.dart';
 import 'package:Decon/View_Android/series_S1/load_svg.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 
 
 class HomePage extends StatefulWidget {
+  HomePage({key}): super(key: key);
   @override
   State<StatefulWidget> createState() {
     return HomePageState();
@@ -52,7 +53,7 @@ class HomePageState extends State<HomePage> {
       case 2:
         if (GlobalVar.strAccessLevel == "1")
           return PeopleTabBar();
-        else
+        else if(GlobalVar.strAccessLevel != null)
           return Consumer<ChangeClient>(
           builder: (context, model, child)=>
             AllPeople(
@@ -66,6 +67,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    GlobalVar.seriesMap = GlobalVar.seriesMapAndr;
+    HomePageVM.instance.selectedDrawerWidget = Home();
     HomePageVM.instance.initialize(context);
     super.initState();
   }
@@ -106,13 +109,13 @@ class HomePageState extends State<HomePage> {
                         child: 
                           Consumer<ChangeWhenGetClientsList>(
                        builder: (context, object,child ){
-                         if(object.clientsMap!=null)
-                        _itemSelected = object.clientsMap[object.clientsMap?.keys?.toList()[0]];
+                         if(object.clientsList!=null  && _itemSelected == null)
+                        _itemSelected = object.clientsList[0].clientName;
                         return
                           Consumer<ChangeClient>(
                             builder: (context, changeList, child)=>
-                            object.clientsMap == null? AppConstant.circulerProgressIndicator():
-                            object.clientsMap.isEmpty? AppConstant.addClient():
+                            object.clientsList == null? AppConstant.circulerProgressIndicator():
+                            object.clientsList.isEmpty? AppConstant.addClient():
                           Padding(
                             padding: EdgeInsets.all(4.0),
                         
@@ -123,12 +126,12 @@ class HomePageState extends State<HomePage> {
                             labelText: 'Select Client',
                           ),
                           value: _itemSelected ?? null ,
-                          items: object.clientsMap.values.map((dropDownStringitem) {
+                          items: object.clientsList.map((dropDownStringitem) {
                                 return  
                                 DropdownMenuItem<String>(
-                                  value: dropDownStringitem,
+                                  value: dropDownStringitem.clientName,
                                   child: Text(
-                                    dropDownStringitem,
+                                    dropDownStringitem.clientName,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
@@ -139,8 +142,8 @@ class HomePageState extends State<HomePage> {
                             
                                 onChanged: (newValueSelected) {
                                 _itemSelected = newValueSelected;
-                                 object.clientsMap.forEach((key, value) { 
-                                  if (value == newValueSelected) HomePageVM.instance.setClientCode = key;
+                                 object.clientsList.forEach((value) { 
+                                  if (value.clientName == newValueSelected) HomePageVM.instance.setClientCode = value.clientCode;
                                 });
                                 GlobalVar.isclientchanged = true;
                                 HomePageVM.instance.onChangeClient();
@@ -167,31 +170,39 @@ class HomePageState extends State<HomePage> {
                width: 70.0,
                child: Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: DropdownButtonFormField<String>(
-                          isExpanded: true,
-                          onChanged: (value){
-                             HomePageVM.instance.setSeriesCode = "$value";
-                             HomePageVM.instance.onChangeSeries();
-                             Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
-                             },
+                        child: ButtonTheme(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          child: DropdownButtonFormField<String>(
+                            style: txtS(blc, 16, FontWeight.w400),
+                            isExpanded: true,
+                            onChanged: (value){
+                               HomePageVM.instance.setSeriesCode = "$value";
+                               HomePageVM.instance.onChangeSeries();
+                               Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
+                               },
 
-                          decoration: InputDecoration(
-                            hintText: 'S0',
-                            labelText: 'Select Series',
+                            decoration: InputDecoration(
+                              hintText: 'S0',
+                              labelText: 'Select Series',
+                              labelStyle: TextStyle(
+                                fontSize: b * 16,
+                                color: Color(0xff858585),
+                              ),
+                            ),
+                            value: model.selectedSeries ,
+                            items: (model.seriesList??[]).map((e) => DropdownMenuItem<String>(
+                                          child: Text(e),
+                                          value: e.toString(),
+                                        )).toList(),
+                            onSaved: (val) {
+
+                            },
+                            validator: (val) {
+                              print('value is $val');
+                              if (val == null) return 'Please choose an option.';
+                              return null;
+                            },
                           ),
-                          value: model.selectedSeries ,
-                          items: (model.seriesList??[]).map((e) => DropdownMenuItem<String>(
-                                        child: Text(e),
-                                        value: e.toString(),
-                                      )).toList(),
-                          onSaved: (val) {
-
-                          },
-                          validator: (val) {
-                            print('value is $val');
-                            if (val == null) return 'Please choose an option.';
-                            return null;
-                          },
                         )
                         ),
              ),
@@ -237,8 +248,8 @@ class HomePageState extends State<HomePage> {
       drawer: DrawerWidget(),
       body: Consumer<ChangeWhenGetClientsList>(
         builder: (context, model, child)=> 
-            model.clientsMap == null? AppConstant.circulerProgressIndicator():
-            model.clientsMap.isEmpty? ClientsNotFound():
+            model.clientsList == null? AppConstant.circulerProgressIndicator():
+            model.clientsList.isEmpty? ClientsNotFound():
             Consumer<ChangeOnActive>(
               builder: (context, _, child)=>
               !GlobalVar.isActive? AppConstant.deactivatedClient():
@@ -282,7 +293,7 @@ class HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
                      
               icon: SvgPicture.asset(
-                'images/3User.svg',
+                'images/3 User.svg',
                 allowDrawingOutsideViewBox: true,
                 color: _currentIndex == 2 ? blc : Colors.white,
               ),

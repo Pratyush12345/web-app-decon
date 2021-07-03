@@ -25,15 +25,31 @@ class HomeState extends State<Home> {
   String futureAddress = "";
   // Completer<GoogleMapController> _controller = Completer();
   Completer<GoogleMapController> _controller = Completer();
-
+  BitmapDescriptor ground_icon;
+  BitmapDescriptor normal_icon;
+  BitmapDescriptor informative_icon;
+  BitmapDescriptor critical_icon;
+  Set<Marker> _setOfMarker = new Set();
+    
   LatLng _latLng;
   double _value;
+
+  loadMarker() async {
+   ground_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/purple-dot.png');
+   normal_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/green-dot.png');
+   informative_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/yellow-dot.png');
+   critical_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/red-dot.png');    
+   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(true);
+   await Future.delayed(Duration(milliseconds: 2000));
+   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(false);
+  }
 
   @override
   void initState() {
     _latLng = new LatLng(26.123456, 72.234567);
     _value = 8.0;
     super.initState();
+    loadMarker();
   }
 
   _animateMap(double lat, double lon) async {
@@ -108,7 +124,7 @@ class HomeState extends State<Home> {
                   ),
                   contentPadding:
                       EdgeInsets.only(top: SizeConfig.screenHeight * 9 / 640),
-                  hintText: 'Search by Device/ ID/ location',
+                  hintText: 'Search by Device ID/ location',
                   hintStyle: TextStyle(
                       fontSize: SizeConfig.b * 4, color: Colors.black),
                   border: InputBorder.none,
@@ -124,21 +140,36 @@ class HomeState extends State<Home> {
   Widget googlemap(BuildContext context, List<DeviceData> allDeviceData) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.60,
-      child: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
-        zoomGesturesEnabled: true,
-        onMapCreated: (GoogleMapController googleMapControler) {
-          _controller.complete(googleMapControler);
-        },
-        markers: addMarker(allDeviceData),
+      child: Consumer<ChangeGoogleMap>(
+        builder: (context, model, child){
+          if(model.isInitialized){
+               _setOfMarker = {};
+             }
+             else{
+               if(GlobalVar.isDeviceChanged){
+               _setOfMarker = {};
+               GlobalVar.isDeviceChanged = false;
+               }
+               else
+               _setOfMarker = addMarker(allDeviceData);
+             }
+            
+        return GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
+          zoomGesturesEnabled: true,
+          onMapCreated: (GoogleMapController googleMapControler) {
+            _controller.complete(googleMapControler);
+          },
+          markers: _setOfMarker,
+        );
+        }
       ),
     );
   }
 
   Set<Marker> addMarker(List<DeviceData> _allDeviceData) {
     print("Length is ######: ${_allDeviceData?.length}");
-    Set<Marker> _setOfMarker = new Set();
     if (_allDeviceData!=null  && _allDeviceData.length != 0) {
       for (var i = 0; i < _allDeviceData.length; i++) {
         _setOfMarker.add(addIndividualMarker(_allDeviceData[i]));
@@ -162,7 +193,7 @@ class HomeState extends State<Home> {
         infoWindow: InfoWindow(
             title: "${_allDeviceData.id.split("_")[2]}",
             snippet: "Ground Level"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+        icon: ground_icon,
       );
     } else if (level == 1) {
       return Marker(
@@ -175,7 +206,7 @@ class HomeState extends State<Home> {
         infoWindow: InfoWindow(
             title: "${_allDeviceData.id.split("_")[2]}",
             snippet: "Normal Level"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        icon: normal_icon,
       );
     } else if (level == 2) {
       return Marker(
@@ -188,9 +219,9 @@ class HomeState extends State<Home> {
         infoWindow: InfoWindow(
             title: "${_allDeviceData.id.split("_")[2]}",
             snippet: "Informative Level"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+        icon: informative_icon,
       );
-    } else {
+    } else if(level == 3) {
       return Marker(
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
@@ -201,7 +232,21 @@ class HomeState extends State<Home> {
         infoWindow: InfoWindow(
             title: "${_allDeviceData.id.split("_")[2]}",
             snippet: "Critical Level"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: critical_icon
+      );
+    }
+    else {
+      return Marker(
+        markerId: MarkerId(_allDeviceData.id.split("_")[2]),
+        onTap: () {
+          _showBottomSheet(
+              level, _allDeviceData.latitude, _allDeviceData.longitude);
+        },
+        position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
+        infoWindow: InfoWindow(
+            title: "${_allDeviceData.id.split("_")[2]}",
+            snippet: "Error in Sensor"),
+        icon: critical_icon,
       );
     }
   }
@@ -211,8 +256,8 @@ class HomeState extends State<Home> {
     DeviceData specificDevice;
     if (val != "") {
       var Key = allDeviceData.firstWhere((entry) {
-        if (entry.id.split("_")[2].contains(val.trim()) ||
-            entry.address.contains(val.trim()))
+        if (entry.id.toLowerCase().contains(val.toLowerCase().trim()) ||
+            entry.address.toLowerCase().contains(val.toLowerCase().trim()))
           return true;
         else
           return false;
@@ -234,8 +279,10 @@ class HomeState extends State<Home> {
       _color = Colors.green;
     else if (level == 2)
       _color = Colors.yellow;
-    else
+    else if (level == 3)
       _color = Colors.red;
+    else
+      _color = Colors.purpleAccent;  
 
     Future<String> address =
         AddressCalculator(latitude, longitude).getLocation();
