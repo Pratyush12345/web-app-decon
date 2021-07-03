@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
       child: MultiProvider(
         providers: [
            ChangeNotifierProvider(create: (context)=> ChangeGoogleMap(),),
-           
            ChangeNotifierProvider(create: (context)=> AfterAdminChangeProvider(),),
            ChangeNotifierProvider(create: (context)=> AfterManagerChangeProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeManager(),),

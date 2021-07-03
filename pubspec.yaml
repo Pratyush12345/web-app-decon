@@ -60,14 +60,15 @@ dependencies:
   rive:
   toast:
   intl:
+  connectivity:
+  connectivity_for_web:  
   flutter_signin_button:
   flutter_web_scrollbar: 
   flutter_svg:
   page_view_indicators:
   wave:
   google_fonts:
-  shape_of_view: ^1.0.2
-  internet_connection_checker:   
+  shape_of_view: ^1.0.2   
   
 dev_dependencies:
   flutter_test:

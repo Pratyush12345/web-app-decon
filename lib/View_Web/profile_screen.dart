@@ -67,20 +67,24 @@ class _ProfileState extends State<Profile> {
                             ),
                           ],
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
-                          fit: BoxFit.cover,
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
+                        child: CircleAvatar(
+                                
+                                backgroundImage: AssetImage("assets/f.png"),
                               ),
-                            ),
-                          ),
-                        ),
+                        // child: CachedNetworkImage(
+                        //   imageUrl:
+                        //       'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
+                        //   fit: BoxFit.cover,
+                        //   imageBuilder: (context, imageProvider) => Container(
+                        //     decoration: BoxDecoration(
+                        //       shape: BoxShape.circle,
+                        //       image: DecorationImage(
+                        //         image: imageProvider,
+                        //         fit: BoxFit.cover,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                     ),
                   ],

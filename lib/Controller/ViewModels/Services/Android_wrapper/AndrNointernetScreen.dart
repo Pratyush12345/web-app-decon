@@ -3,7 +3,7 @@ import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:flutter/material.dart';
 
-class NoInternetScreen extends StatelessWidget{
+class AndrNoInternetScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);

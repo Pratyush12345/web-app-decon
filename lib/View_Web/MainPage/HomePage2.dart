@@ -195,22 +195,25 @@ class _HomePage2State extends State<HomePage2> {
             ),
           ),
           sb(25),
-          CachedNetworkImage(
-            imageUrl:
-                'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
-            fit: BoxFit.cover,
-            imageBuilder: (context, imageProvider) => Container(
-              height: h * 45,
-              width: b * 45,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
+          CircleAvatar(
+                       backgroundImage: AssetImage("assets/DECON_1.png"),
+                       ),
+          // CachedNetworkImage(
+          //   imageUrl:
+          //       'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
+          //   fit: BoxFit.cover,
+          //   imageBuilder: (context, imageProvider) => Container(
+          //     height: h * 45,
+          //     width: b * 45,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       image: DecorationImage(
+          //         image: imageProvider,
+          //         fit: BoxFit.cover,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -261,6 +264,10 @@ class _HomePage2State extends State<HomePage2> {
                         margin: EdgeInsets.only(left: b * 25),
                         height: h * 60,
                         width: b * 60,
+                        child: CircleAvatar(
+                                
+                                backgroundImage: AssetImage("assets/f.png"),
+                              ),
                         decoration: BoxDecoration(
                           color: wc,
                           shape: BoxShape.circle,
