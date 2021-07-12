@@ -166,7 +166,7 @@ class GraphsVM {
 
   _createLevelGraphDatapoints() {
     String searchKey = "$_monthNo/$currentYY";
-    String url1 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[0]}";
+    String url1 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, _deviceData.id.split("_")[2].length)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[0]}";
     print("=======================");
     print(url1);
     print("=======================");
@@ -237,7 +237,7 @@ class GraphsVM {
 
   _createTempGraphDatapoints() {
     String searchKey = "$_monthNo/$currentYY";
-    String url2 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[2]}";
+    String url2 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, _deviceData.id.split("_")[2].length)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[2]}";
 
     GraphsVM.intsance.getDataFromSheetList(url2).then((value) {
       int i = 1;
@@ -282,7 +282,7 @@ class GraphsVM {
 
   _createOpenGraphDatapoints() {
     String searchKey = "$_monthNo/$currentYY";
-    String url3 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, 2)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[1]}";
+    String url3 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, _deviceData.id.split("_")[2].length)}&sheetURL=$_sheetURL&sheetNo=${GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs[1]}";
 
     GraphsVM.intsance.getDataFromSheetList(url3).then((value) {
       int i = 1, open = 0, close = 0;

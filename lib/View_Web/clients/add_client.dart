@@ -27,6 +27,7 @@ class _AddClientState extends State<AddClient> {
   TextEditingController _districtController ;
   TextEditingController _stateController ;
   TextEditingController _sheetController ;
+  TextEditingController _maintainenceSheetController ;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
   UserDetailModel _userDetailModel;
@@ -53,7 +54,8 @@ class _AddClientState extends State<AddClient> {
                     stateName: _stateController.text.trim(),
                     selectedManager: _userDetailModel.key,
                     selectedAdmin: AddClientVM.instance.clientDetailModel?.selectedAdmin??"",
-                    sheetURL: _sheetController.text.trim()
+                    sheetURL: _sheetController.text.trim(),
+                    maintainenceSheetURL: _maintainenceSheetController.text.trim()
                   );
                   AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
                   }
@@ -100,6 +102,7 @@ class _AddClientState extends State<AddClient> {
     _districtController = TextEditingController();
     _stateController = TextEditingController();
     _sheetController = TextEditingController();
+    _maintainenceSheetController = TextEditingController();
 
     _nameController.text = AddClientVM.instance.clientDetailModel?.clientName;
     _departmentNameController.text = AddClientVM.instance.clientDetailModel?.departmentName;
@@ -107,6 +110,7 @@ class _AddClientState extends State<AddClient> {
     _districtController.text = AddClientVM.instance.clientDetailModel?.districtName;
     _stateController.text = AddClientVM.instance.clientDetailModel?.stateName;
     _sheetController.text = AddClientVM.instance.clientDetailModel?.sheetURL;
+    _maintainenceSheetController.text = AddClientVM.instance.clientDetailModel?.maintainenceSheetURL;
     await AddClientVM.instance.getSeriesList();
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_){
@@ -135,6 +139,7 @@ class _AddClientState extends State<AddClient> {
 
 
     return Scaffold(
+      backgroundColor: wc,
       body: Row(
           children: [
             Expanded(
@@ -192,7 +197,7 @@ class _AddClientState extends State<AddClient> {
                             ],
                           ),
                           margin: EdgeInsets.only(
-                              left: b * 32, right: b * 17, bottom: h * 55),
+                              left: b * 62, right: b * 72, bottom: h * 55),
                           child: Form(
                             key: _formKey,
                             child: ListView(
@@ -228,32 +233,32 @@ class _AddClientState extends State<AddClient> {
                                   ),
                                   maxLines: 1,
                                 ),
-                                sh(16),
-                                TextFormField(
-                                   validator: (val){
-                                    if(val.isEmpty)
-                                    return "Department name cannot be empty";
-                                    else
-                                    return null;
-                                  },
+                                // sh(16),
+                                // TextFormField(
+                                //    validator: (val){
+                                //     if(val.isEmpty)
+                                //     return "Department name cannot be empty";
+                                //     else
+                                //     return null;
+                                //   },
                 
-                                  controller: _departmentNameController,
-                                  style: txtS(dc, 16, FontWeight.w500),
-                                  decoration: InputDecoration(
-                                    fillColor: Color(0xfff6f6f6),
-                                    filled: true,
+                                //   controller: _departmentNameController,
+                                //   style: txtS(dc, 16, FontWeight.w500),
+                                //   decoration: InputDecoration(
+                                //     fillColor: Color(0xfff6f6f6),
+                                //     filled: true,
                                     
-                                    isDense: true,
-                                    contentPadding:
-                                        EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 14),
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    hintText: "Enter department name",
-                                    hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
-                                    enabledBorder: InputBorder.none,
-                                  ),
-                                  maxLines: 1,
-                                ),
+                                //     isDense: true,
+                                //     contentPadding:
+                                //         EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 14),
+                                //     border: InputBorder.none,
+                                //     focusedBorder: InputBorder.none,
+                                //     hintText: "Enter department name",
+                                //     hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
+                                //     enabledBorder: InputBorder.none,
+                                //   ),
+                                //   maxLines: 1,
+                                // ),
                                 sh(16),
                                 TextFormField(
                                    validator: (val){
@@ -353,6 +358,32 @@ class _AddClientState extends State<AddClient> {
                                     border: InputBorder.none,
                                     focusedBorder: InputBorder.none,
                                     hintText: "Enter Sheet URL",
+                                    hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
+                                    enabledBorder: InputBorder.none,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                sh(16),
+                                TextFormField(
+                                   validator: (val){
+                                      if(val.isEmpty)
+                                      return "Maintainence Sheet URL cannot be empty";
+                                      else
+                                      return null;
+                                    },
+                
+                                  controller: _maintainenceSheetController,
+                                  style: txtS(dc, 16, FontWeight.w500),
+                                  decoration: InputDecoration(
+                                    fillColor: Color(0xfff6f6f6),
+                                    filled: true,
+                                    
+                                    isDense: true,
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 14),
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    hintText: "Enter Maintainence Sheet URL",
                                     hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
                                     enabledBorder: InputBorder.none,
                                   ),

@@ -15,6 +15,8 @@ import 'package:Decon/View_Web/DrawerFragments/Contact.dart';
 import 'package:Decon/View_Web/DrawerFragments/Device_Setting.dart';
 import 'package:Decon/View_Web/DrawerFragments/HealthReport.dart';
 import 'package:Decon/View_Web/DrawerFragments/Home.dart';
+import 'package:Decon/View_Web/DrawerFragments/maintainence_report.dart';
+import 'package:Decon/View_Web/DrawerFragments/monthly_report.dart';
 import 'package:Decon/View_Web/clients/all_clients.dart';
 import 'package:Decon/View_Web/profile_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -50,7 +52,7 @@ class _HomePage2State extends State<HomePage2> {
     var h = SizeConfig.screenHeight / 900;
     var b = SizeConfig.screenWidth / 1440;
     return Container(
-      height: h * 50,
+      //height: h * 50,
       padding: EdgeInsets.only(
           left: b * 29, right: b * 29, top: h * 8, bottom: h * 8),
       
@@ -76,62 +78,58 @@ class _HomePage2State extends State<HomePage2> {
               borderRadius: BorderRadius.circular(h * 5),
             ),
             padding: EdgeInsets.only(left: b * 17, right: b * 10),
-            child: Row(
-              children: [
-                Consumer<ChangeWhenGetClientsList>(
-                       builder: (context, object,child ){
-                         if(object.clientsList!=null  && _itemSelected == null)
-                        _itemSelected = object.clientsList[0].clientName;
-                   return Consumer<ChangeClient>(
-                              builder: (context, changeList, child)=>
-                    object.clientsList == null? AppConstant.circulerProgressIndicator():
-                    object.clientsList.isEmpty? AppConstant.addClient():
-                             
-                    DropdownButton(
-                      underline: SizedBox(),
-                      iconDisabledColor: Colors.white,
-                      iconEnabledColor: Colors.white,
-                      isDense: true,
-                      icon: Padding(
-                        padding: EdgeInsets.only(
-                            left: _itemSelected.length > 14 ? b * 10 : b * 0),
-                        child: SvgPicture.asset(
-                          'images/drop.svg',
-                          allowDrawingOutsideViewBox: true,
-                          color: blc,
-                          height: h * 12,
-                          width: b * 12,
-                        ),
-                      ),
-                      items: object.clientsList.map((dropDownStringitem) {
-                                return  
-                                DropdownMenuItem<String>(
-                                  value: dropDownStringitem.clientName,
-                                  child: Text(
-                                    dropDownStringitem.clientName,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87),
-                                  ),
-                                );
-                            }).toList(),
-                      style: txtS(blc, 20, FontWeight.w400),
-                      onChanged: (newValueSelected) {
-                                _itemSelected = newValueSelected;
-                                 object.clientsList.forEach((value) { 
-                                  if (value.clientName == newValueSelected) HomePageVM.instance.setClientCode = value.clientCode;
-                                });
-                                GlobalVar.isclientchanged = true;
-                                HomePageVM.instance.onChangeClient();
-                                HomePageVM.instance.loadMap();
-                            },
-                      value: _itemSelected?? null,
+            child: Consumer<ChangeWhenGetClientsList>(
+                   builder: (context, object,child ){
+                     if(object.clientsList!=null  && _itemSelected == null)
+                    _itemSelected = object.clientsList[0].clientName;
+               return Consumer<ChangeClient>(
+                          builder: (context, changeList, child)=>
+                object.clientsList == null? AppConstant.circulerProgressIndicator():
+                object.clientsList.isEmpty? AppConstant.addClient():
+                         
+                DropdownButton(
+                  underline: SizedBox(),
+                  iconDisabledColor: Colors.white,
+                  iconEnabledColor: Colors.white,
+                  isDense: true,
+                  icon: Padding(
+                    padding: EdgeInsets.only(
+                        left: _itemSelected.length > 14 ? b * 10 : b * 0),
+                    child: SvgPicture.asset(
+                      'images/drop.svg',
+                      allowDrawingOutsideViewBox: true,
+                      color: blc,
+                      height: h * 12,
+                      width: b * 12,
                     ),
-                  );
-                       }
+                  ),
+                  items: object.clientsList.map((dropDownStringitem) {
+                            return  
+                            DropdownMenuItem<String>(
+                              value: dropDownStringitem.clientName,
+                              child: Text(
+                                dropDownStringitem.clientName,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87),
+                              ),
+                            );
+                        }).toList(),
+                  style: txtS(blc, 20, FontWeight.w400),
+                  onChanged: (newValueSelected) {
+                            _itemSelected = newValueSelected;
+                             object.clientsList.forEach((value) { 
+                              if (value.clientName == newValueSelected) HomePageVM.instance.setClientCode = value.clientCode;
+                            });
+                            GlobalVar.isclientchanged = true;
+                            HomePageVM.instance.onChangeClient();
+                            HomePageVM.instance.loadMap();
+                        },
+                  value: _itemSelected?? null,
                 ),
-              ],
+              );
+                   }
             ),
           ),
           sb(25),
@@ -143,54 +141,41 @@ class _HomePage2State extends State<HomePage2> {
                 borderRadius: BorderRadius.circular(h * 5),
               ),
               padding: EdgeInsets.only(left: b * 17, right: b * 10),
-              child: Row(
-                children: [
-                  // Text(
-                  //   model?.selectedSeries??"",
-                  //   style: txtS(wc, 18, FontWeight.w700),
-                  // ),
-                  DropdownButton(
-                    underline: SizedBox(),
-                    iconDisabledColor: Colors.white,
-                    iconEnabledColor: Colors.white,
-                    isDense: true,
-                    icon: Padding(
-                      padding: EdgeInsets.only(
-                            left:  b * 10 ),
-                        
-                      child: SvgPicture.asset(
-                        
-                        'images/drop.svg',
-                        allowDrawingOutsideViewBox: true,
-                        color: Colors.white,
-                        height: h * 12,
-                        width: b * 12,
-                      ),
-                    ),
-                    items: (model.seriesList??[]).map((e) => DropdownMenuItem<String>(
-                                          child: Expanded(
-                                            child: Container(
-                                               
-                                              color: dc,
-                                              child: Text(e,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                          value: e.toString(),
-                                        )).toList(),
-                    style: txtS(wc, 20, FontWeight.w400),
-                    onChanged: (value) {
-                      HomePageVM.instance.setSeriesCode = "$value";
-                      HomePageVM.instance.onChangeSeries();
-                     Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
-                               HomePageVM.instance.loadMap();
-                    },
-                    value: model.selectedSeries,
+              child: DropdownButton(
+                underline: SizedBox(),
+                iconDisabledColor: Colors.white,
+                iconEnabledColor: Colors.white,
+                isDense: true,
+                icon: Padding(
+                  padding: EdgeInsets.only(
+                        left:  b * 10 ),
+                    
+                  child: SvgPicture.asset(
+                    
+                    'images/drop.svg',
+                    allowDrawingOutsideViewBox: true,
+                    color: Colors.white,
+                    height: h * 12,
+                    width: b * 12,
                   ),
-                ],
+                ),
+                items: (model.seriesList??[]).map((e) => DropdownMenuItem<String>(
+                                      child: Text(e,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white),
+                                      ),
+                                      value: e.toString(),
+                                    )).toList(),
+                style: txtS(wc, 20, FontWeight.w400),
+                onChanged: (value) {
+                  HomePageVM.instance.setSeriesCode = "$value";
+                  HomePageVM.instance.onChangeSeries();
+                 Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
+                           HomePageVM.instance.loadMap();
+                },
+                value: model.selectedSeries,
+                dropdownColor: Colors.black,
               ),
             ),
           ),
@@ -306,8 +291,9 @@ class _HomePage2State extends State<HomePage2> {
                   ), false, ''),
                 panel("Device Settings", Icons.settings, DeviceSetting(), false, ''),
                 panel("Devices", Icons.memory, Devices(), false, ''),
-                panel("Maintainence Report", Icons.view_list, HealthReport() , false, ''),
-                panel("Add Device", Icons.person, AddDevice(), false, ''),
+                panel("Monthly Report", Icons.assessment, MonthlyReport() , false, ''),
+                panel("Maintainence Report", Icons.build, MaintainenceReport() , false, ''),
+                panel("Add Device", Icons.add, AddDevice(), false, ''),
                 panel("About Vysion", Icons.verified, AboutVysion(), false, ''),
                 panel("Contact Us", Icons.settings_phone, ContactUs(), false, ''),
                 Spacer(),
@@ -321,7 +307,8 @@ class _HomePage2State extends State<HomePage2> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: appBar()),
+                  child: appBar()
+                   ),
                 Expanded(
                   flex: 15,
                   child: Consumer<ChangeWhenGetClientsList>(

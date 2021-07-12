@@ -1,5 +1,7 @@
+import 'package:Decon/View_Web/Dialogs/alert_message_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class FirebaseMessagingServeiceWeb {
   static FirebaseMessagingServeiceWeb instance = FirebaseMessagingServeiceWeb._();
@@ -11,6 +13,19 @@ class FirebaseMessagingServeiceWeb {
       //onTokenRefresh();
          
   } 
+ 
+  Future showAlertMessageDialog(BuildContext context, String title, String body) {
+    return showAnimatedDialog(
+        barrierDismissible: true,
+        context: context,  
+        animationType: DialogTransitionType.scaleRotate,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(milliseconds: 400),
+        builder: (context) {
+          return AlertMessageDialog(deviceId: title, message: body);
+        });
+  }
+
   void firebaseOnMessage(BuildContext context){
     print("on Message");
     FirebaseMessaging.onMessage.listen((message) { 
@@ -20,18 +35,7 @@ class FirebaseMessagingServeiceWeb {
         print("message==========${message}");
       final title  = message.notification.title;
       final body = message.notification.body;
-      showDialog(
-        context: context,
-        builder: (context){
-            return SimpleDialog(
-              contentPadding: EdgeInsets.all(8.0),
-              children: [
-                Text('Title $title'),
-                Text('Body  $body'),
-              ],
-            );
-        }
-      );
+      showAlertMessageDialog(context, title, body);
       }
     });
   }  

@@ -155,6 +155,7 @@ class _LocationDialog extends State<LocationDialog> {
                       },
                     onChanged: (value) {
                           _isChanged = true;
+                          setState(() {});
                         },
                         
                     controller: _latitudeController,
@@ -197,6 +198,7 @@ class _LocationDialog extends State<LocationDialog> {
                       }, 
                     onChanged: (value) {
                           _isChanged = true;
+                          setState(() {});
                         },
                         
                     controller: _longitudeController,

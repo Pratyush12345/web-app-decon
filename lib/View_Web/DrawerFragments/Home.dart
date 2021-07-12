@@ -74,7 +74,7 @@ class HomeState extends State<Home> {
             if (GlobalVar.isclientchanged &&changeList.allDeviceData!=null &&changeList.allDeviceData.length != 0) {
              _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
              }
-            return changeList.allDeviceData == null ?AppConstant.circulerProgressIndicator(): 
+            return changeList.allDeviceData == null ?AppConstant.progressIndicator(): 
             changeList.allDeviceData.isEmpty?AppConstant.noDataFound():
             Stack(
                    children: <Widget>[
@@ -164,7 +164,7 @@ class HomeState extends State<Home> {
                _setOfMarker = addMarker(allDeviceData);
              }
             
-           return  GoogleMap(
+           return  GoogleMap( 
           mapType: MapType.normal,
           initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
           zoomGesturesEnabled: true,

@@ -27,7 +27,8 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
   double _latitude, _longitude;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Position position;
-  bool _isMannual = false, _isChanged = false;
+  String address;
+  bool _isMannual = false, _isAddressChangedManually = false, _isChanged = false;
   
   getCurrentLocation(double latitude, double longitude) async {
     String address = await AddressCalculator(latitude, longitude).getLocation();
@@ -59,9 +60,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
     String clientCode = HomePageVM.instance.getClientCode;
     String seriescode = HomePageVM.instance.getSeriesCode;
     String deviceCode = _deviceIdText.text;
-    String address = await AddressCalculator(_latitude, _longitude).getLocation();
+    if(!_isAddressChangedManually)
+    address = await AddressCalculator(_latitude, _longitude).getLocation();
     if (widget.isUpdating) {
-      await database().ref("clients/$clientCode/series/$seriescode/devices/$deviceCode")
+      await database().ref("clients/$clientCode/series/$seriescode/devices/${deviceCode.split("_")[2]}")
           .update({
         "latitude": _latitude,
         "longitude": _longitude,
@@ -154,6 +156,9 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                 sh(6),
                 TextFormField(
                           validator: (val){
+                          if(widget.isUpdating){
+                            return null;
+                          }
                           int index = widget.list.indexWhere((element) =>element.id.contains(val) );
                           
                           if(val.isEmpty)
@@ -322,6 +327,10 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                     borderRadius: BorderRadius.circular(b * 6),
                   ),
                   child: TextFormField(
+                    onChanged: (val){
+                        _isAddressChangedManually = true;
+                        address = val;
+                    },
                     validator: (val){
                       if(val.isEmpty)
                       return "Address cannot be empty";
@@ -359,6 +368,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   ),
                   padding: EdgeInsets.zero,
                   onPressed: () async {
+                       _isAddressChangedManually = false;
                       if (!_isChanged) {
                         position = await Geolocator.getCurrentPosition();
                         _latitude = position.latitude;

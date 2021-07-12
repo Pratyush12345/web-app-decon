@@ -22,6 +22,7 @@ class _ProfileState extends State<Profile> {
     var b = SizeConfig.screenWidth / 1440;
 
     return Scaffold(
+      backgroundColor: wc,
       body: Row(
         children: [
           Expanded(
@@ -32,7 +33,7 @@ class _ProfileState extends State<Profile> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(
-                          left: b * 32, right: b * 32, bottom: h * 116),
+                          left: b * 62, right: b * 62, bottom: h * 116),
                       alignment: Alignment.centerRight,
                       height: h * 139,
                       decoration: BoxDecoration(
@@ -98,7 +99,7 @@ class _ProfileState extends State<Profile> {
                           Container(
                             alignment: Alignment.center,
                             margin:
-                                EdgeInsets.fromLTRB(b * 32, 0, b * 47, h * 0),
+                                EdgeInsets.fromLTRB(b * 62, 0, b * 62, h * 0),
                             padding: EdgeInsets.fromLTRB(
                                 b * 21, h * 30, b * 21, h * 30),
                             decoration: BoxDecoration(
@@ -133,7 +134,7 @@ class _ProfileState extends State<Profile> {
                           Container(
                             alignment: Alignment.center,
                             margin:
-                                EdgeInsets.fromLTRB(b * 32, 0, b * 47, h * 231),
+                                EdgeInsets.fromLTRB(b * 62, 0, b * 62, h * 231),
                             padding: EdgeInsets.fromLTRB(
                                 b * 21, h * 23, b * 21, h * 23),
                             decoration: BoxDecoration(
@@ -169,7 +170,7 @@ class _ProfileState extends State<Profile> {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(b * 47, 0, b * 32, h * 231),
+                        margin: EdgeInsets.fromLTRB(b * 62, 0, b * 62, h * 231),
                         padding:
                             EdgeInsets.fromLTRB(b * 50, h * 45, b * 50, h * 45),
                         decoration: BoxDecoration(

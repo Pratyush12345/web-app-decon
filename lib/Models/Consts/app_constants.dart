@@ -55,18 +55,18 @@ class AppConstant {
   static Widget deactivatedClient(){
     return Center(
       child: Container(
-        height: 250.0,
-        width: 250.0,
+        height: 400.0,
+        width: 400.0,
         child: Column(
           children: [
             sh(10),
                 Image.asset(
-                      'images/noInternet.png',
-                    height: 80.0),
+                      'images/noConnect.png',
+                    height: 100.0),
                 sh(10),
                 Text(
                       'Client Deactivated!',
-                  style: txtS(blc,  14, FontWeight.w700),
+                  style: txtS(blc,  18, FontWeight.w700),
                 ),
           ]
             ),

@@ -158,6 +158,7 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+        sh(8),
         Container(
           child: Text(
             "Total Devices With",

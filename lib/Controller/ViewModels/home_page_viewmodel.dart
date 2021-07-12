@@ -123,6 +123,12 @@ class HomePageVM {
     }
     
     }
+   _checkQuery() async{
+   await Future.delayed(Duration(seconds: 2));
+   if( Provider.of<ChangeDeviceData>(context, listen: false).allDeviceData.isEmpty){
+     Provider.of<ChangeDeviceData>(context, listen: false).rebuild();
+   }
+  }
 
   _setQuery(String clientCode, String seriesCode) async {
     Provider.of<ChangeDeviceData>(context, listen: false).reinitialize();
@@ -134,13 +140,14 @@ class HomePageVM {
     _query = _database.ref("clients/$clientCode/series/$seriesCode/devices");
     _onDataAddedSubscription = _query.onChildAdded.listen(onDeviceAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onDeviceChanged);
+    _checkQuery();// To Avoid map Jerk loading
   }
  
   _getClientisActive(String clientCode) async{
     DataSnapshot snapshot = (await _database.ref("clients/$clientCode/isActive").once('value')).snapshot;
     if(snapshot.val() == 1)
     GlobalVar.isActive = true;
-    else 
+    else  
     GlobalVar.isActive = false;
     Provider.of<ChangeOnActive>(context, listen: false).changeOnActive();
    }

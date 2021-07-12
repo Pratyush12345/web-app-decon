@@ -95,6 +95,7 @@ class _AllPeople extends State<AllPeople> {
     var b = SizeConfig.screenWidth / 1440;
 
     return Scaffold(
+      backgroundColor: wc,
       body: Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(

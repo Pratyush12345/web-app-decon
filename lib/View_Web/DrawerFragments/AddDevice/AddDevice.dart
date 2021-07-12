@@ -2,6 +2,7 @@ import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
+import 'package:Decon/View_Web/Dialogs/alert_message_dialog.dart';
 import 'package:Decon/View_Web/DrawerFragments/AddDevice/ClickOnAddDevice.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
@@ -36,7 +37,7 @@ class _AddDeviceState extends State<AddDevice> {
           );
         });
   }
-
+  
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -44,13 +45,21 @@ class _AddDeviceState extends State<AddDevice> {
     var h = SizeConfig.screenHeight / 900;
     
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xff0099FF),
-        onPressed: () {
-          if(GlobalVar.strAccessLevel != null)
-          showAddDeviceDialog(context: context, isUpdating: false);
-        },
-        child: Icon(Icons.add),
+      backgroundColor: wc,
+      floatingActionButton: Container(
+        height: h*100,
+        width: h*100,
+        child: FittedBox(
+          child: FloatingActionButton(
+    
+            backgroundColor: Color(0xff0099FF),
+            onPressed: () {
+              if(GlobalVar.strAccessLevel != null)
+              showAddDeviceDialog(context: context, isUpdating: false);
+            },
+            child: Icon(Icons.add),
+          ),
+        ),
       ),
       body: Consumer<ChangeDeviceData>(
         builder: (context, _model, child) => SingleChildScrollView(

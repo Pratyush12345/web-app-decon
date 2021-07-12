@@ -11,7 +11,7 @@ import 'package:Decon/View_Web/series_S1/DeviceSetting_S1.dart';
 
 
 class GlobalVar {
-  static bool isActive = true;
+  static bool isActive = true; 
   static bool isclientchanged  = true;
   static String strAccessLevel;
   static bool isDeviceChanged = false;

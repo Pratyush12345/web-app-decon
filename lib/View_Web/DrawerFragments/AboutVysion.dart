@@ -29,7 +29,7 @@ class AboutVysion extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: h * 120,
+            top: h * 100,
             left: b * 60,
             child: Container(
               child: Column(
@@ -42,7 +42,7 @@ class AboutVysion extends StatelessWidget {
                         fontSize: h * 40,
                         fontWeight: FontWeight.w600),
                   ),
-                  sh(21),
+                  sh(15),
                   SizedBox(
                     width: b * 650,
                     child: Text(
@@ -59,7 +59,7 @@ class AboutVysion extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: h * 70,
+            bottom: h * 90,
             left: b * 60,
             child: Container(
               child: Column(

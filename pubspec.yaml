@@ -68,7 +68,9 @@ dependencies:
   page_view_indicators:
   wave:
   google_fonts:
-  shape_of_view: ^1.0.2   
+  easy_web_view:
+  shape_of_view: ^1.0.2 
+  mailer:  
   
 dev_dependencies:
   flutter_test:

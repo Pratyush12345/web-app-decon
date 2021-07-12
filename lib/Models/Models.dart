@@ -350,6 +350,7 @@ class ClientDetailModel {
   String selectedManager;
   String selectedAdmin;
   String sheetURL;
+  String maintainenceSheetURL;
 
   ClientDetailModel(
       {this.clientName,
@@ -360,7 +361,8 @@ class ClientDetailModel {
       this.selectedSeries,
       this.selectedManager,
       this.selectedAdmin,
-      this.sheetURL});
+      this.sheetURL, 
+      this.maintainenceSheetURL});
 
   ClientDetailModel.fromJson(Map<dynamic, dynamic> json) {
     clientName = json['clientName'];
@@ -372,6 +374,7 @@ class ClientDetailModel {
     selectedManager = json['selectedManager'];
     selectedAdmin = json['selectedAdmin'];
     sheetURL = json['sheetURL'];
+    maintainenceSheetURL = json['maintainenceSheetURL'];
   }
 
   Map<String, dynamic> toJson() {
@@ -385,6 +388,7 @@ class ClientDetailModel {
     data['selectedManager'] = this.selectedManager;
     data['selectedAdmin'] = this.selectedAdmin;
     data['sheetURL'] = this.sheetURL;
+    data['maintainenceSheetURL'] = this.maintainenceSheetURL;
     return data;
   }
 }

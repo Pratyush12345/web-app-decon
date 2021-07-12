@@ -147,7 +147,7 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
             Expanded(
               flex: 2,
               child: Text(
-                "Select a Manager",
+                "Managers",
                 style: txtS(Color(0xff858585), 16, FontWeight.w500),
               ),
             ),
@@ -167,7 +167,7 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                               
                              
                 },
-                  style: TextStyle(fontSize: h * 12, color: dc),
+                  style: TextStyle(fontSize: b * 12, color: dc),
                   decoration: InputDecoration(
                     prefixIcon: InkWell(
                       child: Icon(Icons.search, color: blc),
@@ -183,7 +183,7 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                       color: Color(0xff858585),
                     ),
                     contentPadding: EdgeInsets.symmetric(
-                        vertical: h * 17, horizontal: b * 10),
+                        vertical: b * 12, horizontal: b * 10),
                     border: InputBorder.none,
                   ),
                 ),
@@ -336,7 +336,7 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
             Expanded(
               flex: 2,
               child: Text(
-                "Select a Admin",
+                "Admins",
                 style: txtS(Color(0xff858585), 16, FontWeight.w500),
               ),
             ),
@@ -351,12 +351,12 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                 ),
                 child: TextField(
                   onChanged: (val){
-                   _listUserDetailModelManager = PeopleVM.instance.onSearchManager(val);
+                   _listUserDetailModelAdmins = PeopleVM.instance.onSearchAdmin(val);
                   setState(() {});
                               
                              
                 },
-                  style: TextStyle(fontSize: h * 12, color: dc),
+                  style: TextStyle(fontSize: b * 12, color: dc),
                   decoration: InputDecoration(
                     prefixIcon: InkWell(
                       child: Icon(Icons.search, color: blc),
@@ -372,7 +372,7 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                       color: Color(0xff858585),
                     ),
                     contentPadding: EdgeInsets.symmetric(
-                        vertical: h * 17, horizontal: b * 10),
+                        vertical: b * 12, horizontal: b * 10),
                     border: InputBorder.none,
                   ),
                 ),

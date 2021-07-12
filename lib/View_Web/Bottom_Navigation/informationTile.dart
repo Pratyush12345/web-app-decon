@@ -13,13 +13,19 @@ class InformationTile extends StatelessWidget {
     0: "Ground level",
     1: "Normal Level",
     2: "Infromative Level",
-    3: "Critical Level"
+    3: "Critical Level",
+    191: "Sensor 1",
+    192: "Sensor 2",
+    193: "Sensor 3"
   };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),
     2: Color(0xffE1E357),
-    3: Color(0xffD93D3D)
+    3: Color(0xffD93D3D),
+    191: Colors.white,
+    192: Colors.white,
+    193: Colors.white
   };
   
   @override
@@ -68,6 +74,7 @@ class InformationTile extends StatelessWidget {
               ),
               Spacer(),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     margin: EdgeInsets.only(right: b * 10),
@@ -77,6 +84,11 @@ class InformationTile extends StatelessWidget {
                       color: _levelsColor[deviceData.wlevel],
                       shape: BoxShape.circle,
                     ),
+                    child: deviceData.wlevel>= 191? 
+                          Icon(Icons.error,
+                          size: h * 14,
+                          color: Colors.red,): 
+                          SizedBox(),
                   ),
                   Text(
                      levels[deviceData.wlevel]??"",
@@ -150,16 +162,5 @@ class InformationTile extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color textCol(String level) {
-    if (level == "Critical")
-      return Color(0xffff2020);
-    else if (level == 'Informative')
-      return Color(0xffecae37);
-    else if (level == 'Normal')
-      return Color(0xff69d66d);
-    else
-      return Color(0xffffffff);
   }
 }

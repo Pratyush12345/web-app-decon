@@ -30,18 +30,18 @@ class _GraphsState extends State<Graphs> {
     1: "Normal Level",
     2: "Infromative Level",
     3: "Critical Level",
-    191: "Error in Sensor 1",
-    192: "Error in Sensor 2",
-    193: "Error in Sensor 3"
+    191: "Sensor 1",
+    192: "Sensor 2",
+    193: "Sensor 3"
   };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),
     2: Color(0xffE1E357),
     3: Color(0xffD93D3D),
-    191: Colors.black,
-    192: Colors.black,
-    193: Colors.black
+    191: Colors.white,
+    192: Colors.white,
+    193: Colors.white
   };
 
   @override
@@ -116,6 +116,12 @@ class _GraphsState extends State<Graphs> {
                       color: _levelsColor[widget.deviceData.wlevel],
                       shape: BoxShape.circle,
                     ),
+                    child: widget.deviceData.wlevel>= 191? 
+                          Icon(Icons.error,
+                          size: h * 14,
+                          color: Colors.red,): 
+                          SizedBox(),
+
                   ),
                   Text(
                      levels[widget.deviceData.wlevel],
@@ -160,7 +166,7 @@ class _GraphsState extends State<Graphs> {
               ]),
                 
               Row(children: [
-                Icon(Icons.arrow_upward, size: b * 8, color: blc),
+                Icon(Icons.arrow_upward, size: b * 16, color: blc),
               sb(5),  
             Text(
               "${widget.deviceData.openManhole??""}",
@@ -209,19 +215,21 @@ class _GraphsState extends State<Graphs> {
                   items: GraphsVM.intsance.monthslist.map((dropDownStringitem) {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: SizeConfig.screenWidth * 10 / 360,
-                            top: SizeConfig.screenHeight * 9 / 640),
-                        width: SizeConfig.b * 15,
-                        height: SizeConfig.v * 5,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(
-                              SizeConfig.screenHeight * 8 / 640),
-                        ),
-                        child: Text(
-                          dropDownStringitem,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Container(
+                          width: SizeConfig.b * 15,
+                          height: SizeConfig.v * 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(
+                                SizeConfig.screenHeight * 8 / 640),
+                          ),
+                          child: Center(
+                            child: Text(
+                              dropDownStringitem,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -251,19 +259,21 @@ class _GraphsState extends State<Graphs> {
                   items: GraphsVM.intsance.yearlist.map((dropDownStringitem) {
                     return DropdownMenuItem<String>(
                       value: dropDownStringitem,
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: SizeConfig.screenWidth * 10 / 360,
-                            top: SizeConfig.screenHeight * 9 / 640),
-                        width: SizeConfig.b * 15,
-                        height: SizeConfig.v * 5,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(
-                              SizeConfig.screenHeight * 8 / 640),
-                        ),
-                        child: Text(
-                          dropDownStringitem,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Container(
+                          width: SizeConfig.b * 15,
+                          height: SizeConfig.v * 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(
+                                SizeConfig.screenHeight * 8 / 640),
+                          ),
+                          child: Center(
+                            child: Text(
+                              dropDownStringitem,
+                            ),
+                          ),
                         ),
                       ),
                     );

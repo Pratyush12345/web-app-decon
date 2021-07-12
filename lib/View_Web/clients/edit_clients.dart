@@ -50,6 +50,7 @@ class _ClientDetailsState extends State<ClientDetails> {
     var b = SizeConfig.screenWidth / 1440;
 
     return Scaffold(
+      backgroundColor: wc,
       body: AddClientVM.instance.seriesList == null? AppConstant.circulerProgressIndicator():
           AddClientVM.instance.seriesList.isEmpty ? AppConstant.noDataFound():
           Row(
@@ -78,7 +79,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                         ],
                       ),
                       margin: EdgeInsets.only(
-                          left: b * 32, right: b * 32, bottom: h * 127),
+                          left: b * 62, right: b * 62, bottom: h * 127),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -241,7 +242,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                           ],
                         ),
                         margin: EdgeInsets.only(
-                            left: b * 32, right: b * 36, bottom: h * 194),
+                            left: b * 62, right: b * 62, bottom: h * 194),
                         child: Column(
                           children: [
                             Row(
@@ -352,7 +353,7 @@ class _ClientDetailsState extends State<ClientDetails> {
                           ],
                         ),
                         margin: EdgeInsets.only(
-                            left: b * 36, right: b * 32, bottom: h * 194),
+                            left: b * 62, right: b * 62, bottom: h * 194),
                         child: Column(
                           children: [
                             Row(

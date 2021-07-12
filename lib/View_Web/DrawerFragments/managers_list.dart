@@ -110,7 +110,7 @@ class _ManagersListState extends State<ManagersList> {
                   setState(() {});
                              
                 },
-                  style: TextStyle(fontSize: h * 12, color: dc),
+                  style: TextStyle(fontSize: b * 12, color: dc),
                   decoration: InputDecoration(
                     prefixIcon: InkWell(
                       child: Icon(Icons.search, color: blc),
@@ -122,7 +122,7 @@ class _ManagersListState extends State<ManagersList> {
                         BoxConstraints(minWidth: 35, maxHeight: 30),
                     hintText: 'Search by Name',
                     hintStyle: TextStyle(
-                      fontSize: h * 14,
+                      fontSize: b * 12,
                       color: Color(0xff858585),
                     ),
                     contentPadding: EdgeInsets.symmetric(

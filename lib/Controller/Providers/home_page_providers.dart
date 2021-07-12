@@ -13,9 +13,12 @@ class ChangeDeviceData extends ChangeNotifier{
 
   void reinitialize(){
     allDeviceData = [];
-    notifyListeners();
   }
 
+  void rebuild(){
+    notifyListeners();
+  }
+  
   void changeDeviceData(String methodName, { DeviceData newDeviceData } ){
     if(methodName == "onDeviceAdded" && allDeviceData!=null){
       allDeviceData.add(newDeviceData);
@@ -89,7 +92,7 @@ class ChangeDrawerItems extends ChangeNotifier {
   }
 }
 
-
+ 
 class ChangeOnActive extends ChangeNotifier{
   void changeOnActive(){
     notifyListeners();

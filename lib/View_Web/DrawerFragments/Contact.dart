@@ -2,6 +2,9 @@ import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:mailer/smtp_server/mailgun.dart';
 
 
 class ContactUs extends StatefulWidget {
@@ -9,10 +12,23 @@ class ContactUs extends StatefulWidget {
 }
 
 class _ContactUsState extends State<ContactUs> {
-  final TextEditingController email = TextEditingController();
-  final TextEditingController message = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
   bool isEmail = false;
   bool isMessge = false;
+
+  String username, password;
+  SmtpServer _server;
+  bool _showIndicator = false;
+  @override
+  void initState() {
+    username = "postmaster@sandboxed5e570b949e4df09241aaf88212196e.mailgun.org";
+    password = "fa9f20140afb28824a971d71df326540-c4d287b4-942687a1";
+    _server = mailgun(username, password);
+    print("_server =========${_server.allowInsecure}");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -132,7 +148,7 @@ class _ContactUsState extends State<ContactUs> {
                                       isEmail = false;
                                     });
                                   },
-                                  controller: email,
+                                  controller: emailController,
                                   style: TextStyle(
                                     fontSize: b * 14,
                                     color: dc,
@@ -176,7 +192,7 @@ class _ContactUsState extends State<ContactUs> {
                                     isMessge = false;
                                   });
                                 },
-                                controller: email,
+                                controller: messageController,
                                 style: TextStyle(
                                   fontSize: b * 16,
                                   color: dc,
@@ -206,12 +222,38 @@ class _ContactUsState extends State<ContactUs> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(h * 6),
                                 ),
-                                onPressed: () {},
+                                onPressed: () async{
+                 String senderEmail = emailController.text.trim();
+                 String message = messageController.text.trim();
+                 final composedMessage = new Message()
+                  .. from = new Address(senderEmail, "Pratyush Gupta")
+                  .. recipients.add("pratyushgupta190@gmail.com")
+                  .. subject = "Decon Feedback ${new DateTime.now()}"
+                  .. text = message;
+                  try{
+                   _showIndicator = true;
+                   setState(() {}); 
+                   SendReport _sendReport = await send(composedMessage, _server );
+                   _showIndicator = false;
+                   setState(() {});
+                   AppConstant.showSuccessToast(context, "Message sent successfully");
+                  }
+                  catch(e){
+                    _showIndicator = false;
+                    setState(() {});
+                    AppConstant.showFailToast(context, "Failed to send message");
+                    print(e.toString());
+                    for (var p in e.problems) {
+                      print('Problem: ${p.code}: ${p.msg}');
+                    }
+                  }
+
+                },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                       vertical: h * 11, horizontal: b * 60),
                                   alignment: Alignment.center,
-                                  child: Text(
+                                  child: _showIndicator ?AppConstant.progressIndicator(): Text(
                                     'Send',
                                     style: txtS(wc, 18, FontWeight.w500),
                                   ),
