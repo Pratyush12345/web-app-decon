@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:mailer/smtp_server/mailgun.dart';
-
+import 'package:http/http.dart' as http;
 class Contact extends StatefulWidget {
   final BuildContext menuScreenContext;
   Contact({Key key, this.menuScreenContext}) : super(key: key);
@@ -18,15 +18,9 @@ class Contact extends StatefulWidget {
 class _Contact extends State<Contact> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
-  String username, password;
-  SmtpServer _server;
   bool _showIndicator = false;
   @override
   void initState() {
-    username = "postmaster@sandboxed5e570b949e4df09241aaf88212196e.mailgun.org";
-    password = "fa9f20140afb28824a971d71df326540-c4d287b4-942687a1";
-    _server = mailgun(username, password);
-    print("_server =========${_server.allowInsecure}");
     super.initState();
   }
 
@@ -122,18 +116,18 @@ class _Contact extends State<Contact> {
                 onPressed: () async{
                  String senderEmail = emailController.text.trim();
                  String message = messageController.text.trim();
-                 final composedMessage = new Message()
-                  .. from = new Address(senderEmail, "Pratyush Gupta")
-                  .. recipients.add("pratyushgupta190@gmail.com")
-                  .. subject = "Decon Feedback ${new DateTime.now()}"
-                  .. text = message;
                   try{
                    _showIndicator = true;
                    setState(() {}); 
-                   SendReport _sendReport = await send(composedMessage, _server );
+                   String query = senderEmail + "%" + message;
+                   http.Response res =  await http.get('https://us-central1-decon-3545e.cloudfunctions.net/onMailSend?value="$query"');
+                   
                    _showIndicator = false;
                    setState(() {});
+                   if(res.statusCode == 200)
                    AppConstant.showSuccessToast(context, "Message sent successfully");
+                   else
+                   AppConstant.showFailToast(context, "Failed to send message");
                   }
                   catch(e){
                     _showIndicator = false;

@@ -71,7 +71,8 @@ dependencies:
   easy_web_view:
   shape_of_view: ^1.0.2 
   mailer:  
-  
+  cloud_functions:
+  cloud_functions_web:
 dev_dependencies:
   flutter_test:
     sdk: flutter  

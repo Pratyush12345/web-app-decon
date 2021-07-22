@@ -16,7 +16,6 @@ class HomePageVM {
   HomePageVM._();
   bool isfromDrawer = true;
   Widget selectedDrawerWidget = Home();
-  GlobalKey<ScaffoldState> scafoldKey = GlobalKey<ScaffoldState>();
   List<String> _seriesList;
   String _sheetURL, _scriptEditorURL;
   BuildContext context;
@@ -28,7 +27,8 @@ class HomePageVM {
   DatabaseCallServices _databaseCallServices = DatabaseCallServices();
   final Database _database = database();
   String _ccode, _scode;
-  
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   onDeviceAdded(QueryEvent event) {
     if (event.snapshot.val()["address"] != null) {
       Provider.of<ChangeDeviceData>(context, listen: false).changeDeviceData("onDeviceAdded", newDeviceData: DeviceData.fromSnapshot(event.snapshot, _scode));
@@ -59,9 +59,11 @@ class HomePageVM {
     if(_scode == "S0"){
       if(snapshot.val()!=null){
       S0DeviceSettingModel deviceSettingModel = S0DeviceSettingModel.fromSnapshot(snapshot);
+      _sheetURL = deviceSettingModel.sheetURL;
       GlobalVar.seriesMap["S0"].model = deviceSettingModel; 
       }
       else{
+      _sheetURL = "";
       GlobalVar.seriesMap["S0"].model = S0DeviceSettingModel();   
       }
     Provider.of<ChangeDeviceSeting>(context, listen:  false).changeDeviceSetting("S0");
@@ -69,8 +71,10 @@ class HomePageVM {
     else if(_scode == "S1" && snapshot.val()!=null){
       if(snapshot.val() !=null){
       S1DeviceSettingModel deviceSettingModel = S1DeviceSettingModel.fromSnapshot(snapshot);
+      _sheetURL = deviceSettingModel.sheetURL;
       GlobalVar.seriesMap["S1"].model = deviceSettingModel;
       }else{
+      _sheetURL = "";  
       GlobalVar.seriesMap["S1"].model = S1DeviceSettingModel();   
       }
     Provider.of<ChangeDeviceSeting>(context, listen:  false).changeDeviceSetting("S1");
@@ -83,7 +87,6 @@ class HomePageVM {
     ClientDetailModel _clientDetailModel =  await _databaseCallServices.getClientDetail(clientCode);
     _seriesList = _clientDetailModel.selectedSeries.replaceFirst(",","").split(",");
     _scode = _seriesList[0];
-    _sheetURL = _clientDetailModel.sheetURL;
     Provider.of<ChangeClient>(context, listen: false).changeClientDetail(_clientDetailModel);
    }
    catch(e){
@@ -162,6 +165,7 @@ class HomePageVM {
 
   onChangeClient() async{
     Provider.of<ChangeClient>(context, listen: false).reinitialize();
+    _getScriptEditorUrl();
     await _getClientisActive(_ccode);
     await _getClientDetail(_ccode);
     await _getDeviceSetting(_ccode, _scode);
@@ -169,11 +173,12 @@ class HomePageVM {
   }
   
   onChangeSeries() async{
+    _getScriptEditorUrl();
     await _getDeviceSetting(_ccode, _scode);
     await _setQuery(_ccode, _scode);
   }
   _getScriptEditorUrl() async{
-    _scriptEditorURL = (await _database.ref("urls/doPost").once('value')).snapshot.val();
+    _scriptEditorURL = (await _database.ref("clients/$_ccode/series/$_scode/DeviceSetting/doPost").once('value')).snapshot.val();
   }
 
   void initialize(BuildContext context){

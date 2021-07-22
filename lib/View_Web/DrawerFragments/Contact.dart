@@ -1,11 +1,14 @@
+//import 'package:http/http.dart' as http;
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
+import 'package:cloud_functions_web/cloud_functions_web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
-import 'package:mailer/smtp_server/mailgun.dart';
+import 'dart:async';
+import 'dart:core';
 
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class ContactUs extends StatefulWidget {
   _ContactUsState createState() => _ContactUsState();
@@ -17,15 +20,9 @@ class _ContactUsState extends State<ContactUs> {
   bool isEmail = false;
   bool isMessge = false;
 
-  String username, password;
-  SmtpServer _server;
   bool _showIndicator = false;
   @override
   void initState() {
-    username = "postmaster@sandboxed5e570b949e4df09241aaf88212196e.mailgun.org";
-    password = "fa9f20140afb28824a971d71df326540-c4d287b4-942687a1";
-    _server = mailgun(username, password);
-    print("_server =========${_server.allowInsecure}");
     super.initState();
   }
 
@@ -225,28 +222,23 @@ class _ContactUsState extends State<ContactUs> {
                                 onPressed: () async{
                  String senderEmail = emailController.text.trim();
                  String message = messageController.text.trim();
-                 final composedMessage = new Message()
-                  .. from = new Address(senderEmail, "Pratyush Gupta")
-                  .. recipients.add("pratyushgupta190@gmail.com")
-                  .. subject = "Decon Feedback ${new DateTime.now()}"
-                  .. text = message;
-                  try{
-                   _showIndicator = true;
+                
+                   _showIndicator = true; 
                    setState(() {}); 
-                   SendReport _sendReport = await send(composedMessage, _server );
-                   _showIndicator = false;
+                   String query = senderEmail + "%" + message;
+                   String url = 'https://us-central1-decon-3545e.cloudfunctions.net/onMailSend?value=$query';
+                   print("url ============$url");
+                   _httpcall(url, query).then((value) {
+                     _showIndicator = false;
                    setState(() {});
+                   if(200 == 200)
                    AppConstant.showSuccessToast(context, "Message sent successfully");
-                  }
-                  catch(e){
-                    _showIndicator = false;
-                    setState(() {});
-                    AppConstant.showFailToast(context, "Failed to send message");
-                    print(e.toString());
-                    for (var p in e.problems) {
-                      print('Problem: ${p.code}: ${p.msg}');
-                    }
-                  }
+                   else
+                   AppConstant.showFailToast(context, "Failed to send message");
+                  
+                   });
+                  
+                  
 
                 },
                                 child: Container(
@@ -272,5 +264,31 @@ class _ContactUsState extends State<ContactUs> {
         ),
       ],
     );
+  }
+
+ Future _httpcall(url, String queryP) async{
+    try{
+    
+    final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+      'onMailSend',
+      options: HttpsCallableOptions(
+                      timeout: const Duration(seconds: 10)),);
+    
+    HttpsCallableResult result = await callable.call(
+      <String, dynamic>{
+        "value" : queryP
+      }
+    );             
+    print(result.data);
+    }
+    catch(e){
+                    _showIndicator = false;
+                    setState(() {});
+                    AppConstant.showFailToast(context, "Failed to send message");
+                    print(e.toString());
+                    for (var p in e.problems) {
+                      print('Problem: ${p.code}: ${p.msg}');
+                    }
+                  }
   }
 }

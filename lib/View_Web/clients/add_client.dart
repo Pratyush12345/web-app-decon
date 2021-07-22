@@ -26,7 +26,6 @@ class _AddClientState extends State<AddClient> {
   TextEditingController _cityController ;
   TextEditingController _districtController ;
   TextEditingController _stateController ;
-  TextEditingController _sheetController ;
   TextEditingController _maintainenceSheetController ;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
@@ -54,7 +53,6 @@ class _AddClientState extends State<AddClient> {
                     stateName: _stateController.text.trim(),
                     selectedManager: _userDetailModel.key,
                     selectedAdmin: AddClientVM.instance.clientDetailModel?.selectedAdmin??"",
-                    sheetURL: _sheetController.text.trim(),
                     maintainenceSheetURL: _maintainenceSheetController.text.trim()
                   );
                   AddClientVM.instance.onPressedDone(context, _previousUserDetailModel,_userDetailModel.clientsVisible, widget.isedit, model, clientListModel);       
@@ -66,25 +64,58 @@ class _AddClientState extends State<AddClient> {
   }
 
    _getSeriesWidget(){
+    var h = SizeConfig.screenHeight / 900;
+    var b = SizeConfig.screenWidth / 1440;
      return Column(
        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
        children: AddClientVM.instance.seriesList.map((e) => 
-       Row(children: [
-         Text(e),
-         Spacer(),
-         Checkbox(
-           value: AddClientVM.instance.selectedSeries.contains(e), 
-           onChanged: (val){
-             if(val){
-             AddClientVM.instance.selectedSeries = AddClientVM.instance.selectedSeries + "," + e.trim(); 
-             }
-             else{
-             AddClientVM.instance.selectedSeries = AddClientVM.instance.selectedSeries.replaceAll(","+e.trim(), "");
-             }
-             
-             setState(() {});
-         })
-       ],)
+       Column(
+         children: [
+           Row(children: [
+             Text(e.seriesName),
+             Spacer(),
+             Checkbox(
+               value: AddClientVM.instance.selectedSeries.contains(e.seriesName), 
+               onChanged: (val){
+                 if(val){
+                 AddClientVM.instance.selectedSeries = AddClientVM.instance.selectedSeries + "," + e.seriesName .trim(); 
+                 }
+                 else{
+                 AddClientVM.instance.selectedSeries = AddClientVM.instance.selectedSeries.replaceAll(","+e.seriesName.trim(), "");
+                 }
+                 
+                 setState(() {});
+             })
+           ],),
+           sh(16),
+                                TextFormField(
+                                   validator: (val){
+                                      if(val.isEmpty)
+                                      return "Sheet URL cannot be empty";
+                                      else
+                                      return null;
+                                    },
+                
+                                  controller: e.sheetController,
+                                  style: txtS(dc, 16, FontWeight.w500),
+                                  decoration: InputDecoration(
+                                    fillColor: Color(0xfff6f6f6),
+                                    filled: true,
+                                    
+                                    isDense: true,
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 14),
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    hintText: "Enter Sheet URL",
+                                    hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
+                                    enabledBorder: InputBorder.none,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                
+         ],
+       )
        ).toList()
      );
    }
@@ -101,7 +132,6 @@ class _AddClientState extends State<AddClient> {
     _cityController = TextEditingController();
     _districtController = TextEditingController();
     _stateController = TextEditingController();
-    _sheetController = TextEditingController();
     _maintainenceSheetController = TextEditingController();
 
     _nameController.text = AddClientVM.instance.clientDetailModel?.clientName;
@@ -109,9 +139,8 @@ class _AddClientState extends State<AddClient> {
     _cityController.text = AddClientVM.instance.clientDetailModel?.cityName;
     _districtController.text = AddClientVM.instance.clientDetailModel?.districtName;
     _stateController.text = AddClientVM.instance.clientDetailModel?.stateName;
-    _sheetController.text = AddClientVM.instance.clientDetailModel?.sheetURL;
     _maintainenceSheetController.text = AddClientVM.instance.clientDetailModel?.maintainenceSheetURL;
-    await AddClientVM.instance.getSeriesList();
+    await AddClientVM.instance.getSeriesList(widget.isedit, widget.clientCode);
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_){
      if(widget.isedit){
@@ -332,32 +361,6 @@ class _AddClientState extends State<AddClient> {
                                     border: InputBorder.none,
                                     focusedBorder: InputBorder.none,
                                     hintText: "Enter State name",
-                                    hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
-                                    enabledBorder: InputBorder.none,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                                sh(16),
-                                TextFormField(
-                                   validator: (val){
-                                      if(val.isEmpty)
-                                      return "Sheet URL cannot be empty";
-                                      else
-                                      return null;
-                                    },
-                
-                                  controller: _sheetController,
-                                  style: txtS(dc, 16, FontWeight.w500),
-                                  decoration: InputDecoration(
-                                    fillColor: Color(0xfff6f6f6),
-                                    filled: true,
-                                    
-                                    isDense: true,
-                                    contentPadding:
-                                        EdgeInsets.symmetric(vertical: h * 14, horizontal: b * 14),
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    hintText: "Enter Sheet URL",
                                     hintStyle: txtS(Color(0xff858585), 16, FontWeight.w400),
                                     enabledBorder: InputBorder.none,
                                   ),

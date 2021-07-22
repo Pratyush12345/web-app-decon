@@ -35,7 +35,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       HomePageVM.instance.isfromDrawer = true;
       HomePageVM.instance.selectedDrawerWidget = widget;
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
-      HomePageVM.instance.scafoldKey.currentState.openEndDrawer();
+      HomePageVM.instance.scaffoldKey.currentState.openEndDrawer();
   }
    showAreYouSureDialog(context){
      showAnimatedDialog(

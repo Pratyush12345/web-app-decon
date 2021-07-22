@@ -115,6 +115,7 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
           print("Length of All device is ${model.allDeviceData.length}");
           _count = countDevices(model.allDeviceData);
           countbattery = 0;
+          countError = 0;
           model.allDeviceData.forEach((element) {
             if (element.battery < (GlobalVar.seriesMap["S0"].model as S0DeviceSettingModel).batterythresholdvalue) {
               countbattery++;
@@ -256,7 +257,7 @@ List<int> countDevices(List<DeviceData> _allDevicedata) {
       _normal++;
     } else if (_allDevicedata[i].wlevel == 2) {
       _informative++;
-    } else {
+    } else if(_allDevicedata[i].wlevel == 3){
       _critical++;
     }
   }

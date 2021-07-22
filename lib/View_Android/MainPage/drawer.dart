@@ -2,20 +2,16 @@ import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
-import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/Models/Models.dart';
-import 'package:Decon/View_Android/Bottom_Navigation/AllDevices.dart';
 import 'package:Decon/View_Android/Dialogs/areYouSure.dart';
 import 'package:Decon/View_Android/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Android/DrawerFragments/AddDevice/AddDevice.dart';
 import 'package:Decon/View_Android/DrawerFragments/Contact.dart';
 import 'package:Decon/View_Android/DrawerFragments/Device_Setting.dart';
-import 'package:Decon/View_Android/DrawerFragments/HealthReport.dart';
+import 'package:Decon/View_Android/DrawerFragments/monthly_report.dart';
 import 'package:Decon/View_Android/DrawerFragments/Home.dart';
-import 'package:Decon/View_Android/DrawerFragments/Statistics/Statistics.dart';
-import 'package:Decon/View_Android/MainPage/HomePage.dart';
+import 'package:Decon/View_Android/DrawerFragments/maintainence_report.dart';
 import 'package:Decon/View_Android/clients/all_clients.dart';
 import 'package:Decon/View_Android/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +31,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       HomePageVM.instance.isfromDrawer = true;
       HomePageVM.instance.selectedDrawerWidget = widget;
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
-      HomePageVM.instance.scafoldKey.currentState.openEndDrawer();
+      HomePageVM.instance.scaffoldKey.currentState.openEndDrawer();
   }
    showAreYouSureDialog(context){
      showAnimatedDialog(
@@ -144,14 +140,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           Container(
             color: blc,
             height: h * 0.5,
-          ),
+          ), 
           sh(18),
           if(GlobalVar.strAccessLevel == "1")
           row(Icons.view_list, 'Client List', AllClients(), context),
           row(Icons.home, 'Home', Home(), context),
           row(Icons.settings, 'Device Settings', DeviceSetting(), context),
-          row(Icons.assessment, 'Statistics', AllDevices(), context),
-          row(Icons.build, 'Maintainence Report', HealthReport(), context),
+          row(Icons.assessment, 'Monthly Report', MonthlyReport(), context),
+          row(Icons.build, 'Maintainence Report', MaintainenceReport(), context),
           row(Icons.add, 'Add Device', AddDevice(), context),
           row(Icons.verified, 'About Vysion', AboutVysion(), context),
           row(Icons.settings_phone, 'Contact Us', Contact(), context),

@@ -168,7 +168,12 @@ class _HomePage2State extends State<HomePage2> {
                                       value: e.toString(),
                                     )).toList(),
                 style: txtS(wc, 20, FontWeight.w400),
+                onTap: (){
+                  print("tapped Series");
+                },
                 onChanged: (value) {
+                  
+                  print("Changed Series");
                   HomePageVM.instance.setSeriesCode = "$value";
                   HomePageVM.instance.onChangeSeries();
                  Provider.of<ChangeSeries>(context, listen: false).changeDeconSeries(value, model.seriesList);
@@ -230,6 +235,7 @@ class _HomePage2State extends State<HomePage2> {
     var b = SizeConfig.screenWidth / 1440;
 
     return Scaffold(
+      key: HomePageVM.instance.scaffoldKey,
       backgroundColor: Colors.white,
       body: Row(
         children: [

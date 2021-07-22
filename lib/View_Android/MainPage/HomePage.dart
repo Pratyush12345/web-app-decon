@@ -87,7 +87,7 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      key: HomePageVM.instance.scafoldKey,
+      key: HomePageVM.instance.scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -96,7 +96,7 @@ class HomePageState extends State<HomePage> {
               color: Colors.grey,
             ),
             onPressed: () {
-              HomePageVM.instance.scafoldKey.currentState.openDrawer();
+              HomePageVM.instance.scaffoldKey.currentState.openDrawer();
             }),
         title: GlobalVar.strAccessLevel != null
             ?  Row(

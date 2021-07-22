@@ -2,7 +2,7 @@ import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Models.dart';
-import 'package:Decon/View_Web/Dialogs/please_wait_dialog.dart';
+import 'package:Decon/View_Android/Dialogs/please_wait_dialog.dart';
 import 'package:easy_web_view/easy_web_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -46,7 +46,7 @@ class _MonthlyReportState extends State<MonthlyReport> {
     return Container(
       child: Consumer<ChangeSeries>(
         builder: (context, model, child){
-          String url;
+        String url;
         if(HomePageVM.instance.getSeriesCode == "S0"){
           url = (GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].model as S0DeviceSettingModel)?.sheetURL??"";
         }

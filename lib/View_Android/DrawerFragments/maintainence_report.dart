@@ -1,24 +1,23 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
-import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
-import 'package:Decon/Models/Models.dart';
-import 'package:Decon/View_Web/Dialogs/please_wait_dialog.dart';
+import 'package:Decon/View_Android/Dialogs/please_wait_dialog.dart';
 import 'package:easy_web_view/easy_web_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:provider/provider.dart';
 
-class MonthlyReport extends StatefulWidget {
-  const MonthlyReport({ Key key }) : super(key: key);
+class MaintainenceReport extends StatefulWidget {
+  const MaintainenceReport({ Key key }) : super(key: key);
 
   @override
-  _MonthlyReportState createState() => _MonthlyReportState();
+  _MaintainenceReportState createState() => _MaintainenceReportState();
 }
 
-class _MonthlyReportState extends State<MonthlyReport> {
+class _MaintainenceReportState extends State<MaintainenceReport> {
 
   static ValueKey key = ValueKey('key_0');
   String iframLink;
+
   Future showPleaseWaitDialog(BuildContext context) {
     return showAnimatedDialog(
         barrierDismissible: true,
@@ -40,28 +39,19 @@ class _MonthlyReportState extends State<MonthlyReport> {
       callDialogBox();
         super.initState();
     }
-  
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Consumer<ChangeSeries>(
-        builder: (context, model, child){
-          String url;
-        if(HomePageVM.instance.getSeriesCode == "S0"){
-          url = (GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].model as S0DeviceSettingModel)?.sheetURL??"";
-        }
-        else if(HomePageVM.instance.getSeriesCode == "S1"){
-         url = (GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].model as S1DeviceSettingModel)?.sheetURL??"";
-        }
-        
-          iframLink = '''<html>
+      child: Consumer<ChangeClient>(
+        builder: (context, model, child){ 
+        iframLink = '''<html>
                       <body>
-                        <iframe height="100%" width="100%" src="$url" frameborder="0">
+                        <iframe height="100%" width="100%" src="${model.clientDetailModel.maintainenceSheetURL}" frameborder="0">
                         </iframe>
                         
                       </body>
                     </html>'''; 
-      
+     
         return EasyWebView(
           isHtml: false,
           src: Uri.dataFromString(iframLink, mimeType: 'text/html').toString(),
@@ -78,8 +68,8 @@ class _MonthlyReportState extends State<MonthlyReport> {
           key: key,
 
         );
-        }
-      ), 
+        } 
+      )
     );
   }
 }
