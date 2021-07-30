@@ -14,10 +14,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class AllPeople extends StatefulWidget {
-  final String clientCode; 
-  final ClientDetailModel clientDetailModel;
   AllPeople( 
-      {Key key, @required this.clientCode, @required  this.clientDetailModel})
+      {Key key})
       : super(key: key);
 
   @override
@@ -35,9 +33,14 @@ class _AllPeople extends State<AllPeople> {
     AllPeopleVM.instance.init();
     _listOfAdminTeam = [];
     _listOfManagerTeam = [];
-    print("selected manager==========${widget.clientDetailModel?.selectedManager}");
-    await AllPeopleVM.instance.getManagerDetail(widget.clientDetailModel?.selectedManager);
-    await AllPeopleVM.instance.getAdminDetail(widget.clientDetailModel?.selectedAdmin);
+    _listOfAdminTeam = [UserDetailModel(clientsVisible: ",C0", post: "Engineer", phoneNo: "+919977623450", name: "Urvish Patel", delegate: "Admin Team", key: "DummyAdminTeam1"),
+    UserDetailModel(clientsVisible: ",C0", post: "Technician", phoneNo: "+917878343400", name: "Zilanee Sheikh", delegate: "Admin Team", key: "DummyAdminTeam2")];
+    _listOfManagerTeam = [UserDetailModel(clientsVisible: ",C0", post: "Janitor", phoneNo: "+917799202010", name: "Atul Joshi", delegate: "Manager Team", key: "DummyManagerTeam1"),
+    UserDetailModel(clientsVisible: ",C0", post: "Technician", phoneNo: "+919993331010", name: "Naimish Dave", delegate: "Manager Team", key: "DummyManagerTeam2"),
+    UserDetailModel(clientsVisible: ",C0", post: "Supervisor", phoneNo: "+918990991020", name: "Sandip Parmar", delegate: "Manager Team", key: "DummyManagerTeam3")];
+    
+    await AllPeopleVM.instance.getManagerDetailDummy();
+    await AllPeopleVM.instance.getAdminDetailDummy();
     setState(() { });
   }
 
@@ -104,10 +107,8 @@ class _AllPeople extends State<AllPeople> {
         ),
         iconTheme: IconThemeData(color: blc),
         title: Text(
-                widget.clientDetailModel == null? AppConstant.circulerProgressIndicator():
-                widget.clientDetailModel.cityName == null? AppConstant.noDataFound(): 
                 
-                "${widget.clientDetailModel.clientName}",
+                "Demo Client",
                 
           style: txtS(Colors.black, 16, FontWeight.w500),), 
         backgroundColor: Colors.white,
@@ -298,36 +299,16 @@ class _AllPeople extends State<AllPeople> {
                     style: txtS(dc, 13.57, FontWeight.w400),
                   ),
                   Spacer(),
-                  Consumer<AfterManagerChangeProvider>(
-                    builder: (context, model, child)=>
                     Text(
-                      "Total:${model.listManager?.length}",
+                      "Total:${_listOfManagerTeam?.length}",
                       style: txtS(Color(0xff858585), 12, FontWeight.w400),
                     ),
-                  ),
                 ],
               ),
             SizedBox(height: SizeConfig.v * 1),
             Container(
               height: h *200,
-              child: StreamBuilder<QueryEvent>(
-                    stream: database().ref("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                          if(!PeopleVM.instance.isManagerTeamSearched){
-                            _listOfManagerTeam = [];
-                          (snapshot.data.snapshot.val() as Map)?.forEach((key, value) { 
-                            UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
-                            _usermodel?.clientsVisible = AllPeopleVM.instance.managerDetailModel?.clientsVisible;
-                            _listOfManagerTeam.add(_usermodel);
-                          });
-                          PeopleVM.instance.setManagerTeamList = _listOfManagerTeam;
-                          WidgetsBinding.instance.addPostFrameCallback((_){
-                            Provider.of<AfterManagerChangeProvider>(context, listen:  false).afterManagerChangeProvider(_listOfManagerTeam);  
-                            });
-                          }
-                        if(snapshot.data.snapshot.val()!=null)
-                        return ListView.builder(
+              child: ListView.builder(
                             physics: ScrollPhysics(),
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
@@ -338,11 +319,9 @@ class _AllPeople extends State<AllPeople> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfManagerTeam[index], )));
                                 },
                                 onLongPress: () {
-                                  if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
                                   showDeleteDialog(context).then((value) async {
                                   
                                     if (value == "Yes") {
-                                           database().ref("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
                                     }
                                   });
                                 },
@@ -400,19 +379,7 @@ class _AllPeople extends State<AllPeople> {
                     ),
                   ); 
                              
-                            });  else
-                          return AppConstant.noDataFound();
-                      }
-                      else{
-                        if(snapshot.hasError)
-                        return Center(
-                              child: Text('${snapshot.error}'),
-                            );
-                        else
-                        return AppConstant.circulerProgressIndicator();   
-                      }
-                    },
-                  ),
+                            })
             ),
             SizedBox(height: 10.0,),
             Row(
@@ -422,38 +389,16 @@ class _AllPeople extends State<AllPeople> {
                     style: txtS(dc, 13.57, FontWeight.w400),
                   ),
                   Spacer(),
-                  Consumer<AfterAdminChangeProvider>(
-                    builder: (context, _model, child)=>
                     Text(
-                      "Total:${_model.listAdmin?.length??0}",
+                      "Total:${_listOfAdminTeam?.length??0}",
                       style: txtS(Color(0xff858585), 12, FontWeight.w400),
                     ),
-                  ),
+                  
                 ],
               ),
             Container(
               height: h *200,
-              child:StreamBuilder<QueryEvent>(
-                stream: database().ref("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                      if(!PeopleVM.instance.isAdminTeamSearched){
-                        _listOfAdminTeam = [];
-                      (snapshot.data.snapshot.val() as Map)?.forEach((key, value) {
-                        UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
-                       _usermodel.clientsVisible = AllPeopleVM.instance.adminDetailModel.clientsVisible;
-                             
-                        _listOfAdminTeam.add(_usermodel);
-                      });
-                      PeopleVM.instance.setAdminTeamList = _listOfAdminTeam;
-                      WidgetsBinding.instance.addPostFrameCallback((_){
-                      Provider.of<AfterAdminChangeProvider>(context, listen:  false).afterAdminChangeProvider(_listOfAdminTeam);  
-                      });
-                          
-                          
-                      }
-                    if(snapshot.data.snapshot.val() !=null)
-                    return ListView.builder(
+              child: ListView.builder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
@@ -464,11 +409,9 @@ class _AllPeople extends State<AllPeople> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfAdminTeam[index], )));
                                 },
                              onLongPress: () {
-                              if(GlobalVar.strAccessLevel == "3" ||GlobalVar.strAccessLevel == "1" )
                               showDeleteDialog(context).then((value) async {
                               
                                 if (value == "Yes") {
-                                   database().ref("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
                                 }
                               });
                             },
@@ -525,19 +468,7 @@ class _AllPeople extends State<AllPeople> {
                       ),
                     ),
                   );
-                        });  else
-                      return AppConstant.noDataFound();
-                  }
-                  else{
-                    if(snapshot.hasError)
-                    return Center(
-                          child: Text('${snapshot.error}'),
-                        );
-                    else
-                    return AppConstant.circulerProgressIndicator();   
-                  }
-                },
-              ),
+                        })
             )
           ],
         ),

@@ -290,7 +290,7 @@ class _GraphsState extends State<Graphs> {
               ),
             ],
           ),
-          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_levelSheet"))
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_LevelGraph"))
           Consumer<LinearGraphProvider>(
             builder: (context, model, child)=>
             LevelGraph(
@@ -301,7 +301,7 @@ class _GraphsState extends State<Graphs> {
           SizedBox(
             height: 20.0,
           ),
-          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_openManholeSheet"))
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_ManholeGraph"))
           Consumer<OpenManholeGraphProvider>(
             builder: (context, model, child)=>
              ManholeGraph(
@@ -311,7 +311,7 @@ class _GraphsState extends State<Graphs> {
           SizedBox(
             height: 20.0,
           ),
-          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_temperatureSheet"))
+          if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_TemperatureGraph"))
           Consumer<TempGraphProvider>(
             builder: (context,model ,child)=>
             TempGraph(

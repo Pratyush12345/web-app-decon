@@ -1,5 +1,6 @@
 import 'dart:js';
 
+import 'package:Decon/Controller/Providers/deviceHoverProvider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Web/Dialogs/LocationDialog.dart';
@@ -24,7 +25,7 @@ class _Updatelocation extends State<Updatelocation> {
   List<DeviceData> _listDeviceData = [];
   DeviceData _deviceData;
   bool isDeviceSearched = false;
-  bool selected = false;
+  int selectedIndex = -1;
   
   @override
   void initState() {
@@ -140,53 +141,59 @@ class _Updatelocation extends State<Updatelocation> {
                 itemCount: _listDeviceData.length ,
                 itemBuilder: (BuildContext ctxt, int index) {
                   return InkWell(
+                    onHover: (isHover){
+                      Provider.of<DeviceHoverProvider>(context, listen: false).onDeivceHovered(isHover? index: -1);  
+                    },
                     onTap: () {
                       setState(() {
-                        selected = !selected;
+                        selectedIndex = index;
                         _deviceData = _listDeviceData[index];
                       });
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: h * 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: dc, width: 0.5),
-                        borderRadius: BorderRadius.circular(h * 10),
+                    child: Consumer<DeviceHoverProvider>(
+                      builder: (context, model, child)=>
+                       Container(
+                        margin: EdgeInsets.only(bottom: h * 10),
+                        decoration: BoxDecoration(
+                          color: selectedIndex == index || model.hoveredIndex == index ? Color.fromRGBO(240, 240, 240, 1.0) : Colors.white,
+                          border: Border.all(color: dc, width: 0.5),
+                          borderRadius: BorderRadius.circular(h * 10),
+                        ),
+                        padding:
+                            EdgeInsets.fromLTRB(b * 18, h * 11, b * 18, h * 11),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "${_listDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
+                                      style: txtS(dc, 16, FontWeight.w600),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(2),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: dc, width: 0.5),
+                                        borderRadius: BorderRadius.circular(b * 2),
+                                        color: Color(0xFFffffff),
+                                      ),
+                                      child: Text(
+                                        'ID : ${_listDeviceData[index].id}',
+                                        style: txtS(dc, 14, FontWeight.w400),
+                                      ),
+                                    ),
+                                  ]),
+                              sh(5),
+                              Text(
+                                'ID : ${_listDeviceData[index].address}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: txtS(Color(0xff858585), 14, FontWeight.w500),
+                              ),
+                            ]),
                       ),
-                      padding:
-                          EdgeInsets.fromLTRB(b * 18, h * 11, b * 18, h * 11),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${_listDeviceData[index].id.split("_")[2].replaceAll("D", "Device ")}",
-                                    style: txtS(dc, 16, FontWeight.w600),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(2),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: dc, width: 0.5),
-                                      borderRadius: BorderRadius.circular(b * 2),
-                                      color: Color(0xFFffffff),
-                                    ),
-                                    child: Text(
-                                      'ID : ${_listDeviceData[index].id}',
-                                      style: txtS(dc, 14, FontWeight.w400),
-                                    ),
-                                  ),
-                                ]),
-                            sh(5),
-                            Text(
-                              'ID : ${_listDeviceData[index].address}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: txtS(Color(0xff858585), 14, FontWeight.w500),
-                            ),
-                          ]),
                     ),
                   );
                 }),
@@ -195,21 +202,21 @@ class _Updatelocation extends State<Updatelocation> {
             flex: 1,
             child: InkWell(
               onTap: () {
-                if(selected)
+                if(selectedIndex != -1)
                 showLocationDialog(context, _deviceData);
               },
               child: Container(
                 margin: EdgeInsets.only(
                     bottom: h * 40, left: b * 170, right: b * 170, top: h * 32),
                 decoration: BoxDecoration(
-                  color: selected ? blc : Colors.white,
+                  color: selectedIndex !=-1 ? blc : Colors.white,
                   border: Border.all(color: blc, width: 0.5),
                   borderRadius: BorderRadius.circular(h * 6),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   "Update Location",
-                  style: txtS(selected ? wc : blc, 18, FontWeight.w500),
+                  style: txtS(selectedIndex!=-1 ? wc : blc, 18, FontWeight.w500),
                 ),
               ),
             ),

@@ -1,10 +1,9 @@
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/View_Web/Authentication/Wait.dart';
-import 'package:Decon/View_Web/MainPage/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 class WebTestWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:Decon/Controller/Providers/deviceHoverProvider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
@@ -104,11 +105,9 @@ class _DevicesState extends State<Devices> {
       if(Provider.of<ChangeDeviceData>(context, listen: false).allDeviceData!=null && 
          Provider.of<ChangeDeviceData>(context, listen: false).allDeviceData.isNotEmpty)
       _deviceData = Provider.of<ChangeDeviceData>(context, listen: false).allDeviceData[0];
-      
-                          
-    
       super.initState();
     }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -239,12 +238,14 @@ class _DevicesState extends State<Devices> {
                                   itemCount: _listDeviceData.length,
                                   itemBuilder: (BuildContext ctxt, int index) {
                                     return InkWell(
+                                      onHover: (ishover){
+                                         Provider.of<DeviceHoverProvider>(context, listen: false).onDeivceHovered(ishover? index : -1);   
+                                      },
                                       onTap: () {
-                                        print("device Data tapped");
                                         _deviceData = _listDeviceData[index];
                                         setState(() {});
                                       },
-                                      child: InformationTile(deviceData: _listDeviceData[index],),
+                                      child: InformationTile(deviceData: _listDeviceData[index],index: index,),
                                     );
                                   }),
                             ),

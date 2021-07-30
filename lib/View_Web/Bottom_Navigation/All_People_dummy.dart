@@ -1,24 +1,17 @@
-import 'package:Decon/Controller/Providers/People_provider.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
-import 'package:Decon/Controller/ViewModels/add_client_viewmodel.dart';
 import 'package:Decon/Controller/ViewModels/all_people_viewmodel.dart';
 import 'package:Decon/Controller/ViewModels/people_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Web/Dialogs/Add_Delegates.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Web/profile_screen.dart';
-import 'package:firebase/firebase.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
-class AllPeople extends StatefulWidget {
-  final String clientCode; 
-  final ClientDetailModel clientDetailModel;
-  AllPeople( 
-      {Key key, @required this.clientCode, @required  this.clientDetailModel})
+class AllPeopleDummy extends StatefulWidget {
+  AllPeopleDummy( 
+      {Key key, })
       : super(key: key);
 
   @override
@@ -26,7 +19,7 @@ class AllPeople extends StatefulWidget {
 }
 
 
-class _AllPeople extends State<AllPeople> {
+class _AllPeople extends State<AllPeopleDummy> {
   List<UserDetailModel> _listOfAdminTeam = [];
   List<UserDetailModel> _listOfManagerTeam = [];
                                                         
@@ -35,9 +28,14 @@ class _AllPeople extends State<AllPeople> {
     AllPeopleVM.instance.init();
     _listOfAdminTeam = [];
     _listOfManagerTeam = [];
-    print("selected manager==========${widget.clientDetailModel?.selectedManager}");
-    await AllPeopleVM.instance.getManagerDetail(widget.clientDetailModel?.selectedManager);
-    await AllPeopleVM.instance.getAdminDetail(widget.clientDetailModel?.selectedAdmin);
+    _listOfAdminTeam = [UserDetailModel(clientsVisible: ",C0", post: "Engineer", phoneNo: "+919977623450", name: "Urvish Patel", delegate: "Admin Team", key: "DummyAdminTeam1"),
+    UserDetailModel(clientsVisible: ",C0", post: "Technician", phoneNo: "+917878343400", name: "Zilanee Sheikh", delegate: "Admin Team", key: "DummyAdminTeam2")];
+    _listOfManagerTeam = [UserDetailModel(clientsVisible: ",C0", post: "Janitor", phoneNo: "+917799202010", name: "Atul Joshi", delegate: "Manager Team", key: "DummyManagerTeam1"),
+    UserDetailModel(clientsVisible: ",C0", post: "Technician", phoneNo: "+919993331010", name: "Naimish Dave", delegate: "Manager Team", key: "DummyManagerTeam2"),
+    UserDetailModel(clientsVisible: ",C0", post: "Supervisor", phoneNo: "+918990991020", name: "Sandip Parmar", delegate: "Manager Team", key: "DummyManagerTeam3")];
+    
+    await AllPeopleVM.instance.getManagerDetailDummy();
+    await AllPeopleVM.instance.getAdminDetailDummy();
     setState(() { });
   }
 
@@ -297,35 +295,16 @@ class _AllPeople extends State<AllPeople> {
           sh(33),
           Padding(
             padding: EdgeInsets.only(left: b * 72),
-            child: Consumer<AfterManagerChangeProvider>(
-              builder: (context, model, child)=>
+            child: 
                Text(
-                "Manager Team    Total (${model.listManager.length})",
+                "Manager Team    Total (${_listOfManagerTeam.length})",
                 style: txtS(dc, 18, FontWeight.w500),
               ),
-            ),
           ),
           sh(10),
           Expanded(
-            child: StreamBuilder<QueryEvent>(
-              stream: database().ref("managerTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedManager}").onValue,
-              builder: (context, snapshot) {
-                if(snapshot.hasData){
-                  if(!PeopleVM.instance.isManagerTeamSearched){
-                              _listOfManagerTeam = [];
-                            (snapshot.data.snapshot.val() as Map)?.forEach((key, value) { 
-                              UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
-                              _usermodel?.clientsVisible = AllPeopleVM.instance.managerDetailModel?.clientsVisible;
-                              _listOfManagerTeam.add(_usermodel);
-                            });
-                            PeopleVM.instance.setManagerTeamList = _listOfManagerTeam;  
-                            }
-                            WidgetsBinding.instance.addPostFrameCallback((_){
-                            Provider.of<AfterManagerChangeProvider>(context, listen:  false).afterManagerChangeProvider(_listOfManagerTeam);  
-                            });
-                          
-                if(snapshot.data.snapshot.val()!=null)            
-                return ListView.builder(
+            child:          
+               ListView.builder(
                   itemCount: _listOfManagerTeam.length,
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
@@ -336,11 +315,9 @@ class _AllPeople extends State<AllPeople> {
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfManagerTeam[index], )));
                                   },
                                   onLongPress: () {
-                                    if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
                                     showDeleteDialog(context).then((value) async {
                                     
                                       if (value == "Yes") {
-                                          database().ref("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
                                       }
                                     });
                                   },
@@ -389,55 +366,21 @@ class _AllPeople extends State<AllPeople> {
                       ),
                     );
                   },
-                );
-                else
-                        return AppConstant.noDataFound();
-                        }
-                        else{
-                          if(snapshot.hasError)
-                          return Center(
-                                child: Text('${snapshot.error}'),
-                              );
-                          else
-                          return AppConstant.circulerProgressIndicator();   
-                        }
-              }
-            ),
+                )
+                
           ),
         sh(33),
           Padding(
             padding: EdgeInsets.only(left: b * 72),
-            child: Consumer<AfterAdminChangeProvider>(
-              builder: (context, model, child)=>
-              Text(
-                "Admin Team    Total (${model.listAdmin.length})",
+            child: Text(
+                "Admin Team    Total (${_listOfAdminTeam.length})",
                 style: txtS(dc, 18, FontWeight.w500),
               ),
-            ),
+            
           ),
           sh(10),
           Expanded(
-            child: StreamBuilder<QueryEvent>(
-              stream: database().ref("adminTeam").orderByChild("headUid").equalTo("${widget.clientDetailModel?.selectedAdmin}").onValue,
-              builder: (context, snapshot) {
-                if(snapshot.hasData){
-                  if(!PeopleVM.instance.isAdminTeamSearched){
-                          _listOfAdminTeam = [];
-                        (snapshot.data.snapshot.val() as Map)?.forEach((key, value) {
-                          UserDetailModel _usermodel = UserDetailModel.fromJson(key, value);
-                         _usermodel.clientsVisible = AllPeopleVM.instance.adminDetailModel.clientsVisible;
-                               
-                          _listOfAdminTeam.add(_usermodel);
-                        });
-                        PeopleVM.instance.setAdminTeamList = _listOfAdminTeam;
-                        }
-                        WidgetsBinding.instance.addPostFrameCallback((_){
-                         Provider.of<AfterAdminChangeProvider>(context, listen:  false).afterAdminChangeProvider(_listOfAdminTeam);  
-                         });
-                      
-                
-                if(snapshot.data.snapshot.val()!=null)            
-                return ListView.builder(
+            child:  ListView.builder(
                   itemCount: _listOfAdminTeam.length,
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
@@ -448,12 +391,10 @@ class _AllPeople extends State<AllPeople> {
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfAdminTeam[index], )));
                                   },
                                onLongPress: () {
-                                if(GlobalVar.strAccessLevel == "3" ||GlobalVar.strAccessLevel == "1" )
                                 showDeleteDialog(context).then((value) async {
                                 
                                   if (value == "Yes") {
-                                      database().ref("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
-                                  }
+                                     }
                                 });
                               },
                       
@@ -502,20 +443,8 @@ class _AllPeople extends State<AllPeople> {
                       ),
                     );
                   },
-                );
-                else
-                        return AppConstant.noDataFound();
-                        }
-                        else{
-                          if(snapshot.hasError)
-                          return Center(
-                                child: Text('${snapshot.error}'),
-                              );
-                          else
-                          return AppConstant.circulerProgressIndicator();   
-                        }
-              }
-            ),
+                )
+                
           ),
 
           

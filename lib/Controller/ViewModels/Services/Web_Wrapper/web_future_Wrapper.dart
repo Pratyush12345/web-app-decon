@@ -6,7 +6,6 @@ import 'package:Decon/View_Android/series_S0/DeviceSetting_S0.dart';
 import 'package:Decon/View_Android/series_S1/BottomLayout_S1.dart';
 import 'package:Decon/View_Android/series_S1/DeviceSetting_S1.dart';
 import 'package:Decon/View_Web/Authentication/Wait.dart';
-import 'package:Decon/View_Web/MainPage/HomePage.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/View_Web/MainPage/HomePage2.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,3 +1,4 @@
+import 'package:Decon/Controller/Providers/drawerHoverProvider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
@@ -6,6 +7,7 @@ import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/client_not_found.dart';
 import 'package:Decon/View_Web/Bottom_Navigation/AllDevices.dart';
+import 'package:Decon/View_Web/Bottom_Navigation/All_People_dummy.dart';
 import 'package:Decon/View_Web/Bottom_Navigation/All_people.dart';
 import 'package:Decon/View_Web/Bottom_Navigation/People_admin_manager.dart';
 import 'package:Decon/View_Web/Dialogs/areYouSure.dart';
@@ -13,13 +15,11 @@ import 'package:Decon/View_Web/DrawerFragments/AboutVysion.dart';
 import 'package:Decon/View_Web/DrawerFragments/AddDevice/AddDevice.dart';
 import 'package:Decon/View_Web/DrawerFragments/Contact.dart';
 import 'package:Decon/View_Web/DrawerFragments/Device_Setting.dart';
-import 'package:Decon/View_Web/DrawerFragments/HealthReport.dart';
 import 'package:Decon/View_Web/DrawerFragments/Home.dart';
 import 'package:Decon/View_Web/DrawerFragments/maintainence_report.dart';
 import 'package:Decon/View_Web/DrawerFragments/monthly_report.dart';
 import 'package:Decon/View_Web/clients/all_clients.dart';
 import 'package:Decon/View_Web/profile_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -188,22 +188,6 @@ class _HomePage2State extends State<HomePage2> {
           CircleAvatar(
                        backgroundImage: AssetImage("assets/DECON_1.png"),
                        ),
-          // CachedNetworkImage(
-          //   imageUrl:
-          //       'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8',
-          //   fit: BoxFit.cover,
-          //   imageBuilder: (context, imageProvider) => Container(
-          //     height: h * 45,
-          //     width: b * 45,
-          //     decoration: BoxDecoration(
-          //       shape: BoxShape.circle,
-          //       image: DecorationImage(
-          //         image: imageProvider,
-          //         fit: BoxFit.cover,
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -281,11 +265,11 @@ class _HomePage2State extends State<HomePage2> {
                   ),
                 ),
                 sh(60),
-                panel("Home", Icons.home, Home(), true, 'images/Home.svg'),
+                panel("Home", Icons.home, Home(), true, 'images/Home.svg', 0),
                 if(GlobalVar.strAccessLevel == "1")
-                panel("Client List", Icons.view_list, AllClients(), false, ''),
+                panel("Client List", Icons.view_list, AllClients(), false, '', 1),
                 if(GlobalVar.strAccessLevel == "1")
-                panel("People", Icons.people, PeopleManagerAdmin(), false, ''),
+                panel("People", Icons.people, PeopleManagerAdmin(), false, '', 2),
                 if(GlobalVar.strAccessLevel != "1" && GlobalVar.strAccessLevel != null)
                 panel("People", Icons.people, Consumer<ChangeClient>(
                   builder: (context, model, child)=>
@@ -294,16 +278,18 @@ class _HomePage2State extends State<HomePage2> {
                     clientCode: HomePageVM.instance.getClientCode,
                     clientDetailModel: model.clientDetailModel,
                     ),
-                  ), false, ''),
-                panel("Device Settings", Icons.settings, DeviceSetting(), false, ''),
-                panel("Devices", Icons.memory, Devices(), false, ''),
-                panel("Monthly Report", Icons.assessment, MonthlyReport() , false, ''),
-                panel("Maintainence Report", Icons.build, MaintainenceReport() , false, ''),
-                panel("Add Device", Icons.add, AddDevice(), false, ''),
-                panel("About Vysion", Icons.verified, AboutVysion(), false, ''),
-                panel("Contact Us", Icons.settings_phone, ContactUs(), false, ''),
+                  ), false, '', 3),
+                if(GlobalVar.strAccessLevel == null)
+                panel("People", Icons.people, AllPeopleDummy(), false, '', 4),  
+                panel("Device Settings", Icons.settings, DeviceSetting(), false, '', 5),
+                panel("Devices", Icons.memory, Devices(), false, '', 6),
+                panel("Monthly Report", Icons.assessment, MonthlyReport() , false, '', 7),
+                panel("Maintainence Report", Icons.build, MaintainenceReport() , false, '', 8),
+                panel("Add Device", Icons.add, AddDevice(), false, '', 9),
+                panel("About Vysion", Icons.verified, AboutVysion(), false, '', 10),
+                panel("Contact Us", Icons.settings_phone, ContactUs(), false, '', 11),
                 Spacer(),
-                logOutpanel("Log Out", Icons.logout, 10, false, ''),
+                logOutpanel("Log Out", Icons.logout, 10, false, '', 12),
                 sh(50),
               ],
             ),
@@ -348,87 +334,99 @@ class _HomePage2State extends State<HomePage2> {
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
   }
 
-  Widget panel(String tit, ico, dynamic nextPage, bool svg, String svgLink) {
+  Widget panel(String tit, ico, dynamic nextPage, bool svg, String svgLink, int index) {
     var h = SizeConfig.screenHeight / 900;
     var b = SizeConfig.screenWidth / 1440;
 
     return InkWell(
+      onHover: (isHover){
+        Provider.of<DrawerHoverProvider>(context, listen: false).onDrawerHovered(isHover? index: -1);  
+      },
       onTap: (){
             selected = tit;
             _onSelectedItem( nextPage);
       },
       child: Consumer<ChangeDrawerItems>(
         builder: (context, _, child)=>
-        Container(
-          padding: EdgeInsets.symmetric(vertical: h * 16),
-          decoration: BoxDecoration(
-            color: selected == tit ? Color(0xff3e535e) : Colors.transparent,
-            border: Border(
-              left: BorderSide(
-                  color: selected == tit ? blc : Colors.transparent,
-                  width: b * 6),
-            ),
-          ),
-          child: Row(
-            children: [
-              sb(35),
-              svg
-                  ? SvgPicture.asset(
-                      svgLink,
-                      allowDrawingOutsideViewBox: true,
-                      width: b * 24,
-                      height: h * 24,
-                    )
-                  : Icon(ico, color: wc, size: h * 24),
-              sb(18),
-              Text(
-                tit,
-                style: txtS(wc, 16, FontWeight.w400),
+        Consumer<DrawerHoverProvider>(
+          builder: (context, model, child)=>
+           Container(
+            padding: EdgeInsets.symmetric(vertical: h * 16),
+            decoration: BoxDecoration(
+              color: selected == tit || model.hoveredIndex == index ? Color(0xff3e535e) : Colors.transparent,
+              border: Border(
+                left: BorderSide(
+                    color: selected == tit ? blc : Colors.transparent,
+                    width: b * 6),
               ),
-            ],
+            ),
+            child: Row(
+              children: [
+                sb(35),
+                svg
+                    ? SvgPicture.asset(
+                        svgLink,
+                        allowDrawingOutsideViewBox: true,
+                        width: b * 24,
+                        height: h * 24,
+                      )
+                    : Icon(ico, color: wc, size: h * 24),
+                sb(18),
+                Text(
+                  tit,
+                  style: txtS(wc, 16, FontWeight.w400),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-  Widget logOutpanel(String tit, ico, dynamic nextPage, bool svg, String svgLink) {
+  Widget logOutpanel(String tit, ico, dynamic nextPage, bool svg, String svgLink, int index) {
     var h = SizeConfig.screenHeight / 900;
     var b = SizeConfig.screenWidth / 1440;
 
     return InkWell(
+      onHover: (isHover){
+        Provider.of<DrawerHoverProvider>(context, listen: false).onDrawerHovered(isHover? index: -1);  
+      },
       onTap: (){
         
                showAreYouSureDialog(context);
       },
       child: Consumer<ChangeDrawerItems>(
         builder: (context, _, child)=>
-        Container(
-          padding: EdgeInsets.symmetric(vertical: h * 16),
-          decoration: BoxDecoration(
-            color: selected == tit ? Color(0xff3e535e) : Colors.transparent,
-            border: Border(
-              left: BorderSide(
-                  color: selected == tit ? blc : Colors.transparent,
-                  width: b * 6),
-            ),
-          ),
-          child: Row(
-            children: [
-              sb(35),
-              svg
-                  ? SvgPicture.asset(
-                      svgLink,
-                      allowDrawingOutsideViewBox: true,
-                      width: b * 24,
-                      height: h * 24,
-                    )
-                  : Icon(ico, color: wc, size: h * 24),
-              sb(18),
-              Text(
-                tit,
-                style: txtS(wc, 16, FontWeight.w400),
+        Consumer<DrawerHoverProvider>(
+          builder: (context, model ,child)=>
+           Container(
+            padding: EdgeInsets.symmetric(vertical: h * 16),
+            decoration: BoxDecoration(
+              color: selected == tit || model.hoveredIndex == index ? Color(0xff3e535e) : Colors.transparent,
+              border: Border(
+                left: BorderSide(
+                    color: selected == tit ? blc : Colors.transparent,
+                    width: b * 6),
               ),
-            ],
+            ),
+            child: Row(
+              children: [
+                sb(35),
+                svg
+                    ? SvgPicture.asset(
+                        svgLink,
+                        allowDrawingOutsideViewBox: true,
+                        width: b * 24,
+                        height: h * 24,
+                      )
+                    : Icon(ico, color: wc, size: h * 24),
+                sb(18),
+                Text(
+                  tit,
+                  style: txtS(wc, 16, FontWeight.w400),
+                ),
+              ],
+            ),
           ),
         ),
       ),

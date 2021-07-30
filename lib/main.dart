@@ -1,7 +1,10 @@
 import 'package:Decon/Controller/Providers/Client_provider.dart';
 import 'package:Decon/Controller/Providers/People_provider.dart';
+import 'package:Decon/Controller/Providers/deviceHoverProvider.dart';
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
+import 'package:Decon/Controller/Providers/drawerHoverProvider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
+import 'package:Decon/Controller/Providers/peopleHoverProvider.dart';
 import 'package:Decon/Controller/ViewModels/Services/orientation_wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Controller/ViewModels/Services/test.dart';
@@ -37,6 +40,9 @@ class MyApp extends StatelessWidget {
       
       child: MultiProvider(
         providers: [
+           ChangeNotifierProvider(create: (context)=> PeopleHoverProvider(),),
+           ChangeNotifierProvider(create: (context)=> DrawerHoverProvider(),),
+           ChangeNotifierProvider(create: (context)=> DeviceHoverProvider(),),
            ChangeNotifierProvider(create: (context)=> ChangeGoogleMap(),),
            ChangeNotifierProvider(create: (context)=> AfterAdminChangeProvider(),),
            ChangeNotifierProvider(create: (context)=> AfterManagerChangeProvider(),),

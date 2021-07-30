@@ -116,7 +116,7 @@ class _Replace_Admin extends State<Replace_Admin> {
                         ),
                       ),
               sh(11),
-              Text(
+              Text( 
                   "Post",
                   style: TextStyle(
                     fontSize: b * 16,
@@ -134,7 +134,7 @@ class _Replace_Admin extends State<Replace_Admin> {
                       },
                         controller: _adminpostController,
                         keyboardType: TextInputType.text,
-                        style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                        style: TextStyle(fontSize: b * 14),
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
                           fillColor: Colors.white,
@@ -180,7 +180,7 @@ class _Replace_Admin extends State<Replace_Admin> {
                         return null;
                       },
                       controller: _phoneNoController,
-                      style: TextStyle(fontSize: SizeConfig.b * 4.3),
+                      style: TextStyle(fontSize: b * 14),
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),

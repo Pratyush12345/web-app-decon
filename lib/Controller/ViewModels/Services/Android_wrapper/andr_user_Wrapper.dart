@@ -1,12 +1,5 @@
 import 'package:Decon/Controller/ViewModels/Services/Android_wrapper/andr_future_Wrapper.dart';
-import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
-import 'package:Decon/Models/Models.dart';
-import 'package:Decon/View_Android/Authentication/Phoneverif.dart';
 import 'package:Decon/View_Android/Authentication/login_screen.dart';
-import 'package:Decon/View_Android/series_S1/DeviceSetting_S1.dart';
-import 'package:Decon/View_Android/series_S0/BottomLayout_S0.dart';
-import 'package:Decon/View_Android/series_S0/DeviceSetting_S0.dart';
-import 'package:Decon/View_Android/series_S1/BottomLayout_S1.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

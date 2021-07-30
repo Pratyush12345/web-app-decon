@@ -1,4 +1,5 @@
 import 'package:Decon/Controller/Providers/People_provider.dart';
+import 'package:Decon/Controller/Providers/peopleHoverProvider.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/Controller/ViewModels/people_viewmodel.dart';
@@ -216,51 +217,68 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                   itemBuilder: (BuildContext ctxt, int index) {
                     
                     return InkWell(
+                      onHover: (ishover){
+                        Provider.of<PeopleHoverProvider>(context, listen: false).onPeopleHovered(ishover? _listUserDetailModelManager[index].key : "-1");   
+                      },
                       onTap: () {
                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listUserDetailModelManager[index], )));
                       },
-                      onLongPress: () 
-                                                    {
-                                                    showReplaceManagerDialog(
+                      child: Consumer<PeopleHoverProvider>(
+                        builder: (context, model, child)=>
+                         Transform.translate(
+                           offset: model.idHovered == _listUserDetailModelManager[index].key ? Offset(0, -5.0) :  Offset.zero,
+                           child: Transform.scale(
+                             scale: model.idHovered == _listUserDetailModelManager[index].key ? 1.05 : 1.0,
+                             child: Container(
+                              margin: EdgeInsets.only(bottom: h * 10),
+                              decoration: BoxDecoration(
+                                color: Color(0xfff5f5f5),
+                                borderRadius: BorderRadius.circular(h * 10),
+                              ),
+                              padding:
+                                  EdgeInsets.fromLTRB(b * 22, h * 16, b * 22, h * 16),
+                              child: Row(children: [
+                                Container(
+                                  height: h * 45,
+                                  width: b * 45,
+                                  decoration: BoxDecoration(
+                                    color: dc,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                sb(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${_listUserDetailModelManager[index].name}",
+                                      style: txtS(blc, 18, FontWeight.w700),
+                                    ),
+                                    sh(7),
+                                    Text(
+                                      "${_listUserDetailModelManager[index].phoneNo}",
+                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                AnimatedSwitcher(
+                                  duration: Duration(milliseconds: 500),
+                                  child: model.idHovered == _listUserDetailModelManager[index].key ? 
+                                   IconButton(icon: Icon(Icons.edit), 
+                                   onPressed:(){
+                                     showReplaceManagerDialog(
                                                         context,
                                                         _listUserDetailModelManager[index].clientsVisible,
                                                         _listUserDetailModelManager[index].key,
                                                         );
-                                                  },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: h * 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xfff5f5f5),
-                          borderRadius: BorderRadius.circular(h * 10),
+                                   } ) : SizedBox()
+                                   ),
+                                SizedBox(width: 20.0,)
+                              ]),
                         ),
-                        padding:
-                            EdgeInsets.fromLTRB(b * 22, h * 16, b * 22, h * 16),
-                        child: Row(children: [
-                          Container(
-                            height: h * 45,
-                            width: b * 45,
-                            decoration: BoxDecoration(
-                              color: dc,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          sb(10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${_listUserDetailModelManager[index].name}",
-                                style: txtS(blc, 18, FontWeight.w700),
-                              ),
-                              sh(7),
-                              Text(
-                                "${_listUserDetailModelManager[index].phoneNo}",
-                                style: txtS(Color(0xff858585), 16, FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          
-                        ]),
+                           ),
+                         ),
                       ),
                     );
                   });  else
@@ -407,8 +425,11 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                   itemBuilder: (BuildContext ctxt, int index) {
                     
                     return Consumer<PeopleProvider>(
-                                                                builder: (context, model, child)=>
+                    builder: (context, model, child)=>
                     InkWell(
+                      onHover: (ishover){
+                        Provider.of<PeopleHoverProvider>(context, listen: false).onPeopleHovered(ishover? _listUserDetailModelAdmins[index].key : "-1");   
+                      },
                       onTap: () {
                                                       Navigator.of(context).push(
                                                         MaterialPageRoute(
@@ -431,53 +452,68 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                                                       //   ),
                                                       // );
                                                     },
-                                           onLongPress: () 
-                                                    {
-                                                    showReplaceAdminDialog(
+                                           
+                      child: Consumer<PeopleHoverProvider>(
+                        builder: (context, model, child)=>
+                         Transform.translate(
+                          offset: model.idHovered == _listUserDetailModelAdmins[index].key ? Offset(0, -5.0) :  Offset.zero ,
+                          child: Transform.scale(
+                            scale: model.idHovered == _listUserDetailModelAdmins[index].key ? 1.05 : 1.0,
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: h * 10),
+                              decoration: BoxDecoration(
+                                color: Color(0xfff5f5f5),
+                                borderRadius: BorderRadius.circular(h * 10),
+                              ),
+                              padding:
+                                  EdgeInsets.fromLTRB(b * 22, h * 16, b * 22, h * 16),
+                              child: Row(children: [
+                                Container(
+                                  height: h * 45,
+                                  width: b * 45,
+                                  decoration: BoxDecoration(
+                                    color: dc,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                sb(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${_listUserDetailModelAdmins[index].name}",
+                                      style: txtS(blc, 18, FontWeight.w700),
+                                    ),
+                                    sh(7),
+                                    Text(
+                                      "${_listUserDetailModelAdmins[index].delegate}",
+                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                    ),
+                                    sh(7),
+                                    Text(
+                                      "${_listUserDetailModelAdmins[index].phoneNo}",
+                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                AnimatedSwitcher(
+                                  duration: Duration(milliseconds: 500),
+                                  child: model.idHovered == _listUserDetailModelAdmins[index].key ? 
+                                   IconButton(icon: Icon(Icons.edit), 
+                                   onPressed:(){
+                                     showReplaceAdminDialog(
                                                           context,
                                                           _listUserDetailModelAdmins[index].clientsVisible,
                                                           _listUserDetailModelAdmins[index].key,
                                                           );
-                                                  },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: h * 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xfff5f5f5),
-                          borderRadius: BorderRadius.circular(h * 10),
-                        ),
-                        padding:
-                            EdgeInsets.fromLTRB(b * 22, h * 16, b * 22, h * 16),
-                        child: Row(children: [
-                          Container(
-                            height: h * 45,
-                            width: b * 45,
-                            decoration: BoxDecoration(
-                              color: dc,
-                              shape: BoxShape.circle,
+                                   } ) : SizedBox()
+                                   ),
+                                SizedBox(width: 20.0,)
+                              ]),
                             ),
                           ),
-                          sb(10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${_listUserDetailModelAdmins[index].name}",
-                                style: txtS(blc, 18, FontWeight.w700),
-                              ),
-                              sh(7),
-                              Text(
-                                "${_listUserDetailModelAdmins[index].delegate}",
-                                style: txtS(Color(0xff858585), 16, FontWeight.w500),
-                              ),
-                              sh(7),
-                              Text(
-                                "${_listUserDetailModelAdmins[index].phoneNo}",
-                                style: txtS(Color(0xff858585), 16, FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          
-                        ]),
+                        ),
                       ),
                     )
                     );

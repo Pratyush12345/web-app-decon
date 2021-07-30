@@ -1,7 +1,5 @@
-import 'package:Decon/Controller/ViewModels/Services/Android_wrapper/andr_user_Wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Web_Wrapper/WebNointernetScreen.dart';
 import 'package:Decon/Controller/ViewModels/Services/Web_Wrapper/web_user_Wrapper.dart';
-import 'package:Decon/Controller/ViewModels/Services/Android_wrapper/AndrNointernetScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'dart:html' as html;

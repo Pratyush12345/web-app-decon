@@ -28,7 +28,7 @@ class _Add_Delegates extends State<Add_Delegates> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
   void validateTeamMember(){
-    if(_formKey.currentState.validate()){
+    if(_formKey.currentState.validate() && GlobalVar.strAccessLevel !=null){
        DialogVM.instance.onAddDelegatePressed(context, _nameController.text.trim(), _postnameController.text.trim(), _phoneNumberController.text.trim());
         }
     else{
@@ -37,7 +37,7 @@ class _Add_Delegates extends State<Add_Delegates> {
   }
 
   void validateAddAdmin(){
-    if(_formKey.currentState.validate()){
+    if(_formKey.currentState.validate() && GlobalVar.strAccessLevel !=null){
        DialogVM.instance.onAddAdminPressed(context,  _nameController.text.trim(), _phoneNumberController.text.trim(), _phoneNumberController.text.trim(), 
        _clientController.text.trim());
         }
@@ -47,7 +47,7 @@ class _Add_Delegates extends State<Add_Delegates> {
   }
 
   void validateReplaceAdmin(){
-    if(_formKey.currentState.validate()){
+    if(_formKey.currentState.validate() && GlobalVar.strAccessLevel !=null){
        DialogVM.instance.onReplaceAdminPressed(context, _nameController.text.trim(), widget.adminDetail.clientsVisible, _phoneNumberController.text.trim(), 
        _postnameController.text.trim(), widget.adminDetail.key);
         }
