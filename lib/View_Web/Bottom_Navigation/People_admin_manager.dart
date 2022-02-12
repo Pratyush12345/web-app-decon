@@ -261,6 +261,12 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                                     ),
                                   ],
                                 ),
+                                sb(150),
+                                    Text(
+                                      "${_listUserDetailModelManager[index].clientsVisible.replaceAll(",","")}",
+                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                    ),
+                                
                                 Spacer(),
                                 AnimatedSwitcher(
                                   duration: Duration(milliseconds: 500),
@@ -477,39 +483,54 @@ class _PeopleManagerAdminState extends State<PeopleManagerAdmin> {
                                   ),
                                 ),
                                 sb(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${_listUserDetailModelAdmins[index].name}",
-                                      style: txtS(blc, 18, FontWeight.w700),
-                                    ),
-                                    sh(7),
-                                    Text(
-                                      "${_listUserDetailModelAdmins[index].delegate}",
-                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
-                                    ),
-                                    sh(7),
-                                    Text(
-                                      "${_listUserDetailModelAdmins[index].phoneNo}",
-                                      style: txtS(Color(0xff858585), 16, FontWeight.w500),
-                                    ),
-                                  ],
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${_listUserDetailModelAdmins[index].name}",
+                                        style: txtS(blc, 18, FontWeight.w700),
+                                      ),
+                                      sh(7),
+                                      Text(
+                                        "${_listUserDetailModelAdmins[index].delegate}",
+                                        style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                      ),
+                                      sh(7),
+                                      Text(
+                                        "${_listUserDetailModelAdmins[index].phoneNo}",
+                                        style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Spacer(),
-                                AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 500),
-                                  child: model.idHovered == _listUserDetailModelAdmins[index].key ? 
-                                   IconButton(icon: Icon(Icons.edit), 
-                                   onPressed:(){
-                                     showReplaceAdminDialog(
-                                                          context,
-                                                          _listUserDetailModelAdmins[index].clientsVisible,
-                                                          _listUserDetailModelAdmins[index].key,
-                                                          );
-                                   } ) : SizedBox()
-                                   ),
-                                SizedBox(width: 20.0,)
+                                 Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "${_listUserDetailModelAdmins[index].clientsVisible.replaceAll(",","")}",
+                                            style: txtS(Color(0xff858585), 16, FontWeight.w500),
+                                          ),
+                                          SizedBox(width: 30.0,),    
+                                          AnimatedSwitcher(
+                                            duration: Duration(milliseconds: 500),
+                                            child: model.idHovered == _listUserDetailModelAdmins[index].key ? 
+                                            IconButton(icon: Icon(Icons.edit), 
+                                            onPressed:(){
+                                              showReplaceAdminDialog(
+                                                                    context,
+                                                                    _listUserDetailModelAdmins[index].clientsVisible,
+                                                                    _listUserDetailModelAdmins[index].key,
+                                                                    );
+                                            } ) : SizedBox()
+                                            ),
+                                          SizedBox(width: 20.0,)
+                                        ],
+                                      ),
+                                    ),
+                                
                               ]),
                             ),
                           ),

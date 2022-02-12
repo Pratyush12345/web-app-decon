@@ -187,7 +187,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -200,7 +200,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -213,7 +213,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -226,7 +226,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -240,7 +240,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -256,9 +256,10 @@ class HomeState extends State<Home> {
     DeviceData specificDevice;
     if (val != "") {
       var Key = allDeviceData.firstWhere((entry) {
-        if (entry.id.toLowerCase().contains(val.toLowerCase().trim()) ||
-            entry.address.toLowerCase().contains(val.toLowerCase().trim()))
+        if (entry.id.toLowerCase().contains(val.toLowerCase().trim()))
           return true;
+        else if(entry.address.toLowerCase().contains(val.toLowerCase().trim()))
+          return true;  
         else
           return false;
       });
@@ -271,7 +272,7 @@ class HomeState extends State<Home> {
     }
   }
 
-  _showBottomSheet(int level, double latitude, double longitude) {
+  _showBottomSheet(int level, double latitude, double longitude, String mappedAddress) {
     Color _color;
     if (level == 0)
       _color = Colors.purple;
@@ -306,7 +307,7 @@ class HomeState extends State<Home> {
                     color: _color,
                   ),
                   title: Text(
-                    "Address",
+                    mappedAddress??"",
                     style: TextStyle(fontSize: 20.0, color: _color),
                   ),
                 ),

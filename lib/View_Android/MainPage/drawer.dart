@@ -145,9 +145,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           if(GlobalVar.strAccessLevel == "1")
           row(Icons.view_list, 'Client List', AllClients(), context),
           row(Icons.home, 'Home', Home(), context),
+          if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
           row(Icons.settings, 'Device Settings', DeviceSetting(), context),
           row(Icons.assessment, 'Monthly Report', MonthlyReport(), context),
           row(Icons.build, 'Maintainence Report', MaintainenceReport(), context),
+          if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
           row(Icons.add, 'Add Device', AddDevice(), context),
           row(Icons.verified, 'About Vysion', AboutVysion(), context),
           row(Icons.settings_phone, 'Contact Us', Contact(), context),

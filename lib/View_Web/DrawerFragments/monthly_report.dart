@@ -37,7 +37,7 @@ class _MonthlyReportState extends State<MonthlyReport> {
   }
   @override
     void initState() {
-      callDialogBox();
+      //callDialogBox();
         super.initState();
     }
   
@@ -56,27 +56,34 @@ class _MonthlyReportState extends State<MonthlyReport> {
         
           iframLink = '''<html>
                       <body>
-                        <iframe height="100%" width="100%" src="$url" frameborder="0">
+                        <iframe height="100%" width="100%" src="$url" frameborder="1">
                         </iframe>
                         
                       </body>
                     </html>'''; 
       
-        return EasyWebView(
-          isHtml: false,
-          src: Uri.dataFromString(iframLink, mimeType: 'text/html').toString(),
-          isMarkdown: false,
-          convertToWidgets: false,
-          webAllowFullScreen: false,
-          widgetsTextSelectable: false,
-          onLoaded: (){
-            if(Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).canPop()){
-              Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).pop();
-            }
-            print("Key loaded");
-          },
-          key: key,
+        return Stack(
+          children: [
+            EasyWebView(
+              isHtml: false,
+              src: Uri.dataFromString(iframLink, mimeType: 'text/html').toString(),
+              isMarkdown: false,
+              convertToWidgets: false,
+              webAllowFullScreen: false,
+              widgetsTextSelectable: false,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
 
+              onLoaded: (){
+                // if(Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).canPop()){
+                //   Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).pop();
+                // }
+                print("Key loaded");
+              },
+              key: key,
+
+            ),
+          ],
         );
         }
       ), 

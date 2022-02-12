@@ -21,7 +21,10 @@ class InformationTile extends StatelessWidget {
     192: "Sensor 2",
     193: "Sensor 3"
   };
-  
+  final Map<int, String> _manholeCondition = {
+    0: "manhole close",
+    1: "manhole open",
+  };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),
@@ -147,7 +150,7 @@ class InformationTile extends StatelessWidget {
                     sb(5),
                           
                   Text(
-                    "${deviceData.openManhole??""}",
+                    "${_manholeCondition[deviceData.openManhole]??""}",
                     style: txtS(blc, 14, FontWeight.w400),
                   ),
                     ]),

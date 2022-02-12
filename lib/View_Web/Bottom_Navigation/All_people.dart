@@ -56,6 +56,7 @@ class _AllPeople extends State<AllPeople> {
         duration: Duration(milliseconds: 400),
         builder: (context) {
           return Add_Delegates(list: GlobalVar.strAccessLevel=="2" ? _listOfManagerTeam : _listOfAdminTeam,
+          secondarylist: GlobalVar.strAccessLevel=="2" ?  _listOfAdminTeam : _listOfManagerTeam ,
           adminDetail: AllPeopleVM.instance.adminDetailModel);
         });
   }
@@ -179,49 +180,47 @@ class _AllPeople extends State<AllPeople> {
             AllPeopleVM.instance.managerDetailModel.key == null? AppConstant.noDataFound(): 
             Row(
               children: [
-                Container(
-                              height: h * 45,
-                              width: b * 45,
-                              decoration: BoxDecoration(
-                                color: dc,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                sb(23),
+                Expanded(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      Container(
+                                    height: h * 45,
+                                    width: b * 45,
+                                    decoration: BoxDecoration(
+                                      color: dc,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                     sb(23),
                 
                        
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${AllPeopleVM.instance.managerDetailModel.name??""}",
-                      style: txtS(dc, 20, FontWeight.w500),
-                    ),
-                    // Text(
-                    //   "${AllPeopleVM.instance.managerDetailModel.phoneNo??""}",
-                    //   style: TextStyle(
-                    //     color: blc,
-                    //     fontWeight: FontWeight.w400,
-                    //     fontSize: h * 14,
-                    //     fontStyle: FontStyle.italic,
-                    //   ),
-                    // ),
-                  ],
-                ),
-                Spacer(),
                 Text(
-                  "${AllPeopleVM.instance.managerDetailModel.post??""}",
-                  style: TextStyle(
-                    color: dc,
-                    fontWeight: FontWeight.w400,
-                    fontSize: h * 16,
-                    fontStyle: FontStyle.italic,
+                  "${AllPeopleVM.instance.managerDetailModel.name??""}",
+                  style: txtS(dc, 20, FontWeight.w500),
+                ),
+                             
+                    ],
                   ),
                 ),
-                Spacer(),
-                Text(
-                  "${AllPeopleVM.instance.managerDetailModel.phoneNo??""}",
-                  style: txtS(blc, 20, FontWeight.w700),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "${AllPeopleVM.instance.managerDetailModel.post??""}",
+                    style: TextStyle(
+                      color: dc,
+                      fontWeight: FontWeight.w400,
+                      fontSize: h * 16,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                ),
+                 Expanded(
+                   flex: 1,
+                  child: Text(
+                    "${AllPeopleVM.instance.managerDetailModel.phoneNo??""}",
+                    style: txtS(blc, 20, FontWeight.w700),
+                  ),
                 ),
               ],
             ),
@@ -248,48 +247,47 @@ class _AllPeople extends State<AllPeople> {
             AllPeopleVM.instance.adminDetailModel.key == null? AppConstant.noDataFound(): 
                         Row(
               children: [
-                 Container(
-                              height: h * 45,
-                              width: b * 45,
-                              decoration: BoxDecoration(
-                                color: dc,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
+                 Expanded(
+                   flex: 3,
+                   child: Row(
+                     children: [
+                       Container(
+                                    height: h * 45,
+                                    width: b * 45,
+                                    decoration: BoxDecoration(
+                                      color: dc,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                       sb(23),
+                      Text(
+                        "${AllPeopleVM.instance.adminDetailModel.name??""}",
+                        style: txtS(dc, 20, FontWeight.w500),
+                      ),           
+                     ],
+                   ),
+                 ),
                
-                sb(23),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${AllPeopleVM.instance.adminDetailModel.name??""}",
-                      style: txtS(dc, 20, FontWeight.w500),
+                
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "${AllPeopleVM.instance.adminDetailModel.post??""}",
+                    style: TextStyle(
+                      color: dc,
+                      fontWeight: FontWeight.w400,
+                      fontSize: h * 16,
+                      fontStyle: FontStyle.normal,
                     ),
-                    // Text(
-                    //   "Manager",
-                    //   style: TextStyle(
-                    //     color: blc,
-                    //     fontWeight: FontWeight.w400,
-                    //     fontSize: h * 14,
-                    //     fontStyle: FontStyle.italic,
-                    //   ),
-                    // ),
-                  ],
-                ),
-                Spacer(),
-                Text(
-                  "${AllPeopleVM.instance.adminDetailModel.post??""}",
-                  style: TextStyle(
-                    color: dc,
-                    fontWeight: FontWeight.w400,
-                    fontSize: h * 16,
-                    fontStyle: FontStyle.italic,
                   ),
                 ),
-                Spacer(),
-                Text(
-                  "${AllPeopleVM.instance.adminDetailModel.phoneNo??""}",
-                  style: txtS(blc, 20, FontWeight.w700),
+
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    "${AllPeopleVM.instance.adminDetailModel.phoneNo??""}",
+                    style: txtS(blc, 20, FontWeight.w700),
+                  ),
                 ),
               ],
             ),
@@ -335,16 +333,7 @@ class _AllPeople extends State<AllPeople> {
                       onTap: (){
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfManagerTeam[index], )));
                                   },
-                                  onLongPress: () {
-                                    if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
-                                    showDeleteDialog(context).then((value) async {
-                                    
-                                      if (value == "Yes") {
-                                          database().ref("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
-                                      }
-                                    });
-                                  },
-                      child: Container(
+                                  child: Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.fromLTRB(b * 0, h * 15, b * 0, h * 15),
                         margin: EdgeInsets.fromLTRB(b * 32, 0, b * 32, h * 0),
@@ -356,34 +345,69 @@ class _AllPeople extends State<AllPeople> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                                    height: h * 45,
-                                    width: b * 45,
-                                    decoration: BoxDecoration(
-                                      color: dc,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                            sb(23),
-                            Text(
-                               '${_listOfManagerTeam[index].name}',
-                              style: txtS(dc, 18, FontWeight.w500),
-                            ),
-                            Spacer(),
-                            Text(
-                               '${_listOfManagerTeam[index].post}',
-                              style: TextStyle(
-                                color: dc,
-                                fontWeight: FontWeight.w400,
-                                fontSize: h * 16,
-                                fontStyle: FontStyle.italic,
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                Container(
+                                  padding: EdgeInsets.all(8.0),
+                                        height: h * 45,
+                                        width: b * 45,
+                                        decoration: BoxDecoration(
+                                          color: dc,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                        sb(23),
+                              Text(
+                                 '${_listOfManagerTeam[index].name}',
+                                style: txtS(dc, 18, FontWeight.w500),
+                              ),
+                              
+                                ],
                               ),
                             ),
-                            Spacer(),
-                            Text(
-                               '${_listOfManagerTeam[index].phoneNo}',
-                              style: txtS(blc, 16, FontWeight.w400),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                 '${_listOfManagerTeam[index].post}',
+                                 textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color: dc,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: h * 16,
+
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
                             ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Text(
+                                     '${_listOfManagerTeam[index].phoneNo}',
+                                    style: txtS(blc, 16, FontWeight.w400),
+                                  ),
+                                  SizedBox(width: 20.0,),
+                              if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
+                                    
+                              IconButton(
+                               icon: Icon(Icons.delete, color: Colors.black,),
+                               onPressed: (){
+                                   showDeleteDialog(context).then((value) async {
+                                      
+                                        if (value == "Yes") {
+                                            database().ref("managerTeam/${_listOfManagerTeam[index].key}").remove(); 
+                                        }
+                                      });
+                                    
+                               },
+                              )
+                                ],
+                              ),
+                            ),
+                            
                           ],
                         ),
                       ),
@@ -447,16 +471,7 @@ class _AllPeople extends State<AllPeople> {
                       onTap: (){
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile(myProfile: false, userDetailModel: _listOfAdminTeam[index], )));
                                   },
-                               onLongPress: () {
-                                if(GlobalVar.strAccessLevel == "3" ||GlobalVar.strAccessLevel == "1" )
-                                showDeleteDialog(context).then((value) async {
-                                
-                                  if (value == "Yes") {
-                                      database().ref("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
-                                  }
-                                });
-                              },
-                      
+                               
                       child: Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.fromLTRB(b * 0, h * 15, b * 0, h * 15),
@@ -469,34 +484,67 @@ class _AllPeople extends State<AllPeople> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                                    height: h * 45,
-                                    width: b * 45,
-                                    decoration: BoxDecoration(
-                                      color: dc,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                            sb(23),
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                  Container(
+                                          height: h * 45,
+                                          width: b * 45,
+                                          decoration: BoxDecoration(
+                                            color: dc,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        sb(23),
                             Text(
                                '${_listOfAdminTeam[index].name}',
                               style: txtS(dc, 18, FontWeight.w500),
                             ),
-                            Spacer(),
-                            Text(
-                               '${_listOfAdminTeam[index].post}',
-                              style: TextStyle(
-                                color: dc,
-                                fontWeight: FontWeight.w400,
-                                fontSize: h * 16,
-                                fontStyle: FontStyle.italic,
+                            
+                                ],
                               ),
                             ),
-                            Spacer(),
-                            Text(
-                               '${_listOfAdminTeam[index].phoneNo}',
-                              style: txtS(blc, 16, FontWeight.w400),
+                            
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                 '${_listOfAdminTeam[index].post}',
+                                style: TextStyle(
+                                  color: dc,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: h * 16,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
                             ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Text(
+                                     '${_listOfAdminTeam[index].phoneNo}',
+                                    style: txtS(blc, 16, FontWeight.w400),
+                                  ),
+                                  SizedBox(width: 20.0,),
+                            if(GlobalVar.strAccessLevel == "2" ||GlobalVar.strAccessLevel == "1")
+                                  
+                            IconButton(
+                             icon: Icon(Icons.delete, color: Colors.black,),
+                             onPressed: (){
+                                showDeleteDialog(context).then((value) async {
+                                
+                                  if (value == "Yes") {
+                                      database().ref("adminTeam/${_listOfAdminTeam[index].key}").remove(); 
+                                  }
+                                });
+                               
+                             },
+                            )
+                                ],
+                              ),
+                            ),
+                            
                           ],
                         ),
                       ),

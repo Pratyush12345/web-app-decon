@@ -1,7 +1,10 @@
+import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Consts/database_calls.dart';
 import 'package:firebase/firebase.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class DialogVM {
   static DialogVM instance = DialogVM._();
@@ -31,7 +34,18 @@ class DialogVM {
       print(e);
     }
   }
+  Future<bool> checkCustomClaim(String phoneNo, BuildContext context )async{
+    bool data = await _databaseCallServices.getUserCustomClaim(phoneNo);
 
+    if(data){
+      return true;
+    }
+    else{
+      AppConstant.showFailToast(context, "Number already taken");
+      return false;
+    }
+
+  }
   onAddDelegatePressed(
       BuildContext context, String name, String post, String phoneNo) {
     try {
@@ -101,7 +115,7 @@ class DialogVM {
       _databaseCallServices.setSelectAdmin(clientVisible, {
         "selectedAdmin": _dbRef.key,
       });
-
+      _updateClientDetailModel(context, "Admin", _dbRef.key);
        Map<String, dynamic> adminTeamData =  await _databaseCallServices.getAdminTeamMap(uid);
       if(adminTeamData!=null){
         adminTeamData.forEach((key, value) { 
@@ -132,7 +146,7 @@ class DialogVM {
 
       _databaseCallServices
           .pushFirestoreLoginDetail(phoneNo, {"value": "Manager_BySuperAdmin"});
-
+      _updateClientDetailModel(context, "Manager", _dbRef.key);
       List<String> clientsList = clientVisible.split(",");
       for (int i = 0; i < clientsList.length; i++) {
         
@@ -154,6 +168,14 @@ class DialogVM {
       Navigator.of(context).pop();
     } catch (e) {
       print(e);
+    }
+  }
+  _updateClientDetailModel(BuildContext context, String key, String id){
+    
+    if(key == "Admin")
+    Provider.of<ChangeClient>(context, listen: false).clientDetailModel.selectedAdmin = id;
+    else if(key== "Manager"){
+    Provider.of<ChangeClient>(context, listen: false).clientDetailModel.selectedManager = id;
     }
   }
 }

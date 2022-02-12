@@ -34,6 +34,10 @@ class _DevicesState extends State<Devices> {
     192: "Sensor 2",
     193: "Sensor 3"
   };
+  final Map<int, String> _manholeCondition = {
+    0: "manhole close",
+    1: "manhole open",
+  };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),

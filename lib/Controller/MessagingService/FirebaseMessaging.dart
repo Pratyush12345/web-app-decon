@@ -23,6 +23,12 @@ class FirebaseMessagingServeiceWeb {
         duration: Duration(milliseconds: 400),
         builder: (context) {
           return AlertMessageDialog(deviceId: title, message: body);
+        }).timeout(Duration(seconds: 5), onTimeout: (){
+          if(Navigator.of(context).canPop()){
+            Navigator.of(context).pop();
+           
+          }
+          return  Future.delayed(Duration(seconds: 1));
         });
   }
 

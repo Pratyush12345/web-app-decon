@@ -20,6 +20,7 @@ class _Replace_Manager extends State<Replace_Manager> {
   final _phoneNoController = TextEditingController();
   final _nameController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  int _clickedCount = 0 ;
   
   void validate() async{
     if(_formKey.currentState.validate()){
@@ -28,6 +29,7 @@ class _Replace_Manager extends State<Replace_Manager> {
      _phoneNoController.text.trim(), widget.uid);
     }
     else{
+      _clickedCount = 0 ;
       print("Not Validated");
     }
   }
@@ -170,7 +172,14 @@ class _Replace_Manager extends State<Replace_Manager> {
               ),
               padding: EdgeInsets.zero,
               onPressed: () {
+                _clickedCount++;
+               if(_clickedCount ==1)
+               {
                 validate();
+               }
+               else{
+                  _clickedCount = 0;
+                }
               },
               child: Container(
                 alignment: Alignment.center,

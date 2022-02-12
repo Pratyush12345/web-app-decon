@@ -27,7 +27,7 @@ class GraphsVM {
   List<DataFromSheet> _manHoleData = [];
   List<DataFromSheet> _temperatureData = [];
   DeviceData _deviceData;
-  int i;
+  int i; var result;
 
   final Map<String, String> _monthstonum = {
     "January": "01",
@@ -72,13 +72,8 @@ class GraphsVM {
     "December"
   ];
   final List<String> yearlist = [
-    "2019",
-    "2020",
-    "2021",
-    "2022",
-    "2023",
-    "2024",
-    "2025",
+    "${(DateTime.now().year-1)}",
+    "${DateTime.now().year}",
   ];
   final Map<String, int> _endDateMap = {
     "01": 31,
@@ -110,14 +105,19 @@ class GraphsVM {
     Provider.of<TempGraphProvider>(context, listen: false).reinitialize();
     Provider.of<OpenManholeGraphProvider>(context, listen: false).reinitialize();
     _callFunctions();
+    initfields();
     
   }
 
   _callFunctions() async{
+    print("calling function");
     String searchKey = "$_monthNo/$currentYY";
     String url1 = "$_scriptEditorURL?searchKey=$searchKey&deviceNo=${_deviceData.id.split("_")[2].substring(1, _deviceData.id.split("_")[2].length)}&sheetURL=$_sheetURL&sheetNo=DataSheet";
-    
-    await getDataFromSheetList(url1);
+    print("before result");
+    result = await getDataFromSheetList(url1);
+   print("--------------------------");
+   print(result);
+   print("--------------------------");
    if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_LevelGraph"))
     _createLevelGraphDatapoints();
     if(GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].graphs.contains("${HomePageVM.instance.getSeriesCode}_TemperatureGraph"))
@@ -161,22 +161,32 @@ class GraphsVM {
   }
    getDataFromSheetList(String _url) async {
     return await http.get(_url).then((response) {
+      print("responsed .body========% ${response.body.length}");
+      if(response.body.length<=2){
+        print("in ifffffffffffff");
+       return null;
+      }
+      else{
       var jsonFeedback = convert.jsonDecode(response.body) as List;
+
       if(HomePageVM.instance.getSeriesCode == "S0"|| HomePageVM.instance.getSeriesCode == "S1"){
       _levelData = jsonFeedback.map((json) => DataFromSheet.fromLevelJson(json)).toList();
       _manHoleData = jsonFeedback.map((json) => DataFromSheet.fromOpenManholeJson(json)).toList();
       }
       if(HomePageVM.instance.getSeriesCode == "S1")
       _temperatureData = jsonFeedback.map((json) => DataFromSheet.fromTempJson(json)).toList();
-    
+      return "data found";
+      }
     });
   }
 
   String formattedDate(String date){
     String formattedDate;
     DateTime dateTime = DateTime.parse(date);
+    print("date Time");
     print(dateTime.hour);
     print(dateTime.minute);
+    print("date Time");
     formattedDate = "${dateTime.day}/${dateTime.month}/${dateTime.year}  ${DateFormat('jms').format(dateTime)}";
     return formattedDate;
   }
@@ -242,7 +252,7 @@ class GraphsVM {
             shape: DataMarkerType.circle,
             height: 3.0),
       ));
-      Provider.of<LinearGraphProvider>(context, listen: false).linearChangeGraph(_seriesLinearData, _endDateMap[_monthNo]);
+      Provider.of<LinearGraphProvider>(context, listen: false).linearChangeGraph(_seriesLinearData, _endDateMap[_monthNo], result == null? true: false);
     
   }
 
@@ -282,7 +292,7 @@ class GraphsVM {
             shape: DataMarkerType.circle,
             height: 3.0),
       ));
-      Provider.of<TempGraphProvider>(context, listen: false).tempChangeGraph(_seriesTempData, _endDateMap[_monthNo]);
+      Provider.of<TempGraphProvider>(context, listen: false).tempChangeGraph(_seriesTempData, _endDateMap[_monthNo], result == null? true: false);
     
     
   }
@@ -331,6 +341,6 @@ class GraphsVM {
             shape: DataMarkerType.circle,
             height: 3.0),
       ));
-      Provider.of<OpenManholeGraphProvider>(context, listen: false).openManholeChangeGraph(_seriesManHoleData, _endDateMap[_monthNo]);   
+      Provider.of<OpenManholeGraphProvider>(context, listen: false).openManholeChangeGraph(_seriesManHoleData, _endDateMap[_monthNo], result == null? true: false);   
   } 
 }

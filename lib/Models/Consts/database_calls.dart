@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:Decon/Models/Consts/base_calls.dart';
 import 'package:Decon/Models/Consts/database_path.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:firebase/firebase.dart';
+import 'package:http/http.dart' as http;
 
 class DatabaseCallServices extends BaseCall{
   
@@ -14,7 +17,11 @@ class DatabaseCallServices extends BaseCall{
   Future<UserDetailModel> getManagerCredentails(String uid) async {
    String url = "${DatabasePath.getManagerCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
+   if(snapshot?.val()!=null)
    return UserDetailModel.fromJson(snapshot.key, snapshot.val());
+   else
+   return null;
+   
   }
   Future setManagerClientVisible(String uid, String clientsVisible) async {
    String url = "${DatabasePath.getManagerCredentials}/$uid";
@@ -25,7 +32,11 @@ class DatabaseCallServices extends BaseCall{
   Future<UserDetailModel> getAdminCredentails(String uid) async {
    String url = "${DatabasePath.getAdminCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
+   if(snapshot?.val()!=null)
    return UserDetailModel.fromJson(snapshot.key, snapshot.val());
+   else
+   return null;
+   
   }
 
   Future<UserDetailModel> getManagerTeamCredentails(String uid) async {
@@ -35,7 +46,7 @@ class DatabaseCallServices extends BaseCall{
   }
 
   Future<UserDetailModel> getAdminTeamCredentails(String uid) async {
-   String url = "${DatabasePath.getAdminCredentials}/$uid";
+   String url = "${DatabasePath.getAdminTeamCredentials}/$uid";
    DataSnapshot snapshot = await databaseOnceCall(url);
    return UserDetailModel.fromJson(snapshot.key, snapshot.val());
   }
@@ -116,6 +127,21 @@ class DatabaseCallServices extends BaseCall{
     String url = "+91$phoneNo";
     String message = await firestoreSetCall(url, json);
     return message;
+  }
+  Future<bool> getUserCustomClaim(String phoneNo) async {
+   String url = "${DatabasePath.getUserCustomClaim}?phoneNo=$phoneNo";
+   http.Response response = await http.Client().get(url);
+   
+   try{
+   Map _map = jsonDecode(response.body);
+   if(_map["accessLevel"]!=null)
+   return false;
+   else
+   return true ;
+   }
+   catch(e){
+     return true;
+   }
   }
   Future setSelectAdmin(String clientCode, Map<String, dynamic> json) async{
     String url = "${DatabasePath.client}/$clientCode/Detail";

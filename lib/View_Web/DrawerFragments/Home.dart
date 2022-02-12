@@ -50,7 +50,7 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     _latLng = new LatLng(26.123456, 72.234567);
-    _value = 8.0;
+    _value = 16.0;
     super.initState();
     loadMarker();
   }
@@ -59,7 +59,7 @@ class HomeState extends State<Home> {
     GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(lat,lon),
-        zoom: 8.0)));
+        zoom: _value)));
   }
 
   @override
@@ -147,40 +147,44 @@ class HomeState extends State<Home> {
   Widget googlemap(BuildContext context, List<DeviceData> allDeviceData) {
     
     return 
-       Container(
-        //height: MediaQuery.of(context).size.height,
-        child: Consumer<ChangeGoogleMap>(
-          builder: (context, model,child){
+       Consumer<ChangeGoogleMap>(
+         builder: (context, model,child){
 
-            if(model.isInitialized){
-               _setOfMarker = {};
-             }
-             else{
-               if(GlobalVar.isDeviceChanged){
-               _setOfMarker = {};
-               GlobalVar.isDeviceChanged = false;
-               }
-               else
-               _setOfMarker = addMarker(allDeviceData);
-             }
-            
-           return  GoogleMap( 
-          mapType: MapType.normal,
-          initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
-          zoomGesturesEnabled: true,
-          onMapCreated: (GoogleMapController googleMapControler) {
-            _controller.complete(googleMapControler);
-            print("controller loaded");
-            print(Auth.instance.ground_icon);
-            print(Auth.instance.normal_icon);
-            print(Auth.instance.informative_icon);
-            print(Auth.instance.critical_icon);
-          },
-          markers: _setOfMarker,
-        );
-          },
-      ),
-    );
+           if(model.isInitialized){
+              _setOfMarker = {};
+            }
+            else{
+              if(GlobalVar.isDeviceChanged){
+              _setOfMarker = {};
+              _value = 28;
+              GlobalVar.isDeviceChanged = false;
+              }
+              else
+              _setOfMarker = addMarker(allDeviceData);
+            }
+           
+          return  IndexedStack(
+            index: 0,
+            children: [
+              GoogleMap( 
+         key: ValueKey('key_0'),
+         mapType: MapType.normal,
+         initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
+         zoomGesturesEnabled: true,
+         onMapCreated: (GoogleMapController googleMapControler) {
+               _controller.complete(googleMapControler);
+               print("controller loaded");
+               print(Auth.instance.ground_icon);
+               print(Auth.instance.normal_icon);
+               print(Auth.instance.informative_icon);
+               print(Auth.instance.critical_icon);
+         },
+         markers: _setOfMarker,
+       ),
+            ],
+          );
+         },
+      );
   }
 
   Set<Marker> addMarker(List<DeviceData> _allDeviceData) {
@@ -202,7 +206,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -215,7 +219,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -228,7 +232,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -241,7 +245,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -255,7 +259,7 @@ class HomeState extends State<Home> {
         markerId: MarkerId(_allDeviceData.id.split("_")[2]),
         onTap: () {
           _showBottomSheet(
-              level, _allDeviceData.latitude, _allDeviceData.longitude);
+              level, _allDeviceData.latitude, _allDeviceData.longitude, _allDeviceData.address);
         },
         position: LatLng(_allDeviceData.latitude, _allDeviceData.longitude),
         infoWindow: InfoWindow(
@@ -271,9 +275,10 @@ class HomeState extends State<Home> {
     DeviceData specificDevice;
     if (val != "") {
       var Key = allDeviceData.firstWhere((entry) {
-        if (entry.id.split("_")[2].contains(val.trim()) ||
-            entry.address.contains(val.trim()))
+        if (entry.id.split("_")[2].contains(val.trim()))
           return true;
+        else if(entry.address.contains(val.trim()))
+          return true;  
         else
           return false;
       });
@@ -286,7 +291,7 @@ class HomeState extends State<Home> {
     }
   }
 
-  _showBottomSheet(int level, double latitude, double longitude) {
+  _showBottomSheet(int level, double latitude, double longitude, String mappedAddress) {
     Color _color;
     if (level == 0)
       _color = Colors.purple;
@@ -327,7 +332,7 @@ class HomeState extends State<Home> {
                 ),
                 ListTile(
                   title: Text(
-                    futureAddress,
+                    mappedAddress??"",
                     style: TextStyle(fontSize: 20.0),
                   ),
                 ),

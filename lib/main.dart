@@ -7,7 +7,6 @@ import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/Providers/peopleHoverProvider.dart';
 import 'package:Decon/Controller/ViewModels/Services/orientation_wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
-import 'package:Decon/Controller/ViewModels/Services/test.dart';
 import 'package:Decon/View_Web/DrawerFragments/Statistics/graphs_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -59,29 +58,34 @@ class MyApp extends StatelessWidget {
            ChangeNotifierProvider(create: (context)=> TempGraphProvider(),),
            ChangeNotifierProvider(create: (context)=> OpenManholeGraphProvider(),),
           ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Decon',
-          theme: ThemeData(
-            primarySwatch: MaterialColor(
-              //0xff263238,
-              0xff0099ff,
-              <int, Color>{
-                50: Color(0xff263238),
-                100: Color(0xff263238),
-                200: Color(0xff263238),
-                300: Color(0xff263238),
-                400: Color(0xff263238),
-                500: Color(0xff263238),
-                600: Color(0xff263238),
-                700: Color(0xff263238),
-                800: Color(0xff263238),
-                900: Color(0xff263238),
-              },
+        child: GestureDetector(
+          onTap: () {
+         FocusManager.instance.primaryFocus.unfocus();
+        },
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Decon',
+            theme: ThemeData(
+              primarySwatch: MaterialColor(
+                //0xff263238,
+                0xff0099ff,
+                <int, Color>{
+                  50: Color(0xff263238),
+                  100: Color(0xff263238),
+                  200: Color(0xff263238),
+                  300: Color(0xff263238),
+                  400: Color(0xff263238),
+                  500: Color(0xff263238),
+                  600: Color(0xff263238),
+                  700: Color(0xff263238),
+                  800: Color(0xff263238),
+                  900: Color(0xff263238),
+                },
+              ),
+              visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
+            home: OrientationWrapper()
           ),
-          home: OrientationWrapper()
         ),
       ),
     );

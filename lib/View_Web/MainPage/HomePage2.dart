@@ -255,6 +255,7 @@ class _HomePage2State extends State<HomePage2> {
                              "${GlobalVar.userDetail.name ?? ""}",
                             style: txtS(wc, 18, FontWeight.w700),
                           ),
+                          sh(10),
                           Text(
                              "${GlobalVar.userDetail.phoneNo ?? ""}",
                             style: txtS(wc, 14, FontWeight.w400),
@@ -281,10 +282,12 @@ class _HomePage2State extends State<HomePage2> {
                   ), false, '', 3),
                 if(GlobalVar.strAccessLevel == null)
                 panel("People", Icons.people, AllPeopleDummy(), false, '', 4),  
+                if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
                 panel("Device Settings", Icons.settings, DeviceSetting(), false, '', 5),
                 panel("Devices", Icons.memory, Devices(), false, '', 6),
                 panel("Monthly Report", Icons.assessment, MonthlyReport() , false, '', 7),
                 panel("Maintainence Report", Icons.build, MaintainenceReport() , false, '', 8),
+                if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
                 panel("Add Device", Icons.add, AddDevice(), false, '', 9),
                 panel("About Vysion", Icons.verified, AboutVysion(), false, '', 10),
                 panel("Contact Us", Icons.settings_phone, ContactUs(), false, '', 11),
@@ -312,10 +315,14 @@ class _HomePage2State extends State<HomePage2> {
                       !GlobalVar.isActive? AppConstant.deactivatedClient():
                         Consumer<ChangeDrawerItems>(
                           builder: (context, _, child){
-                          return  Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width,
-                          child: HomePageVM.instance.selectedDrawerWidget);
+                          return  Stack(
+                            children: [
+                              Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: HomePageVM.instance.selectedDrawerWidget),
+                            ],
+                          );
                           }
                         ),
                     )

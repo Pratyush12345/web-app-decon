@@ -109,7 +109,12 @@ class DataFromSheet {
   );
 
   factory DataFromSheet.fromLevelJson(dynamic json) {
+    try{
     return DataFromSheet("${json['key']}", "${json['value'].toString().split(",")[0].trim()}");
+    }
+    catch(e){
+      return  DataFromSheet("${json['key']}", "0");
+    }
   }
 
   factory DataFromSheet.fromOpenManholeJson(dynamic json) {
@@ -117,11 +122,21 @@ class DataFromSheet {
    "Close" : 0,
    "Open" : 1
   };
+  try{
     return DataFromSheet("${json['key']}", "${ _map[json['value'].toString().split(",")[1].trim()]}");
+  }
+  catch(e){
+     return  DataFromSheet("${json['key']}", "0");
+    }
   }
 
   factory DataFromSheet.fromTempJson(dynamic json) {
+   try{ 
     return DataFromSheet("${json['key']}", "${json['value'].toString().split(",")[3].trim()}");
+    }
+  catch(e){
+     return  DataFromSheet("${json['key']}", "0");
+    }
   }
 
   // Method to make GET parameters.
@@ -167,7 +182,7 @@ class DeviceData {
     id = snapshot.val()["id"];
     latitude = snapshot.val()["latitude"];
     longitude = snapshot.val()["longitude"];
-    battery = snapshot.val()["battery"];
+    battery = snapshot.val()["battery"]??100;
     distance = snapshot.val()["distance"];
     if(_seriesCode == "S0"){
       wlevel = snapshot.val()["wLevel"];

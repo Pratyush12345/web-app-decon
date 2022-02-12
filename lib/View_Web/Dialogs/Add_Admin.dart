@@ -25,6 +25,7 @@ class _Add_admin extends State<Add_admin> {
   final _clientController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final dbRef = database();
+  int _clickedCount = 0 ;
 
   void validate() async{
     if(_formKey.currentState.validate()){
@@ -33,6 +34,7 @@ class _Add_admin extends State<Add_admin> {
 
            }
     else{
+      _clickedCount = 0 ;
       print("Not Validated");
     }
   }
@@ -269,7 +271,15 @@ class _Add_admin extends State<Add_admin> {
               ),
               padding: EdgeInsets.zero,
               onPressed: () {
+                _clickedCount++;
+               if(_clickedCount ==1)
+               {
                 validate();
+               }
+               else{
+                  _clickedCount = 0;
+                }
+
               },
               child: Container(
                 alignment: Alignment.center,

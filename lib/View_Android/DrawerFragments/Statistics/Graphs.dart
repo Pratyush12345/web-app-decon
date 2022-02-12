@@ -299,6 +299,7 @@ class _GraphsState extends State<Graphs> {
             LevelGraph(
               seriesLinearData: model.seriesLinearData,
               lastDay: double.parse(model.noOfDays.toString()),
+              showNoDatafoundflag: model.showNoDatafound,
             ),
           ),
           SizedBox(
@@ -309,7 +310,8 @@ class _GraphsState extends State<Graphs> {
             builder: (context, model, child)=>
              ManholeGraph(
                 seriesManHoleData: model.seriesManHoleData,
-                lastDay: double.parse(model.noOfDays.toString())),
+                lastDay: double.parse(model.noOfDays.toString()),
+                showNoDatafoundflag: model.showNoDatafound,),
           ),
           SizedBox(
             height: 20.0,
@@ -319,7 +321,8 @@ class _GraphsState extends State<Graphs> {
             builder: (context,model ,child)=>
             TempGraph(
                 seriesTempData: model.seriesTempData,
-                lastDay: double.parse(model.noOfDays.toString())),
+                lastDay: double.parse(model.noOfDays.toString()),
+                showNoDatafoundflag: model.showNoDatafound,),
           ),
           
         ],

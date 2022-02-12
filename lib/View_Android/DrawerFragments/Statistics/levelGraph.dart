@@ -1,3 +1,4 @@
+import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Android/Authentication/Wait.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
@@ -7,14 +8,18 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class LevelGraph extends StatelessWidget {
   final List<ChartSeries<LinearData, int>> seriesLinearData;
   final double lastDay;
-  LevelGraph({this.seriesLinearData, this.lastDay});
+  bool showNoDatafoundflag;
+  LevelGraph({this.seriesLinearData, this.lastDay, @required this.showNoDatafoundflag});
   @override
   Widget build(BuildContext context) {
     return Container(
             padding: EdgeInsets.only(right: 8.0),
             height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width,
-            child: seriesLinearData.length!=0? SfCartesianChart(
+            child: 
+             showNoDatafoundflag?
+             AppConstant.noDataFound():
+              seriesLinearData.length!=0? SfCartesianChart(
               enableMultiSelection: false,
 
               tooltipBehavior: TooltipBehavior(

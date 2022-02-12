@@ -34,6 +34,10 @@ class _GraphsState extends State<Graphs> {
     192: "Sensor 2",
     193: "Sensor 3"
   };
+  final Map<int, String> _manholeCondition = {
+    0: "manhole close",
+    1: "manhole open",
+  };
   final Map<int, Color> _levelsColor = {
     0: Color(0xffC4C4C4),
     1: Color(0xff69D66D),
@@ -169,7 +173,7 @@ class _GraphsState extends State<Graphs> {
                 Icon(Icons.arrow_upward, size: b * 16, color: blc),
               sb(5),  
             Text(
-              "${widget.deviceData.openManhole??""}",
+              "${_manholeCondition[widget.deviceData.openManhole]??""}",
               style: txtS(blc, 16, FontWeight.w400),
             ),
               ]),
@@ -195,7 +199,7 @@ class _GraphsState extends State<Graphs> {
       ), 
         
       ),
-                      Text("Last Updated: ${GraphsVM.intsance.formattedDate(widget.deviceData.lastUpdated)}"),
+      Text("Last Updated: ${GraphsVM.intsance.formattedDate(widget.deviceData.lastUpdated)}"),
                     
                   SizedBox(height: SizeConfig.v * 0.5),
                   ],
@@ -296,6 +300,7 @@ class _GraphsState extends State<Graphs> {
             LevelGraph(
               seriesLinearData: model.seriesLinearData,
               lastDay: double.parse(model.noOfDays.toString()),
+              showNoDatafoundflag: model.showNoDatafound,
             ),
           ),
           SizedBox(
@@ -306,7 +311,8 @@ class _GraphsState extends State<Graphs> {
             builder: (context, model, child)=>
              ManholeGraph(
                 seriesManHoleData: model.seriesManHoleData,
-                lastDay: double.parse(model.noOfDays.toString())),
+                lastDay: double.parse(model.noOfDays.toString()),
+                showNoDatafoundflag: model.showNoDatafound,),
           ),
           SizedBox(
             height: 20.0,
@@ -316,7 +322,8 @@ class _GraphsState extends State<Graphs> {
             builder: (context,model ,child)=>
             TempGraph(
                 seriesTempData: model.seriesTempData,
-                lastDay: double.parse(model.noOfDays.toString())),
+                lastDay: double.parse(model.noOfDays.toString()),
+                showNoDatafoundflag: model.showNoDatafound,),
           ),
           
         ],

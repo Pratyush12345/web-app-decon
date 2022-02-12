@@ -10,7 +10,8 @@ import 'package:flutter/services.dart';
 class Add_Delegates extends StatefulWidget {
   final List<UserDetailModel> list;
   final UserDetailModel adminDetail;
-  Add_Delegates({@required this.list, @required this.adminDetail});
+  final List<UserDetailModel> secondarylist;
+  Add_Delegates({@required this.list, @required this.secondarylist,@required this.adminDetail});
   @override
   _Add_Delegates createState() => _Add_Delegates();
 }
@@ -24,7 +25,7 @@ class _Add_Delegates extends State<Add_Delegates> {
   final _clientController = TextEditingController();
   
   bool admin = false;
-
+  int _clickedCount = 0 ;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
   void validateTeamMember(){
@@ -32,6 +33,7 @@ class _Add_Delegates extends State<Add_Delegates> {
        DialogVM.instance.onAddDelegatePressed(context, _nameController.text.trim(), _postnameController.text.trim(), _phoneNumberController.text.trim());
         }
     else{
+      _clickedCount = 0 ;
       print("Not Validated");
     }
   }
@@ -42,6 +44,7 @@ class _Add_Delegates extends State<Add_Delegates> {
        _clientController.text.trim());
         }
     else{
+      _clickedCount = 0 ;
       print("Not Validated");
     }
   }
@@ -52,6 +55,7 @@ class _Add_Delegates extends State<Add_Delegates> {
        _postnameController.text.trim(), widget.adminDetail.key);
         }
     else{
+      _clickedCount = 0 ;
       print("Not Validated");
     }
   }
@@ -114,6 +118,7 @@ class _Add_Delegates extends State<Add_Delegates> {
                   ),
                 ),
                 SizedBox(width: b * 16),
+                if(GlobalVar.strAccessLevel =="2" || GlobalVar.strAccessLevel =="1" )
                 Expanded(
                   flex: 2,
                   child: InkWell(
@@ -303,13 +308,16 @@ class _Add_Delegates extends State<Add_Delegates> {
               TextFormField(
                       validator: (val){
                         int index= widget.list.indexWhere((element) => element.phoneNo.contains(val));
+                        int phoneindex= widget.secondarylist.indexWhere((element) => element.phoneNo.contains(val));
                         
                           if(val.isEmpty)
                           return "Phone Number Cannot be empty";
                           else if(val.length!=10)
                           return "Phone Number must be of 10 digits";
-                          else if(index!=-1)
+                          else if(index!=-1 || phoneindex!=-1 )
                           return "Phone No already registered"; 
+                          else if(widget.adminDetail.phoneNo.contains(val))
+                          return "Phone No should be different";
                           else
                           return null;
                       },
@@ -346,7 +354,15 @@ class _Add_Delegates extends State<Add_Delegates> {
                 borderRadius: BorderRadius.circular(b * 6),
               ),
               padding: EdgeInsets.zero,
-              onPressed: () {
+              onPressed: ()  async{
+                _clickedCount++;
+               if(_clickedCount ==1)
+               {
+                
+               
+                bool allowAdd = await DialogVM.instance.checkCustomClaim(_phoneNumberController.text, context);
+                if(allowAdd){
+                
                 if(admin && widget.adminDetail.key==null){
                   validateAddAdmin();
                 }
@@ -355,6 +371,11 @@ class _Add_Delegates extends State<Add_Delegates> {
                 }
                 else if(!admin){
                 validateTeamMember();
+                }
+                }
+                }
+                else{
+                  _clickedCount = 0;
                 }
               },
               child: Container(

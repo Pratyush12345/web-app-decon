@@ -42,7 +42,10 @@ class _AllDevicesState extends State<AllDevices> {
     192: Colors.white,
     193: Colors.white
   };
-  
+  final Map<int, String> _manholeCondition = {
+    0: "manhole close",
+    1: "manhole open",
+  };
   @override
   void initState() {
     super.initState();
@@ -306,7 +309,7 @@ class _AllDevicesState extends State<AllDevices> {
                 Row(children: [
               Icon(Icons.arrow_upward, size: b * 16, color: blc),
               Text(
-                "${_listDeviceData[index].openManhole??""}",
+                "${_manholeCondition[_listDeviceData[index].openManhole]??""}",
                 style: txtS(blc, 14, FontWeight.w400),
               ),
                 ]),

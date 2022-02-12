@@ -116,12 +116,16 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
           _count = countDevices(model.allDeviceData);
           countbattery = 0;
           countError = 0;
+          countOpenManhole = 0;
           model.allDeviceData.forEach((element) {
             if (element.battery < (GlobalVar.seriesMap["S0"].model as S0DeviceSettingModel).batterythresholdvalue) {
               countbattery++;
             }  
             if(element.wlevel > 3){
               countError++;
+            }
+            if(element.openManhole ==1){
+              countOpenManhole ++;
             }
           });
           groundAnimation = IntTween(begin: 0, end: _count[0]).animate(
@@ -205,6 +209,7 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
                     children: [
                       detailRow("Open Manholes", countOpenManhole),
                       detailRow("Insufficient Energy", countbattery),
+                      if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
                       detailRow("Error in Devices", countError),
                     ],
                   ),

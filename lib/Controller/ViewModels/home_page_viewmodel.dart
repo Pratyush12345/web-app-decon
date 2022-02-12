@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:Decon/Controller/MessagingService/FirebaseMessaging.dart';
 import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
+import 'package:Decon/Controller/ViewModels/Services/Auth.dart' as auth;
 import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Models/Consts/database_calls.dart';
 import 'package:Decon/Models/Models.dart';
 import 'package:Decon/View_Web/DrawerFragments/Home.dart';
 import 'package:firebase/firebase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +24,10 @@ class HomePageVM {
   Map _clientsMap;
   List<String> citieslist = [];
   Query _query;
+  Query _delquery;
   StreamSubscription<QueryEvent> _onDataAddedSubscription;
   StreamSubscription<QueryEvent> _onDataChangedSubscription;
+  StreamSubscription<QueryEvent> _onUserChangedSubscription;
   DatabaseCallServices _databaseCallServices = DatabaseCallServices();
   final Database _database = database();
   String _ccode, _scode;
@@ -132,7 +136,37 @@ class HomePageVM {
      Provider.of<ChangeDeviceData>(context, listen: false).rebuild();
    }
   }
-
+  _setdelQuery(){
+        
+     if (GlobalVar.strAccessLevel == "1") {
+       }
+      else if (GlobalVar.strAccessLevel == "2") {
+        _delquery =   _database.ref("/managers/${FirebaseAuth.instance.currentUser.uid}");
+        _attachfunction();
+      }  
+      else if (GlobalVar.strAccessLevel == "3") {
+        _delquery =   _database.ref("/admins/${FirebaseAuth.instance.currentUser.uid}");
+       _attachfunction();
+         
+      }
+      else if (GlobalVar.strAccessLevel == "4") {
+        _delquery =   _database.ref("/managerTeam/${FirebaseAuth.instance.currentUser.uid}");
+        _attachfunction();
+      }
+      else if (GlobalVar.strAccessLevel == "5") {
+        _delquery =   _database.ref("/adminTeam/${FirebaseAuth.instance.currentUser.uid}");
+        _attachfunction();   
+      }
+      
+  }
+  _attachfunction(){
+     _onUserChangedSubscription    = _delquery.onChildRemoved.listen((event) { 
+          
+          if(event.snapshot.key == "phoneNo" && event.snapshot.val() == "${GlobalVar.userDetail.phoneNo}")
+           auth.Auth.instance.signOut();
+          });
+  }
+  
   _setQuery(String clientCode, String seriesCode) async {
     Provider.of<ChangeDeviceData>(context, listen: false).reinitialize();
     
@@ -194,6 +228,7 @@ class HomePageVM {
   void dispose(){
     _onDataChangedSubscription.cancel();
     _onDataAddedSubscription.cancel();  
+    _onUserChangedSubscription.cancel();
   }
 
   Map get getClientsMap => _clientsMap;
