@@ -17,7 +17,7 @@ class HomePageVM {
   static HomePageVM instance = HomePageVM._();
   HomePageVM._();
   bool isfromDrawer = true;
-  Widget selectedDrawerWidget = Home();
+  Widget selectedDrawerWidget = Home(key: Key("HomeKey"));
   List<String> _seriesList;
   String _sheetURL, _scriptEditorURL;
   BuildContext context;
@@ -38,13 +38,15 @@ class HomePageVM {
       Provider.of<ChangeDeviceData>(context, listen: false).changeDeviceData("onDeviceAdded", newDeviceData: DeviceData.fromSnapshot(event.snapshot, _scode));
     }
   }
+  
   loadMap() async{
-    await Future.delayed(Duration(milliseconds: 1000));
-        GlobalVar.isDeviceChanged = false;
-        Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(true);
-   await Future.delayed(Duration(milliseconds: 2000));
-   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(false);
+   await Future.delayed(Duration(milliseconds: 1000));
+   GlobalVar.isDeviceChanged = false;
+   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(true);
+  //  await Future.delayed(Duration(milliseconds: 2000));
+  //  Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(false);
   }
+
   onDeviceChanged(QueryEvent event)  async{
     try {
       if (event.snapshot.val()["address"] != null) {
@@ -238,6 +240,8 @@ class HomePageVM {
   String get getSheetURL => _sheetURL; 
   
   String get getScriptEditorURL => _scriptEditorURL; 
+
+  int get getClientCodeOnlyId => int.parse(_ccode.substring(1, _ccode.length));
   
   set setClientCode(String clientCode){
     _ccode = clientCode;

@@ -63,18 +63,18 @@ class _MonthlyReportState extends State<MonthlyReport> {
                     </html>'''; 
       
         return EasyWebView(
-          isHtml: false,
+          //isHtml: false,
           src: Uri.dataFromString(iframLink, mimeType: 'text/html').toString(),
-          isMarkdown: false,
-          convertToWidgets: false,
+          //isMarkdown: false,
+          //convertToWidgets: false,
           webAllowFullScreen: false,
-          widgetsTextSelectable: false,
-          onLoaded: (){
-            if(Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).canPop()){
-              Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).pop();
-            }
-            print("Key loaded");
-          },
+          //widgetsTextSelectable: false,
+          // onLoaded: (){
+          //   if(Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).canPop()){
+          //     Navigator.of(HomePageVM.instance.scaffoldKey.currentContext).pop();
+          //   }
+          //   print("Key loaded");
+          // },
           key: key,
 
         );

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:provider/provider.dart';
 
-class BottomLayoutS0Web extends StatefulWidget {
+class BottomLayoutS0AndrNoGround extends StatefulWidget {
   
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +14,7 @@ class BottomLayoutS0Web extends StatefulWidget {
   }
 }
 
-class BottomLayoutState extends State<BottomLayoutS0Web>
+class BottomLayoutState extends State<BottomLayoutS0AndrNoGround>
     with SingleTickerProviderStateMixin {
   Animation groundAnimation,
       normalAnimation,
@@ -26,11 +26,11 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
   TextEditingController descriptionController = TextEditingController();
   List<int> _count = List.filled(4, null);
   int countOpenManhole =0,
-      countbattery = 0, countError = 0;
+      countbattery = 0,
+      countError = 0;
   @override
   void initState() {
-     WidgetsBinding.instance.addPostFrameCallback((_){
-       _isStart
+    _isStart
         ? Future.delayed(Duration(milliseconds: 1100), () {
             setState(() {
               _animate = true;
@@ -38,11 +38,9 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
             });
           })
         : _animate = true;
-    
-      });
     animationController =
         AnimationController(duration: Duration(seconds: 5), vsync: this);
-  
+
     super.initState();
   }
 
@@ -52,52 +50,55 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
 
     super.dispose();
   }
+
   Widget informationRow(Color col, String tit, int val) {
-    var h = SizeConfig.screenHeight / 900;
-    var b = SizeConfig.screenWidth / 1440;
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
 
     return Container(
-      padding: EdgeInsets.only(
-          left: b * 25, right: b * 25, top: h * 15, bottom: h * 15),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: col,
             radius: b * 5.5,
           ),
-          sb(8),
+          SizedBox(width: b * 8),
           Text(
             tit,
-            style: txtS(col, 16, FontWeight.w400),
+            style: txtS(col, 12, FontWeight.w400),
           ),
-          sb(14),
+          SizedBox(width: b * 14),
           Text(
             val.toString(),
-            style: txtS(col, 16, FontWeight.w400),
+            style: txtS(col, 12, FontWeight.w700),
           ),
         ],
       ),
     );
   }
-  
+
   Container detailRow(String tit, int val) {
-    var h = SizeConfig.screenHeight / 900;
-    var b = SizeConfig.screenWidth / 1440;
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
 
     return Container(
-      padding: EdgeInsets.only(
-          left: b * 25, right: b * 25, top: h * 15, bottom: h * 15),
-      color: Colors.white,
-      margin: EdgeInsets.only(bottom: h * 6),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Color(0xff3b4e58),
+          ),
+        ),
+      ),
+      padding: EdgeInsets.symmetric(vertical: h * 10),
       child: Row(children: [
         Text(
           tit,
-          style: txtS(dc, 16, FontWeight.w400),
+          style: txtS(Colors.white, 12, FontWeight.w400),
         ),
         Spacer(),
         Text(
           val.toString(),
-          style: txtS(dc, 16, FontWeight.w400),
+          style: txtS(Colors.white, 12, FontWeight.w600),
         ),
       ]),
     );
@@ -106,8 +107,8 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    var h = SizeConfig.screenHeight / 900;
-    var b = SizeConfig.screenWidth / 1440;
+    var h = SizeConfig.screenHeight / 812;
+    var b = SizeConfig.screenWidth / 375;
     
     return
         Consumer<ChangeDeviceData>(
@@ -120,7 +121,7 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
           model.allDeviceData.forEach((element) {
             if (element.battery < (GlobalVar.seriesMap["S0"].model as S0DeviceSettingModel).batterythresholdvalue) {
               countbattery++;
-            }  
+            } 
             if(element.wlevel > 3){
               countError++;
             }
@@ -146,51 +147,43 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
               animation: animationController,
               builder: (BuildContext context, Widget child) {
                 return Container(
-       width: b * 420,
-      padding: EdgeInsets.only(top: details ? h * 18 : 0),
+      margin: EdgeInsets.symmetric(horizontal: b * 5),
+      padding: EdgeInsets.symmetric(horizontal: b * 17, vertical: h * 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(h * 10),
-        color: Color(0xfff8f8f8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.25),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(b * 10),
+        color: dc,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-        sh(8),
         Container(
           child: Text(
             "Total Devices With",
-            style: txtS(blc, 16, FontWeight.w400),
+            style: txtS(Colors.white, 16, FontWeight.w400),
           ),
         ),
         sh(18),
         Row(children: [
+          // Expanded(
+          //   flex: 3,
+          //   child: informationRow(Color(0xffc4c4c4), 'Ground Level', groundAnimation.value),
+          // ),
           Expanded(
-            flex: 2,
-            child: informationRow(Color(0xff848484), 'Ground Level', groundAnimation.value),
-          ),
-          Expanded(
-            flex: 2,
+            flex: 3,
             child: informationRow(Color(0xff69d66d), 'Normal Level', normalAnimation.value),
           ),
+          Expanded(
+              flex: 2,
+              child: informationRow(Color(0xfffcff50), 'Informative Level', informativeAnimation.value),
+            ),
         ]),
         sh(20),
         Row(
           children: [
+            
             Expanded(
-              flex: 2,
-              child: informationRow( Color(0xffFFBC3A), 'Informative Level', informativeAnimation.value),
-            ),
-            Expanded(
-              flex: 2,
-              child: informationRow(Colors.red, 'Critical Level', criticalAnimation.value),
+              flex: 3,
+              child: informationRow(Color(0xffd93d3d), 'Critical Level', criticalAnimation.value),
             ),
           ],
         ),
@@ -210,33 +203,31 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
                       detailRow("Open Manholes", countOpenManhole),
                       detailRow("Insufficient Energy", countbattery),
                       if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
-                      detailRow("Sensors Stuck In", countError),
+                      detailRow("Error in Devices", countError),
                     ],
                   ),
                 ),
               )
             : SizedBox(),
-        InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          onTap: () {
+        MaterialButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          color: Color(0xff3b4e58),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(b * 6),
+          ),
+          onPressed: () {
             setState(() {
               details = !details;
             });
           },
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: h * 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(b * 6),
-            ),
+            padding: EdgeInsets.symmetric(vertical: h * 10),
             alignment: Alignment.center,
             child: Text(
               details ? 'Hide Details' : "Show Details",
               style: TextStyle(
-                color: blc,
-                fontSize: h * 16,
+                color: Colors.white,
+                fontSize: b * 12,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -262,9 +253,10 @@ List<int> countDevices(List<DeviceData> _allDevicedata) {
       _normal++;
     } else if (_allDevicedata[i].wlevel == 2) {
       _informative++;
-    } else if(_allDevicedata[i].wlevel == 3){
+    } else if(_allDevicedata[i].wlevel == 3) {
       _critical++;
     }
+    
   }
   _count[0] = _ground;
   _count[1] = _normal;

@@ -120,7 +120,7 @@ class _Contact extends State<Contact> {
                    _showIndicator = true;
                    setState(() {}); 
                    String query = senderEmail + "%" + message;
-                   http.Response res =  await http.get('https://us-central1-decon-3545e.cloudfunctions.net/onMailSend?value="$query"');
+                   http.Response res =  await http.get(Uri.parse('https://us-central1-decon-3545e.cloudfunctions.net/onMailSend?value="$query"'));
                    
                    _showIndicator = false;
                    setState(() {});

@@ -26,7 +26,7 @@ class PleaseWait extends StatelessWidget {
                width: b * 100,
                child: Center( 
                   child: RiveAnimation.asset('images/loading7.riv',
-                  animation: "loading",
+                  animations: ["loading"],
                   ),
                 ),
              ),

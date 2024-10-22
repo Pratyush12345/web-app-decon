@@ -5,6 +5,7 @@ import 'package:Decon/Controller/Providers/devie_setting_provider.dart';
 import 'package:Decon/Controller/Providers/drawerHoverProvider.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/Providers/peopleHoverProvider.dart';
+import 'package:Decon/Controller/ViewModels/Services/Web_Wrapper/Web_connec_Wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/orientation_wrapper.dart';
 import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/View_Web/DrawerFragments/Statistics/graphs_provider.dart';
@@ -16,7 +17,10 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options:  FirebaseOptions(apiKey: "AIzaSyDRt5UTSp7hHOenFDpJY00XJHeK_-haQV8", appId: "1:987240167971:web:7720800de3aa4914940f96", 
+    messagingSenderId: "987240167971", projectId: "decon-3545e")
+  );
   //Auth.instance.loadMarker();
   runApp(MyApp());
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -35,6 +39,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return StreamProvider<User>.value(
+      
       value: Auth.instance.appuser,
       
       child: MultiProvider(
@@ -63,6 +68,7 @@ class MyApp extends StatelessWidget {
          FocusManager.instance.primaryFocus.unfocus();
         },
           child: MaterialApp(
+            
             debugShowCheckedModeBanner: false,
             title: 'Decon',
             theme: ThemeData(
@@ -85,6 +91,7 @@ class MyApp extends StatelessWidget {
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
             home: OrientationWrapper()
+            //home: WebConnectivityWrapper(),
           ),
         ),
       ),

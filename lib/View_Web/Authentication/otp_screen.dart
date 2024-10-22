@@ -3,7 +3,7 @@ import 'package:Decon/Controller/ViewModels/Services/Auth.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Web/Authentication/login_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pinput.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
@@ -33,7 +33,13 @@ class _OtpPageState extends State<OtpPage> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(h * 5),
     );
-
+    final defaultPinTheme = PinTheme(
+                      height: h * 50,
+                      width: b * 50,
+                      textStyle: TextStyle(fontSize: h * 20, color: dc),
+                      decoration: pinPutDecoration,
+                    
+                    );
     return Scaffold(
       body: Column(
         children: [
@@ -62,17 +68,14 @@ class _OtpPageState extends State<OtpPage> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: b * 520),
             width: SizeConfig.screenWidth,
-            child: PinPut(
-              withCursor: true,
-              fieldsCount: 6,
-              textStyle: TextStyle(fontSize: h * 20, color: dc),
-              eachFieldWidth: b * 50,
-              eachFieldHeight: h * 50,
-              focusNode: _pinPutFocusNode,
+            child: Pinput(
+              showCursor: true,
+              length: 6,
+              focusNode: _pinPutFocusNode, 
               controller: _pinPutController,
-              submittedFieldDecoration: pinPutDecoration,
-              selectedFieldDecoration: pinPutDecoration,
-              followingFieldDecoration: pinPutDecoration,
+              submittedPinTheme: defaultPinTheme,
+              followingPinTheme: defaultPinTheme,
+              defaultPinTheme: defaultPinTheme,
             ),
           ),
           sh(24),

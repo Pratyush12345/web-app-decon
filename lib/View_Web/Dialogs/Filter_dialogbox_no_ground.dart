@@ -1,0 +1,90 @@
+import 'package:Decon/Controller/Utils/sizeConfig.dart';
+import 'package:Decon/Models/Consts/app_constants.dart';
+import 'package:flutter/material.dart';
+
+class FilterDialogDeviceNoGround extends StatelessWidget {
+  final String selected;
+  FilterDialogDeviceNoGround({ Key key, @required this.selected }) : super(key: key);
+  
+  List<String> _filterList = [
+    "None",
+    "Normal Level",
+    "Informative Level",
+    "Critical Level",
+    "Open Manholes",
+    "High Temperature",
+    "Insufficient Battery"
+  ];
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    var b = SizeConfig.screenWidth / 1440;
+    var h = SizeConfig.screenHeight / 900;
+    
+    return Dialog(
+      backgroundColor: Colors.white,
+      insetPadding: EdgeInsets.symmetric(horizontal: b * 476.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(h * 10),
+      ),
+    
+      child: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          sh(4),
+                      Text(
+                          "Filter",
+                          style: TextStyle(
+                            fontSize: b * 16,
+                            color: dc,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          ),
+          Container(
+            height: MediaQuery.of(context).size.height *0.4,
+            padding: EdgeInsets.fromLTRB(b * 21, h * 8, b * 21, h * 21),
+            child: 
+              ListView.builder(
+                itemCount: _filterList.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop(_filterList[index]);
+                          },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: h * 10),
+                          decoration: !(selected == '${_filterList[index]}')? BoxDecoration(
+                        border: Border.all(color: blc),
+                        borderRadius: BorderRadius.circular(b * 6)):
+                        BoxDecoration(
+                        color: blc,
+                        borderRadius: BorderRadius.circular(b * 6)),
+                            
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${_filterList[index]}',
+                            style: !(selected == '${_filterList[index]}')? TextStyle(
+                            color: blc,
+                            fontSize: b * 16,
+                            fontWeight: FontWeight.w500):
+                            TextStyle(
+                            color: Colors.white,
+                            fontSize: b * 16,
+                            fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                      sh(8)
+                    ],
+                  );
+                }
+              ),  
+           ),
+        ]),
+      ),
+    );
+
+  }
+}

@@ -5,7 +5,7 @@ import 'package:Decon/View_Web/Authentication/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pinput.dart';
 
 class Otp extends StatefulWidget {
   final String phoneNo;
@@ -13,6 +13,7 @@ class Otp extends StatefulWidget {
   Otp({@required this.countryCode,@required this.phoneNo}){
   
   }
+  
   @override
   State<StatefulWidget> createState() {
     return _OtpState();
@@ -39,6 +40,14 @@ class _OtpState extends State<Otp> {
       borderRadius: BorderRadius.circular(b * 5),
     );
 
+    final defaultPinTheme = PinTheme(
+                      height: h*40,
+                      width: b*40,
+                      textStyle: TextStyle(fontSize: h * 20, color: dc),
+                      decoration: pinPutDecoration,
+                    
+                    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -64,29 +73,19 @@ class _OtpState extends State<Otp> {
                 ),
                 sh(25),
                 Container(
-                  width: SizeConfig.screenWidth,
-                  child: PinPut(
-                    onTap: () {
-                      keyboard = true;
-                    },
-                    onSubmit: (value) {
-                      keyboard = false;
-                    },
-                    onSaved: (value) {
-                      keyboard = true;
-                    },
-                    withCursor: true,
-                    fieldsCount: 6,
-                    textStyle: TextStyle(fontSize: b * 20, color: dc),
-                    eachFieldWidth: 40,
-                    eachFieldHeight: 40,
-                    focusNode: _pinPutFocusNode,
-                    controller: _pinPutController,
-                    submittedFieldDecoration: pinPutDecoration,
-                    selectedFieldDecoration: pinPutDecoration,
-                    followingFieldDecoration: pinPutDecoration,
-                  ),
+                padding: EdgeInsets.symmetric(horizontal: b * 40),
+                width: SizeConfig.screenWidth,
+                child: Pinput(
+                showCursor: true,
+                length: 6,
+                focusNode: _pinPutFocusNode, 
+                controller: _pinPutController,
+                submittedPinTheme: defaultPinTheme, 
+                followingPinTheme: defaultPinTheme,
+                defaultPinTheme: defaultPinTheme,
                 ),
+               ),
+                
                 sh(15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

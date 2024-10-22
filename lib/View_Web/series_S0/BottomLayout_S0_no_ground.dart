@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:provider/provider.dart';
 
-class BottomLayoutS0Web extends StatefulWidget {
+class BottomLayoutS0NoGroundWeb extends StatefulWidget {
   
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +14,7 @@ class BottomLayoutS0Web extends StatefulWidget {
   }
 }
 
-class BottomLayoutState extends State<BottomLayoutS0Web>
+class BottomLayoutState extends State<BottomLayoutS0NoGroundWeb>
     with SingleTickerProviderStateMixin {
   Animation groundAnimation,
       normalAnimation,
@@ -172,22 +172,22 @@ class BottomLayoutState extends State<BottomLayoutS0Web>
         ),
         sh(18),
         Row(children: [
-          Expanded(
-            flex: 2,
-            child: informationRow(Color(0xff848484), 'Ground Level', groundAnimation.value),
-          ),
+          // Expanded(
+          //   flex: 2,
+          //   child: informationRow(Color(0xff848484), 'Ground Level', groundAnimation.value),
+          // ),
           Expanded(
             flex: 2,
             child: informationRow(Color(0xff69d66d), 'Normal Level', normalAnimation.value),
           ),
-        ]),
-        sh(20),
-        Row(
-          children: [
-            Expanded(
+          Expanded(
               flex: 2,
               child: informationRow( Color(0xffFFBC3A), 'Informative Level', informativeAnimation.value),
             ),
+        ]),
+        sh(20),
+        Row(
+          children: [      
             Expanded(
               flex: 2,
               child: informationRow(Colors.red, 'Critical Level', criticalAnimation.value),

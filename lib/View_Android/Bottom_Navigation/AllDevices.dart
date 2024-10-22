@@ -1,7 +1,9 @@
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
+import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
 import 'package:Decon/View_Android/Dialogs/Filter_dialogbox.dart';
+import 'package:Decon/View_Android/Dialogs/Filter_dialogbox_no_ground.dart';
 import 'package:Decon/View_Android/DrawerFragments/Statistics/Graphs.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 
@@ -98,7 +100,7 @@ class _AllDevicesState extends State<AllDevices> {
         curve: Curves.fastOutSlowIn,
         duration: Duration(milliseconds: 400),
         builder: (context) {
-          return FilterDialogDevice(selected: __itemSelected);
+          return HomePageVM.instance.getClientCodeOnlyId == 0 || HomePageVM.instance.getClientCodeOnlyId>= GlobalVar.thresholdClientId? FilterDialogDeviceNoGround(selected: __itemSelected) : FilterDialogDevice(selected: __itemSelected);
         }).then((value) { 
           if(value!=null){
           __itemSelected = value;

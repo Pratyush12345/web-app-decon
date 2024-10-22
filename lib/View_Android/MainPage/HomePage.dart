@@ -68,6 +68,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     GlobalVar.seriesMap = GlobalVar.seriesMapAndr;
+    GlobalVar.seriesMapNoGround = GlobalVar.seriesMapAndrNoGround;
     HomePageVM.instance.selectedDrawerWidget = Home();
     HomePageVM.instance.initialize(context);
     super.initState();

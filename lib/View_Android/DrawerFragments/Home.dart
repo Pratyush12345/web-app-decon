@@ -333,7 +333,9 @@ class HomeState extends State<Home> {
             Container(
             color: Colors.white,
             padding: EdgeInsets.fromLTRB(6.0, 0.0, 6.0, 8.0),
-            child: GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout),
+            //child: GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout),
+            child: HomePageVM.instance.getClientCodeOnlyId == 0 || HomePageVM.instance.getClientCodeOnlyId>= GlobalVar.thresholdClientId ? GlobalVar.seriesMapNoGround[HomePageVM.instance.getSeriesCode].bottomLayout : GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout,
+            )
       ),
     );
   }

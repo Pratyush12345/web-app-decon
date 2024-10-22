@@ -133,7 +133,7 @@ class Auth  {
     return value; 
   }
 
-  signInWithCred(cred) async {
+  signInWithCred(cred) async { 
     currentuser = (await _firebaseAuth.signInWithCredential(cred)).user;
     return "done";
   }

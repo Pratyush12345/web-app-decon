@@ -16,10 +16,16 @@ class AndrConnectivityWrapper extends StatelessWidget{
           builder: (context,snapshot){
             if(snapshot.hasData){
               
-            double downlink = html.window.navigator.connection.downlink;
-            int rtt = html.window.navigator.connection.rtt;
-            bool isonline = html.window.navigator.onLine; 
-            
+            double downlink = 0;
+            int rtt = 1;
+            bool isonline = true;
+
+            if(html.window.navigator.connection!=null){  
+              downlink = html.window.navigator.connection?.downlink;
+              rtt = html.window.navigator.connection?.rtt;
+              isonline = html.window.navigator?.onLine; 
+              }
+
             print("downlink------------$downlink");
             print("rtt------------$rtt");
             print("isonline------------$isonline");
@@ -35,10 +41,16 @@ class AndrConnectivityWrapper extends StatelessWidget{
                 }
             }
             else{
-            double downlink = html.window.navigator.connection.downlink;
-            int rtt = html.window.navigator.connection.rtt;
-            bool isonline = html.window.navigator.onLine; 
-            
+            double downlink = 0;
+            int rtt = 1;
+            bool isonline = true;
+
+            if(html.window.navigator.connection!=null){  
+              downlink = html.window.navigator.connection?.downlink;
+              rtt = html.window.navigator.connection?.rtt;
+              isonline = html.window.navigator?.onLine; 
+              }
+
                 print("downlink------------$downlink");
                 print("downlink------------$downlink");
                 print("rtt------------$rtt");

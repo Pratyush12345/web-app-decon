@@ -38,7 +38,8 @@ class _HomePage2State extends State<HomePage2> {
   @override
   void initState() {
     GlobalVar.seriesMap = GlobalVar.seriesMapWeb;
-    HomePageVM.instance.selectedDrawerWidget = Home();
+    GlobalVar.seriesMapNoGround = GlobalVar.seriesMapWebNoGround;
+    HomePageVM.instance.selectedDrawerWidget = Home(key: Key("HomeKey"),);
     HomePageVM.instance.initialize(context);
     super.initState();
   }
@@ -117,13 +118,15 @@ class _HomePage2State extends State<HomePage2> {
                             );
                         }).toList(),
                   style: txtS(blc, 20, FontWeight.w400),
-                  onChanged: (newValueSelected) {
+                  onChanged: (newValueSelected) async {
+                            GlobalVar.isclientchanged = true;
+                            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${GlobalVar.isclientchanged}");
                             _itemSelected = newValueSelected;
                              object.clientsList.forEach((value) { 
                               if (value.clientName == newValueSelected) HomePageVM.instance.setClientCode = value.clientCode;
                             });
-                            GlobalVar.isclientchanged = true;
-                            HomePageVM.instance.onChangeClient();
+                            
+                            await HomePageVM.instance.onChangeClient();
                             HomePageVM.instance.loadMap();
                         },
                   value: _itemSelected?? null,
@@ -266,7 +269,7 @@ class _HomePage2State extends State<HomePage2> {
                   ),
                 ),
                 sh(60),
-                panel("Home", Icons.home, Home(), true, 'images/Home.svg', 0),
+                panel("Home", Icons.home, Home(key: Key("HomeKey"),), true, 'images/Home.svg', 0),
                 if(GlobalVar.strAccessLevel == "1")
                 panel("Client List", Icons.view_list, AllClients(), false, '', 1),
                 if(GlobalVar.strAccessLevel == "1")
@@ -341,7 +344,7 @@ class _HomePage2State extends State<HomePage2> {
       Provider.of<ChangeDrawerItems>(context, listen: false).changeDrawerItem();
   }
 
-  Widget panel(String tit, ico, dynamic nextPage, bool svg, String svgLink, int index) {
+  Widget panel(String tit, ico, Widget nextPage, bool svg, String svgLink, int index) {
     var h = SizeConfig.screenHeight / 900;
     var b = SizeConfig.screenWidth / 1440;
 

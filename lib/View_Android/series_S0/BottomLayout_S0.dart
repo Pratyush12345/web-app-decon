@@ -202,7 +202,7 @@ class BottomLayoutState extends State<BottomLayoutS0Andr>
                       detailRow("Open Manholes", countOpenManhole),
                       detailRow("Insufficient Energy", countbattery),
                       if(GlobalVar.strAccessLevel !="3" && GlobalVar.strAccessLevel !="5")
-                      detailRow("Error in Devices", countError),
+                      detailRow("", countError),
                     ],
                   ),
                 ),

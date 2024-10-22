@@ -85,7 +85,7 @@ class _ClickOnAddDeviceState extends State<ClickOnAddDevice> {
                   latitude: _latitude,
                   longitude: _longitude,
                   status: 1,
-                  wlevel: 0,
+                  wlevel: HomePageVM.instance.getClientCodeOnlyId == 0 || HomePageVM.instance.getClientCodeOnlyId>= GlobalVar.thresholdClientId ? 1 : 0,
                   openManhole: 0,
                   address: address,
                   lightIntensity: 0,

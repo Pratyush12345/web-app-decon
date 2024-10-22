@@ -160,7 +160,7 @@ class GraphsVM {
    
   }
    getDataFromSheetList(String _url) async {
-    return await http.get(_url).then((response) {
+    return await http.get(Uri.parse(_url)).then((response) {
       print("responsed .body========% ${response.body.length}");
       if(response.body.length<=2){
         print("in ifffffffffffff");

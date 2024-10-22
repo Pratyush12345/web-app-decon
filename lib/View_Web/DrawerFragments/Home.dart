@@ -4,7 +4,6 @@ import 'package:Decon/Controller/ViewModels/Services/GlobalVariable.dart';
 import 'package:Decon/Controller/Providers/home_page_providers.dart';
 import 'package:Decon/Controller/ViewModels/home_page_viewmodel.dart';
 import 'package:Decon/Models/Consts/app_constants.dart';
-import 'package:Decon/View_Web/series_S0/BottomLayout_S0.dart';
 import 'package:Decon/Models/AddressCaluclator.dart';
 import 'package:Decon/Controller/Utils/sizeConfig.dart';
 import 'package:Decon/Models/Models.dart';
@@ -15,7 +14,8 @@ import 'package:provider/provider.dart';
 
 
 class Home extends StatefulWidget {
-  Home();
+
+  Home({Key key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -27,6 +27,7 @@ class HomeState extends State<Home> {
   String futureAddress = "";
   // Completer<GoogleMapController> _controller = Completer();
   Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController googleMapController;
   Set<Marker> _setOfMarker = {};
   LatLng _latLng;
   double _value;
@@ -35,22 +36,25 @@ class HomeState extends State<Home> {
   BitmapDescriptor normal_icon;
   BitmapDescriptor informative_icon;
   BitmapDescriptor critical_icon;
-  
+  GoogleMap _googleMap;
 
    loadMarker() async {
+    print("----------------------------Marker Loaded-------------------");
    ground_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/purple-dot.png');
    normal_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/green-dot.png');
    informative_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/yellow-dot.png');
    critical_icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/red-dot.png');    
-   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(true);
-   await Future.delayed(Duration(milliseconds: 2000));
-   Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(false);
+  //  Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(true);
+  //  await Future.delayed(Duration(milliseconds: 2000));
+  //  Provider.of<ChangeGoogleMap>(context, listen: false).changeGoogleMap(false);
   }
 
   @override
   void initState() {
     _latLng = new LatLng(26.123456, 72.234567);
+    //_latLng = new LatLng(72.234567,26.123456);
     _value = 16.0;
+    _setOfMarker = {};
     super.initState();
     loadMarker();
   }
@@ -59,21 +63,27 @@ class HomeState extends State<Home> {
     GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(lat,lon),
-        zoom: _value)));
+        zoom: 16.0)));
   }
-
+  
+  getController() async{
+    googleMapController = await _controller.future;
+  }
+ 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return 
        Scaffold(
-         resizeToAvoidBottomInset: false,
+         resizeToAvoidBottomInset: true,
       
          body: Consumer<ChangeDeviceData>(
           builder: (context, changeList, child){
-            if (GlobalVar.isclientchanged &&changeList.allDeviceData!=null &&changeList.allDeviceData.length != 0) {
-             _animateMap(changeList.allDeviceData[0].latitude, changeList.allDeviceData[0].longitude);
-             }
+            // if (GlobalVar.isclientchanged &&changeList.allDeviceData!=null &&changeList.allDeviceData.length != 0) {
+            //  }
+
+            print("--------------------Building---------------------");
+             print("changeList--------------${changeList.allDeviceData.length}");
             return changeList.allDeviceData == null ?AppConstant.progressIndicator(): 
             changeList.allDeviceData.isEmpty?AppConstant.noDataFound():
             Stack(
@@ -149,40 +159,71 @@ class HomeState extends State<Home> {
     return 
        Consumer<ChangeGoogleMap>(
          builder: (context, model,child){
+           if(allDeviceData!=null && allDeviceData.length!=0)
+             _animateMap(allDeviceData[0].latitude, allDeviceData[0].longitude);
+             
+          //  if(model.isInitialized){
+          //     _setOfMarker = {};
+          //   }
+          //   else {          
+          //     if(GlobalVar.isDeviceChanged){
+          //     _setOfMarker = {};
+          //     _value = 28;
+          //     GlobalVar.isDeviceChanged = false;
+          //     }
+          //     else
+          //     _setOfMarker = addMarker(allDeviceData);
+          //   }
 
-           if(model.isInitialized){
-              _setOfMarker = {};
-            }
-            else{
-              if(GlobalVar.isDeviceChanged){
-              _setOfMarker = {};
-              _value = 28;
-              GlobalVar.isDeviceChanged = false;
-              }
-              else
-              _setOfMarker = addMarker(allDeviceData);
-            }
-           
-          return  IndexedStack(
-            index: 0,
-            children: [
-              GoogleMap( 
-         key: ValueKey('key_0'),
+          print("----------------------------------");
+          print(_setOfMarker.isEmpty);
+          print(GlobalVar.isDeviceChanged);
+          print(GlobalVar.isclientchanged);
+          print(model.isInitialized);
+          print("----------------------------------");
+
+          if(_setOfMarker.isEmpty || model.isInitialized){
+          Future.delayed(Duration(seconds: 2)).then((value) {
+            _setOfMarker = {};
+            _setOfMarker= addMarker(allDeviceData);
+            setState(() {});
+            Provider.of<ChangeGoogleMap>(context, listen: false).isInitialized = false;
+            print("Called after 1 second");
+          });
+          Provider.of<ChangeGoogleMap>(context, listen: false).isInitialized = false;
+          GlobalVar.isDeviceChanged = false;
+          GlobalVar.isclientchanged = false;
+          }
+          
+            
+          print("-------------------Google map----------------------");
+            
+          print(_setOfMarker.length);
+          print(_latLng.latitude);
+          print("-------------------Google map----------------------"); 
+         
+         print("Map id---------------------------------- ${googleMapController?.mapId}");
+
+         _googleMap =   GoogleMap( 
          mapType: MapType.normal,
+         key: Key("google map key"),
          initialCameraPosition: CameraPosition(target: _latLng, zoom: _value),
          zoomGesturesEnabled: true,
          onMapCreated: (GoogleMapController googleMapControler) {
-               _controller.complete(googleMapControler);
-               print("controller loaded");
-               print(Auth.instance.ground_icon);
-               print(Auth.instance.normal_icon);
-               print(Auth.instance.informative_icon);
-               print(Auth.instance.critical_icon);
+           _controller.complete(googleMapControler);
+           getController();
+           print("controller loaded");
+           print(Auth.instance.ground_icon);
+           print(Auth.instance.normal_icon);
+           print(Auth.instance.informative_icon);
+           print(Auth.instance.critical_icon);
          },
          markers: _setOfMarker,
-       ),
-            ],
-          );
+
+        );
+        
+        return _googleMap;
+
          },
       );
   }
@@ -284,8 +325,8 @@ class HomeState extends State<Home> {
       });
       specificDevice = allDeviceData[allDeviceData.indexOf(Key)];
       _value = 20.0;
-      GoogleMapController controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      
+      googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target: LatLng(specificDevice.latitude, specificDevice.longitude),
           zoom: _value)));
     }
@@ -355,7 +396,7 @@ class HomeState extends State<Home> {
               child: Consumer<ChangeSeries>(
               builder: (context, _, child)=>
             
-              GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout,
+              HomePageVM.instance.getClientCodeOnlyId == 0 || HomePageVM.instance.getClientCodeOnlyId>= GlobalVar.thresholdClientId ? GlobalVar.seriesMapNoGround[HomePageVM.instance.getSeriesCode].bottomLayout : GlobalVar.seriesMap[HomePageVM.instance.getSeriesCode].bottomLayout
               
       ),
     );

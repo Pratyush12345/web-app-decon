@@ -203,7 +203,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
                             ],
                           ),
                           //if (Auth.instance.post != null)
-                            RaisedButton(
+                            MaterialButton(
                               child: Text("Resolve"),
                               onPressed: () {
                                 type = "image";
